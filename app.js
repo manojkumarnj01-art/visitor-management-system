@@ -1631,38 +1631,58 @@ async function handleLoginSubmit(e) {
     const userVal = document.getElementById("login-username").value.trim().toLowerCase();
     const passVal = document.getElementById("login-password").value;
 
-    if (state.settings?.gcpBackendUrl) {
-        showToast("Authenticating", "Verifying credentials with GCP Cloud Run...", "info");
+    if (supabaseClient) {
+        showToast("Authenticating", "Verifying credentials with Supabase...", "info");
         try {
-            const response = await fetch(`${state.settings.gcpBackendUrl}/api/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: userVal, password: passVal })
+            // Map simple local usernames to domain emails for Supabase Auth
+            let email = userVal;
+            if (!email.includes("@")) {
+                email = `${userVal}@acme.corp`;
+            }
+            
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: passVal
             });
-            if (response.ok) {
-                const data = await response.json();
-                state.settings.jwtToken = data.token;
-                state.currentUser = {
-                    username: data.username,
-                    name: data.name,
-                    role: data.role,
-                    phone: "GCP Cloud Session",
-                    shift: "Continuous"
-                };
+            
+            if (error) {
+                console.error("Supabase Auth error:", error);
+                showToast("Access Denied", error.message || "Invalid credentials.", "danger");
+                return;
+            }
+            
+            if (data && data.user) {
+                // Fetch the security user profile to retrieve the proper role configuration
+                const { data: profile, error: profileErr } = await supabaseClient
+                    .from('security_users')
+                    .select('*')
+                    .eq('id', data.user.id)
+                    .single();
+                
+                if (profileErr || !profile) {
+                    console.warn("Custom profile not found in security_users, using auth default metadata.", profileErr);
+                    state.currentUser = {
+                        username: userVal,
+                        name: userVal.charAt(0).toUpperCase() + userVal.slice(1),
+                        role: userVal === "admin" ? "Administrator" : "Security Gatekeeper",
+                        phone: "Supabase Session",
+                        shift: "Continuous"
+                    };
+                } else {
+                    state.currentUser = mapSecurityUserFromDb(profile);
+                }
+                
                 saveState();
-                showToast("Access Granted", getTranslatedText("logged-in-as", "Logged in as {name}").replace("{name}", data.name), "success");
+                showToast("Access Granted", getTranslatedText("logged-in-as", "Logged in as {name}").replace("{name}", state.currentUser.name), "success");
                 document.getElementById("login-form").reset();
                 checkAuthSession();
                 
-                // Fetch state updates from GCP Cloud SQL
-                syncFromGcp();
-            } else {
-                const errData = await response.json();
-                showToast("Access Denied", errData.error || "Invalid credentials.", "danger");
+                // Fetch latest state updates from Supabase
+                syncFromSupabase();
             }
         } catch (err) {
-            console.error("GCP auth error:", err);
-            showToast("Auth Service Offline", "Could not connect to GCP server. Falling back to offline local auth.", "warning");
+            console.error("Supabase auth exception:", err);
+            showToast("Auth Service Offline", "Could not connect to Supabase server. Falling back to offline local auth.", "warning");
             performOfflineLogin(userVal, passVal);
         }
     } else {
@@ -5493,12 +5513,17 @@ function mapSecurityUserFromDb(row) {
 }
 
 function initSupabase() {
+    if (window.supabaseClient) {
+        supabaseClient = window.supabaseClient;
+        console.log("[VMS Cloud] Supabase Client loaded from Vite global.");
+        return;
+    }
     const url = state.settings?.supabaseUrl;
     const key = state.settings?.supabaseKey;
     if (url && key && window.supabase) {
         try {
             supabaseClient = window.supabase.createClient(url, key);
-            console.log("[VMS Cloud] Supabase Client Initialized successfully.");
+            console.log("[VMS Cloud] Supabase Client Initialized from local settings.");
         } catch (e) {
             console.error("[VMS Cloud] Failed to initialize Supabase client:", e);
         }
@@ -5662,183 +5687,9 @@ async function syncSingleVisitorToCloud(visitor) {
             console.error("Supabase visitor sync error:", e);
         }
     }
-
-    if (state.settings?.gcpBackendUrl) {
-        try {
-            const token = state.settings.jwtToken || "";
-            const response = await fetch(`${state.settings.gcpBackendUrl}/api/visitors`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : ''
-                },
-                body: JSON.stringify(visitor)
-            });
-            if (!response.ok) {
-                console.error("Failed to sync visitor to GCP Backend:", response.statusText);
-            } else {
-                console.log("Visitor synced to GCP Backend:", visitor.id);
-                try {
-                    const serverVisitor = await response.json();
-                    const idx = state.visitors.findIndex(v => v.id === visitor.id);
-                    if (idx !== -1) {
-                        state.visitors[idx] = { ...state.visitors[idx], ...serverVisitor };
-                        saveState();
-                        console.log("Updated visitor state with GCS URLs and Tokens from GCP Backend:", visitor.id);
-                    }
-                } catch (parseErr) {
-                    console.warn("Could not parse visitor response payload from GCP Backend", parseErr);
-                }
-            }
-        } catch (e) {
-            console.error("GCP visitor sync error:", e);
-        }
-    }
 }
 
-async function syncFromGcp() {
-    if (!state.settings?.gcpBackendUrl) {
-        showToast("Error", "GCP Backend URL is not configured.", "danger");
-        return;
-    }
-    try {
-        showToast("Syncing Database", "Fetching latest data from GCP Cloud Run...", "info");
-        const token = state.settings.jwtToken || "";
-        
-        // Sync Employees
-        const empRes = await fetch(`${state.settings.gcpBackendUrl}/api/employees`, {
-            headers: { 'Authorization': token ? `Bearer ${token}` : '' }
-        });
-        if (empRes.ok) {
-            state.employees = await empRes.json();
-            localStorage.setItem("gk_employees", JSON.stringify(state.employees));
-        }
 
-        // Sync Visitors
-        const visRes = await fetch(`${state.settings.gcpBackendUrl}/api/visitors`, {
-            headers: { 'Authorization': token ? `Bearer ${token}` : '' }
-        });
-        if (visRes.ok) {
-            state.visitors = await visRes.json();
-            localStorage.setItem("gk_visitors", JSON.stringify(state.visitors));
-        }
-
-        // Sync Blacklist
-        const blRes = await fetch(`${state.settings.gcpBackendUrl}/api/blacklist`, {
-            headers: { 'Authorization': token ? `Bearer ${token}` : '' }
-        });
-        if (blRes.ok) {
-            state.blacklist = await blRes.json();
-            localStorage.setItem("gk_blacklist", JSON.stringify(state.blacklist));
-        }
-
-        // Sync Departments
-        const deptRes = await fetch(`${state.settings.gcpBackendUrl}/api/departments`, {
-            headers: { 'Authorization': token ? `Bearer ${token}` : '' }
-        });
-        if (deptRes.ok) {
-            state.departments = await deptRes.json();
-            localStorage.setItem("gk_departments", JSON.stringify(state.departments));
-        }
-
-        refreshAllDataViews();
-        showToast("Sync Complete", "Database synced with GCP Cloud SQL successfully.", "success");
-        addAuditLog("Sync Database", "GCP Cloud SQL", "Synced local database tables with GCP PostgreSQL");
-    } catch (e) {
-        console.error("GCP sync error:", e);
-        showToast("Sync Error", "Failed to sync database tables from GCP.", "danger");
-    }
-}
-
-async function pushLocalToGcp() {
-    if (!state.settings?.gcpBackendUrl) {
-        showToast("Error", "GCP Backend URL is not configured.", "danger");
-        return;
-    }
-    try {
-        showToast("Syncing Database", "Uploading local data to GCP Cloud SQL...", "info");
-        const token = state.settings.jwtToken || "";
-        
-        // Seed Employees
-        for (const emp of state.employees) {
-            await fetch(`${state.settings.gcpBackendUrl}/api/employees`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : ''
-                },
-                body: JSON.stringify(emp)
-            });
-        }
-        
-        // Seed Visitors
-        for (const vis of state.visitors) {
-            await fetch(`${state.settings.gcpBackendUrl}/api/visitors`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : ''
-                },
-                body: JSON.stringify(vis)
-            });
-        }
-
-        // Seed Blacklist
-        for (const bl of state.blacklist) {
-            await fetch(`${state.settings.gcpBackendUrl}/api/blacklist`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : ''
-                },
-                body: JSON.stringify(bl)
-            });
-        }
-
-        // Seed Departments
-        for (const dept of state.departments) {
-            await fetch(`${state.settings.gcpBackendUrl}/api/departments`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : ''
-                },
-                body: JSON.stringify(dept)
-            });
-        }
-
-        showToast("GCP Seeding Successful", "Local data pushed to Cloud SQL PostgreSQL tables.", "success");
-        addAuditLog("Push to Cloud SQL", "GCP Cloud SQL", "Pushed local tables to GCP PostgreSQL database");
-    } catch (e) {
-        console.error("GCP push failed:", e);
-        showToast("GCP Push Failed", e.message, "danger");
-    }
-}
-
-async function fetchGcpDispatchLogs() {
-    if (!state.settings?.gcpBackendUrl) return;
-    try {
-        const res = await fetch(`${state.settings.gcpBackendUrl}/api/notifications/dispatch-logs`);
-        if (res.ok) {
-            const logs = await res.json();
-            const panel = document.getElementById("sms-email-logs-panel");
-            if (panel && logs.length > 0) {
-                panel.innerHTML = logs.map(l => `
-                    <div class="dispatch-log-item" style="border-bottom:1px solid var(--border-color); padding: 8px 0; display: flex; flex-direction: column; gap: 4px;">
-                        <div>
-                            <span class="badge-status ${l.status === 'Sent' || l.status.startsWith('Sent') ? 'checked-in' : 'pending'}" style="font-size:0.6rem; padding: 2px 4px; border-radius: 4px;">${l.status}</span>
-                            <strong style="font-size:0.7rem; color:var(--accent-primary); margin-left:6px;">${l.type}</strong>
-                            <span style="font-size:0.65rem; color:var(--text-muted); float:right;">${new Date(l.timestamp).toLocaleTimeString()}</span>
-                        </div>
-                        <div style="font-size:0.65rem; color:var(--text-secondary);">To: ${l.recipient} | ${l.content}</div>
-                    </div>
-                `).join("");
-            }
-        }
-    } catch (err) {
-        console.warn("Could not fetch GCP logs", err);
-    }
-}
 
 function loadSettingsIntoForm() {
     const s = state.settings || {};
@@ -5857,7 +5708,7 @@ function loadSettingsIntoForm() {
     if (document.getElementById("cfg-supabase-key")) document.getElementById("cfg-supabase-key").value = s.supabaseKey || "";
     if (document.getElementById("cfg-supabase-bucket")) document.getElementById("cfg-supabase-bucket").value = s.supabaseBucket || "visitor-passes";
     
-    // GCP Settings
+    // GCP Settings (Legacy/Deprecated)
     if (document.getElementById("cfg-gcp-backend-url")) document.getElementById("cfg-gcp-backend-url").value = s.gcpBackendUrl || "";
     if (document.getElementById("cfg-gcp-ai-url")) document.getElementById("cfg-gcp-ai-url").value = s.gcpAiUrl || "";
     if (document.getElementById("cfg-public-web-url")) document.getElementById("cfg-public-web-url").value = s.publicWebUrl || "";
@@ -5920,16 +5771,7 @@ function initializeCloudSettings() {
         btnSyncCloud.addEventListener("click", syncFromSupabase);
     }
 
-    // GCP Database Buttons Event Listeners
-    const btnSeedGcp = document.getElementById("btn-seed-gcp-db");
-    if (btnSeedGcp) {
-        btnSeedGcp.addEventListener("click", pushLocalToGcp);
-    }
 
-    const btnSyncGcp = document.getElementById("btn-sync-gcp-db");
-    if (btnSyncGcp) {
-        btnSyncGcp.addEventListener("click", syncFromGcp);
-    }
 
     // Initialize Supabase Client
     initSupabase();
@@ -7089,40 +6931,7 @@ async function autoSendPassToWhatsApp(visitor, isManual = false, preOpenedWindow
                     showToast('Cloud Uploaded', 'Visitor pass image hosted on cloud.', 'success');
                 }
             }
-        } else if (state.settings?.gcpBackendUrl && (method === "meta" || method === "url-cloud")) {
-            // Upload to GCP GCS via Spring Boot backend if configured
-            showToast('Cloud Upload', 'Uploading visitor pass to GCP Cloud Storage...', 'info');
-            try {
-                const token = state.settings.jwtToken || "";
-                const response = await fetch(`${state.settings.gcpBackendUrl}/api/files/upload-base64`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': token ? `Bearer ${token}` : ''
-                    },
-                    body: JSON.stringify({
-                        base64Data: imgData,
-                        contentType: "image/png",
-                        extension: "png",
-                        year: String(new Date().getFullYear()),
-                        month: String(new Date().getMonth() + 1).padStart(2, '0'),
-                        visitorType: "pass",
-                        visitorId: visitor.id
-                    })
-                });
-                if (response.ok) {
-                    const fileData = await response.json();
-                    publicUrl = fileData.url;
-                    showToast('Cloud Uploaded', 'Visitor pass hosted on GCP GCS.', 'success');
-                } else {
-                    console.error('[VMS Cloud] GCP GCS upload error:', response.statusText);
-                    showToast('Cloud Upload Failed', 'Failed to host pass in GCP. Falling back to offline send.', 'warning');
-                }
-            } catch (err) {
-                console.error('[VMS Cloud] GCP GCS upload failed:', err);
-                showToast('Cloud Upload Failed', 'Could not connect to GCP storage. Falling back to offline send.', 'warning');
-            }
-        }
+
 
         var cleanPhone = visitor.phone.replace(/[^0-9]/g, '');
         if (cleanPhone.length === 10) { cleanPhone = '91' + cleanPhone; }
@@ -7364,33 +7173,7 @@ function checkUrlApprovalAction() {
                 return;
             }
 
-            // Legacy Cloud-Based Approval
-            if (state.settings?.gcpBackendUrl) {
-                showToast('Email Approval Link', 'Connecting to secure VMS cloud server...', 'info');
-                try {
-                    const endpoint = action === 'approve' ? 'approve' : 'reject';
-                    const response = await fetch(`${state.settings.gcpBackendUrl}/api/visitors/${visitorId}/${endpoint}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({})
-                    });
-                    if (response.ok) {
-                        showToast('Visitor Status Sync', `Success: Request successfully ${action}d!`, 'success');
-                        // Force pull database updates to sync client interface
-                        syncFromGcp();
-                    } else {
-                        const err = await response.text();
-                        console.error('[VMS] Cloud approval link execution error:', err);
-                        showToast('Approval Failed', 'Server rejected the request or record is already processed.', 'warning');
-                    }
-                } catch (err) {
-                    console.error('[VMS] Cloud approval link connection error:', err);
-                    showToast('Connection Offline', 'Failed to connect to approval server.', 'danger');
-                }
-                return;
-            }
+
 
             // 2. Offline Browser-Local Fallback
             var visitor = state.visitors.find(function(v) { return v.id === visitorId; });

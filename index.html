@@ -21,8 +21,8 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <!-- jsPDF for visitor pass PDF generation -->
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-    <!-- Supabase Client Library CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Client Reusable Module (via Vite) -->
+    <script type="module" src="/src/lib/supabase.js"></script>
 </head>
 
 <body>
@@ -3057,7 +3057,7 @@
 
                         <!-- SUBTAB 3: DEPARTMENTS -->
                         <div id="admin-tab-depts" class="admin-panel-tab">
-                            <div class="card-header style=" border-bottom: none; padding-bottom: 0;">
+                            <div class="card-header" style="border-bottom: none; padding-bottom: 0;">
                                 <h2>Organization Departments</h2>
                             </div>
                             <div class="table-container" style="max-width: 400px;">
@@ -3265,20 +3265,6 @@
                                                 <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
                                             </svg>
                                             <span>Force Fetch from Supabase DB</span>
-                                        </button>
-                                        <button type="button" class="btn btn-success" id="btn-seed-gcp-db" style="background: var(--accent-success);">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                class="btn-icon">
-                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
-                                            </svg>
-                                            <span>Seed Data to GCP Cloud SQL</span>
-                                        </button>
-                                        <button type="button" class="btn btn-secondary" id="btn-sync-gcp-db">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                class="btn-icon">
-                                                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-                                            </svg>
-                                            <span>Fetch from GCP Cloud SQL</span>
                                         </button>
                                     </div>
                                 </div>
@@ -4371,8 +4357,8 @@
     <div id="toast-container" class="toast-wrapper"></div>
 
     <!-- External Script JS -->
-    <script src="aiEngine.js"></script>
-    <script src="app.js?v=7"></script>
+    <script defer src="/aiEngine.js"></script>
+    <script defer src="/app.js"></script>
 
     <!-- Scanner animation keyframe -->
     <style>

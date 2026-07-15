@@ -21,6 +21,10 @@ node_modules/
 .DS_Store
 Thumbs.db
 
+# Build Output & Credentials
+dist/
+.env
+
 # Python
 ai-service/venv/
 venv/
