@@ -3545,21 +3545,28 @@ function saveEmployeeCRUD(e) {
     const email = document.getElementById("crud-emp-email").value.trim();
     const phone = document.getElementById("crud-emp-phone").value.trim();
 
+    let targetEmp = null;
     if (id === "") {
         // Add new
         const newId = "EMP" + (101 + state.employees.length);
-        state.employees.push({ id: newId, name, dept, cabin, email, phone, status: "In Office" });
+        targetEmp = { id: newId, name, dept, cabin, email, phone, status: "In Office" };
+        state.employees.push(targetEmp);
         showToast("Employee Added", `${name} added to corporate files.`, "success");
     } else {
         // Edit existing
         const idx = state.employees.findIndex(emp => emp.id === id);
         if (idx !== -1) {
             state.employees[idx] = { ...state.employees[idx], name, dept, cabin, email, phone };
+            targetEmp = state.employees[idx];
             showToast("Employee Updated", `${name} details modified.`, "success");
         }
     }
 
     saveState();
+    if (supabaseClient && targetEmp) {
+        supabaseClient.from('employees').upsert(mapEmployeeToDb(targetEmp), { onConflict: 'employee_code' })
+            .then(({ error }) => { if (error) console.error("Employee cloud sync error:", error); });
+    }
     document.getElementById("modal-employee").classList.remove("active");
     renderSettingsData();
 }
@@ -3572,6 +3579,10 @@ window.deleteEmployeeCRUD = function(empId) {
         const name = state.employees[idx].name;
         state.employees.splice(idx, 1);
         saveState();
+        if (supabaseClient) {
+            supabaseClient.from('employees').delete().eq('employee_code', empId)
+                .then(({ error }) => { if (error) console.error("Employee cloud delete error:", error); });
+        }
         renderSettingsData();
         showToast("Deleted", `${name} deleted from databases.`, "warning");
     }
@@ -3613,20 +3624,27 @@ function saveSecurityCRUD(e) {
     const phone = document.getElementById("crud-sec-phone").value.trim();
     const shift = document.getElementById("crud-sec-shift").value;
 
+    let targetSec = null;
     if (id === "") {
         // Add new
-        state.securityUsers.push({ username: login, name, role: "Security Gatekeeper", phone, shift });
+        targetSec = { username: login, name, role: "Security Gatekeeper", phone, shift };
+        state.securityUsers.push(targetSec);
         showToast("Operator Added", `${name} registered for Duty.`, "success");
     } else {
         // Edit existing
         const idx = state.securityUsers.findIndex(u => u.username === id);
         if (idx !== -1) {
             state.securityUsers[idx] = { ...state.securityUsers[idx], name, phone, shift };
+            targetSec = state.securityUsers[idx];
             showToast("Details Updated", `Officer ${name} details modified.`, "success");
         }
     }
 
     saveState();
+    if (supabaseClient && targetSec) {
+        supabaseClient.from('security_users').upsert(mapSecurityUserToDb(targetSec), { onConflict: 'username' })
+            .then(({ error }) => { if (error) console.error("Security profile cloud sync error:", error); });
+    }
     document.getElementById("modal-security-user").classList.remove("active");
     renderSettingsData();
 }
@@ -3643,6 +3661,10 @@ window.deleteSecurityCRUD = function(username) {
     if (idx !== -1) {
         state.securityUsers.splice(idx, 1);
         saveState();
+        if (supabaseClient) {
+            supabaseClient.from('security_users').delete().eq('username', username)
+                .then(({ error }) => { if (error) console.error("Security profile cloud delete error:", error); });
+        }
         renderSettingsData();
         showToast("Deleted", "Officer credentials revoked.", "warning");
     }
@@ -3772,6 +3794,10 @@ function addNotificationAlert(title, message, type = "info") {
     state.notifications.unshift(notification);
     if (state.notifications.length > 50) state.notifications.pop(); // Cap at 50 logs
     saveState();
+    if (supabaseClient) {
+        supabaseClient.from('notifications').insert(mapNotificationToDb(notification))
+            .then(({ error }) => { if (error) console.error("Notification cloud sync error:", error); });
+    }
     renderNotificationsDrawer();
 }
 
@@ -4803,9 +4829,10 @@ window.saveBlacklistCRUD = function(e) {
     const idNumber = document.getElementById("crud-blacklist-id-number").value.trim();
     const reason = document.getElementById("crud-blacklist-reason").value.trim();
 
+    let targetBl = null;
     if (id === "") {
         const newId = "BL" + (101 + state.blacklist.length);
-        state.blacklist.push({
+        targetBl = {
             id: newId,
             name,
             phone,
@@ -4813,16 +4840,22 @@ window.saveBlacklistCRUD = function(e) {
             idNumber,
             reason,
             dateAdded: getLocalDateStr()
-        });
+        };
+        state.blacklist.push(targetBl);
         showToast("Restricted Record Added", getTranslatedText("added-to-security-blacklist", "{name} added to security blacklist.").replace("{name}", name), "success");
     } else {
         const idx = state.blacklist.findIndex(b => b.id === id);
         if (idx !== -1) {
             state.blacklist[idx] = { ...state.blacklist[idx], name, phone, idType, idNumber, reason };
+            targetBl = state.blacklist[idx];
             showToast("Restricted Record Updated", getTranslatedText("blacklist-details-modified", "{name} blacklist details modified.").replace("{name}", name), "success");
         }
     }
     saveState();
+    if (supabaseClient && targetBl) {
+        supabaseClient.from('blacklist').upsert(mapBlacklistToDb(targetBl))
+            .then(({ error }) => { if (error) console.error("Blacklist cloud sync error:", error); });
+    }
     document.getElementById("modal-blacklist").classList.remove("active");
     renderSettingsData();
 };
@@ -4832,8 +4865,13 @@ window.deleteBlacklistCRUD = function(id) {
     const idx = state.blacklist.findIndex(b => b.id === id);
     if (idx !== -1) {
         const name = state.blacklist[idx].name;
+        const item = state.blacklist[idx];
         state.blacklist.splice(idx, 1);
         saveState();
+        if (supabaseClient) {
+            supabaseClient.from('blacklist').delete().eq('phone', item.phone)
+                .then(({ error }) => { if (error) console.error("Blacklist cloud delete error:", error); });
+        }
         renderSettingsData();
         showToast("Restriction Revoked", getTranslatedText("removed-from-security-blacklist", "{name} removed from security blacklist.").replace("{name}", name), "warning");
     }
@@ -5107,6 +5145,353 @@ function initializeNewFeatures() {
 // ==========================================================================
 let supabaseClient = null;
 
+// Mapping helper functions between JS CamelCase and PostgreSQL snake_case
+function mapVisitorToDb(v) {
+    return {
+        visitor_code: v.id,
+        name: v.name,
+        phone: v.phone,
+        email: v.email,
+        address: v.address,
+        company: v.company,
+        purpose: v.purpose,
+        vehicle: v.vehicle,
+        num_visitors: v.numVisitors || 1,
+        id_type: v.idType,
+        id_number: v.idNumber,
+        host_id: v.hostId,
+        host_name: v.hostName,
+        host_dept: v.hostDept,
+        visit_date: v.visitDate || new Date().toISOString().split('T')[0],
+        check_in: v.checkIn,
+        check_out: v.checkOut,
+        expected_exit: v.expectedExit,
+        status: v.status,
+        photo: v.photo,
+        photo_id_doc: v.photoIdDoc,
+        approve_token: v.approveToken,
+        reject_token: v.rejectToken,
+        branch: v.branch
+    };
+}
+
+function mapVisitorFromDb(row) {
+    return {
+        id: row.visitor_code,
+        name: row.name,
+        phone: row.phone,
+        email: row.email,
+        address: row.address,
+        company: row.company,
+        purpose: row.purpose,
+        vehicle: row.vehicle,
+        numVisitors: row.num_visitors,
+        idType: row.id_type,
+        idNumber: row.id_number,
+        hostId: row.host_id,
+        hostName: row.host_name,
+        hostDept: row.host_dept,
+        visitDate: row.visit_date,
+        checkIn: row.check_in,
+        checkOut: row.check_out,
+        expectedExit: row.expected_exit,
+        status: row.status,
+        photo: row.photo,
+        photoIdDoc: row.photo_id_doc,
+        approveToken: row.approve_token,
+        rejectToken: row.reject_token,
+        branch: row.branch
+    };
+}
+
+function mapEmployeeToDb(e) {
+    return {
+        employee_code: e.id,
+        name: e.name,
+        dept: e.dept,
+        designation: e.designation,
+        email: e.email,
+        phone: e.phone,
+        cabin: e.cabin,
+        status: e.status,
+        campus_status: e.campusStatus || 'Outside',
+        photo: e.photo
+    };
+}
+
+function mapEmployeeFromDb(row) {
+    return {
+        id: row.employee_code,
+        name: row.name,
+        dept: row.dept,
+        designation: row.designation,
+        email: row.email,
+        phone: row.phone,
+        cabin: row.cabin,
+        status: row.status,
+        campusStatus: row.campus_status,
+        photo: row.photo
+    };
+}
+
+function mapBlacklistToDb(b) {
+    return {
+        name: b.name,
+        phone: b.phone,
+        id_type: b.idType,
+        id_number: b.idNumber,
+        reason: b.reason,
+        date_added: b.dateAdded || new Date().toISOString().split('T')[0]
+    };
+}
+
+function mapBlacklistFromDb(row) {
+    return {
+        id: row.id,
+        name: row.name,
+        phone: row.phone,
+        idType: row.id_type,
+        idNumber: row.id_number,
+        reason: row.reason,
+        dateAdded: row.date_added
+    };
+}
+
+function mapNotificationToDb(n) {
+    return {
+        notification_code: n.id,
+        title: n.title,
+        message: n.message,
+        type: n.type,
+        time: n.time
+    };
+}
+
+function mapNotificationFromDb(row) {
+    return {
+        id: row.notification_code,
+        title: row.title,
+        message: row.message,
+        type: row.type,
+        time: row.time
+    };
+}
+
+function mapPurchaseManualToDb(pm) {
+    return {
+        manual_code: pm.id,
+        dept: pm.dept,
+        agent_name: pm.agentName,
+        agent_auth_detail: pm.agentAuthDetail,
+        company_name: pm.companyName,
+        company_address: pm.companyAddress,
+        contact_number: pm.contactNumber,
+        contract_type: pm.contractType,
+        contract_no: pm.contractNo,
+        contract_date: pm.contractDate,
+        no_contract: pm.noContract,
+        nature_work: pm.natureWork,
+        required_output: pm.requiredOutput,
+        experience: pm.experience,
+        competency_assess: pm.competencyAssess,
+        eligibility: pm.eligibility,
+        risks_involved: pm.risksInvolved,
+        quality_req: pm.qualityReq,
+        duration: pm.duration,
+        special_tool_needed: pm.specialToolNeeded,
+        special_equip: pm.specialEquip,
+        equip_available: pm.equipAvailable,
+        skill_training_req: pm.skillTrainingReq,
+        special_skills: pm.specialSkills,
+        spares_provider: pm.sparesProvider,
+        inspect_req: pm.inspectReq,
+        procedure_avail: pm.procedureAvail,
+        inspect_rep_req: pm.inspectRepReq,
+        est_defective_prob: pm.estDefectiveProb,
+        correction_plan_prepared: pm.correctionPlanPrepared,
+        spare_parts_req: pm.sparePartsReq,
+        env_haz: pm.envHaz,
+        env_waste: pm.envWaste,
+        env_emissions: pm.envEmissions,
+        env_legal: pm.envLegal,
+        env_ocps_followed: pm.envOcpsFollowed,
+        env_controls: pm.envControls,
+        num_workers: pm.numWorkers,
+        saf_insurance: pm.safInsurance,
+        saf_drawing: pm.safDrawing,
+        saf_briefing: pm.safBriefing,
+        saf_emergency: pm.safEmergency,
+        saf_height: pm.safHeight,
+        saf_hot: pm.safHot,
+        saf_electrical: pm.safElectrical,
+        saf_confined: pm.safConfined,
+        saf_isolated: pm.safIsolated,
+        saf_risk: pm.safRisk,
+        saf_permit_provided: pm.safPermitProvided,
+        saf_conduct_briefed: pm.safConductBriefed,
+        saf_ppe: pm.safPpe,
+        status: pm.status,
+        date_created: pm.dateCreated,
+        date_submitted: pm.dateSubmitted,
+        date_approved: pm.dateApproved
+    };
+}
+
+function mapPurchaseManualFromDb(row) {
+    return {
+        id: row.manual_code,
+        dept: row.dept,
+        agentName: row.agent_name,
+        agentAuthDetail: row.agent_auth_detail,
+        companyName: row.company_name,
+        companyAddress: row.company_address,
+        contactNumber: row.contact_number,
+        contractType: row.contract_type,
+        contractNo: row.contract_no,
+        contractDate: row.contract_date,
+        noContract: row.no_contract,
+        natureWork: row.nature_work,
+        requiredOutput: row.required_output,
+        experience: row.experience,
+        competencyAssess: row.competency_assess,
+        eligibility: row.eligibility,
+        risksInvolved: row.risks_involved,
+        qualityReq: row.quality_req,
+        duration: row.duration,
+        specialToolNeeded: row.special_tool_needed,
+        specialEquip: row.special_equip,
+        equipAvailable: row.equip_available,
+        skillTrainingReq: row.skill_training_req,
+        specialSkills: row.special_skills,
+        sparesProvider: row.spares_provider,
+        inspectReq: row.inspect_req,
+        procedureAvail: row.procedure_avail,
+        inspectRepReq: row.inspect_rep_req,
+        estDefectiveProb: row.est_defective_prob,
+        correctionPlanPrepared: row.correction_plan_prepared,
+        sparePartsReq: row.spare_parts_req,
+        envHaz: row.env_haz,
+        envWaste: row.env_waste,
+        envEmissions: row.env_emissions,
+        envLegal: row.env_legal,
+        envOcpsFollowed: row.env_ocps_followed,
+        envControls: row.env_controls,
+        numWorkers: row.num_workers,
+        safInsurance: row.saf_insurance,
+        safDrawing: row.saf_drawing,
+        safBriefing: row.saf_briefing,
+        safEmergency: row.saf_emergency,
+        safHeight: row.saf_height,
+        safHot: row.saf_hot,
+        safElectrical: row.saf_electrical,
+        safConfined: row.saf_confined,
+        safIsolated: row.saf_isolated,
+        safRisk: row.saf_risk,
+        safPermitProvided: row.saf_permit_provided,
+        safConductBriefed: row.saf_conduct_briefed,
+        safPpe: row.saf_ppe,
+        status: row.status,
+        dateCreated: row.date_created,
+        dateSubmitted: row.date_submitted,
+        dateApproved: row.date_approved,
+        attachments: []
+    };
+}
+
+function mapWorkPermitToDb(wp) {
+    return {
+        permit_code: wp.id,
+        purchase_manual_id: wp.purchaseManualId,
+        company_entity: wp.companyEntity,
+        location_site: wp.locationSite,
+        conducted_on: wp.conductedOn,
+        work_activity: wp.workActivity,
+        high_risk_work: wp.highRiskWork,
+        start_time: wp.startTime,
+        end_time: wp.endTime,
+        rep_name: wp.repName,
+        start_date: wp.startDate,
+        end_date: wp.endDate,
+        description: wp.description,
+        chk_standards: wp.chkStandards || false,
+        dec_risk_reviewed: wp.decRiskReviewed,
+        dec_controls_adequate: wp.decControlsAdequate,
+        dec_competent_coord: wp.decCompetentCoord,
+        dec_implement_controls: wp.decImplementControls,
+        dec_workers_informed: wp.decWorkersInformed,
+        dec_monitor_hazards: wp.decMonitorHazards,
+        dec_req_approval: wp.decReqApproval,
+        dec_supervisor_sig: wp.decSupervisorSig,
+        eng_reviewed_docs: wp.engReviewedDocs,
+        eng_monitor_methods: wp.engMonitorMethods,
+        eng_informed_persons: wp.engInformedPersons,
+        eng_contractor_sig: wp.engContractorSig,
+        auth_reviewed_docs: wp.authReviewedDocs,
+        auth_registered: wp.authRegistered,
+        auth_person_sig: wp.authPersonSig,
+        status: wp.status,
+        safety_officer_approved: wp.safetyOfficerApproved || false,
+        final_authorized: wp.finalAuthorized || false
+    };
+}
+
+function mapWorkPermitFromDb(row) {
+    return {
+        id: row.permit_code,
+        purchaseManualId: row.purchase_manual_id,
+        companyEntity: row.company_entity,
+        locationSite: row.location_site,
+        conductedOn: row.conducted_on,
+        workActivity: row.work_activity,
+        highRiskWork: row.high_risk_work,
+        startTime: row.start_time,
+        endTime: row.end_time,
+        repName: row.rep_name,
+        startDate: row.start_date,
+        endDate: row.end_date,
+        description: row.description,
+        chkStandards: row.chk_standards,
+        decRiskReviewed: row.dec_risk_reviewed,
+        decControlsAdequate: row.dec_controls_adequate,
+        decCompetentCoord: row.dec_competent_coord,
+        decImplementControls: row.dec_implement_controls,
+        decWorkersInformed: row.dec_workers_informed,
+        decMonitorHazards: row.dec_monitor_hazards,
+        decReqApproval: row.dec_req_approval,
+        decSupervisorSig: row.dec_supervisor_sig,
+        engReviewedDocs: row.eng_reviewed_docs,
+        engMonitorMethods: row.eng_monitor_methods,
+        engInformedPersons: row.eng_informed_persons,
+        engContractorSig: row.eng_contractor_sig,
+        authReviewedDocs: row.auth_reviewed_docs,
+        authRegistered: row.auth_registered,
+        authPersonSig: row.auth_person_sig,
+        status: row.status,
+        safetyOfficerApproved: row.safety_officer_approved,
+        finalAuthorized: row.final_authorized
+    };
+}
+
+function mapSecurityUserToDb(su) {
+    return {
+        username: su.username,
+        name: su.name,
+        role: su.role,
+        phone: su.phone,
+        shift: su.shift
+    };
+}
+
+function mapSecurityUserFromDb(row) {
+    return {
+        username: row.username,
+        name: row.name,
+        role: row.role,
+        phone: row.phone,
+        shift: row.shift
+    };
+}
+
 function initSupabase() {
     const url = state.settings?.supabaseUrl;
     const key = state.settings?.supabaseKey;
@@ -5127,25 +5512,10 @@ async function syncFromSupabase() {
     try {
         showToast("Syncing Database", "Fetching latest data from Supabase...", "info");
         
-        // Sync Employees
-        const { data: employees, error: empErr } = await supabaseClient.from('employees').select('*');
-        if (!empErr && employees) {
-            state.employees = employees;
-            localStorage.setItem("gk_employees", JSON.stringify(state.employees));
-        }
-
-        // Sync Visitors
-        const { data: visitors, error: visErr } = await supabaseClient.from('visitors').select('*');
-        if (!visErr && visitors) {
-            state.visitors = visitors;
-            localStorage.setItem("gk_visitors", JSON.stringify(state.visitors));
-        }
-
-        // Sync Blacklist
-        const { data: blacklist, error: blErr } = await supabaseClient.from('blacklist').select('*');
-        if (!blErr && blacklist) {
-            state.blacklist = blacklist;
-            localStorage.setItem("gk_blacklist", JSON.stringify(state.blacklist));
+        // Sync Branches
+        const { data: branches, error: branchErr } = await supabaseClient.from('branches').select('*');
+        if (!branchErr && branches) {
+            state.branches = branches;
         }
 
         // Sync Departments
@@ -5153,6 +5523,48 @@ async function syncFromSupabase() {
         if (!deptErr && departments) {
             state.departments = departments;
             localStorage.setItem("gk_departments", JSON.stringify(state.departments));
+        }
+
+        // Sync Employees
+        const { data: employees, error: empErr } = await supabaseClient.from('employees').select('*');
+        if (!empErr && employees) {
+            state.employees = employees.map(mapEmployeeFromDb);
+            localStorage.setItem("gk_employees", JSON.stringify(state.employees));
+        }
+
+        // Sync Visitors
+        const { data: visitors, error: visErr } = await supabaseClient.from('visitors').select('*');
+        if (!visErr && visitors) {
+            state.visitors = visitors.map(mapVisitorFromDb);
+            localStorage.setItem("gk_visitors", JSON.stringify(state.visitors));
+        }
+
+        // Sync Blacklist
+        const { data: blacklist, error: blErr } = await supabaseClient.from('blacklist').select('*');
+        if (!blErr && blacklist) {
+            state.blacklist = blacklist.map(mapBlacklistFromDb);
+            localStorage.setItem("gk_blacklist", JSON.stringify(state.blacklist));
+        }
+
+        // Sync Purchase Manuals
+        const { data: pms, error: pmErr } = await supabaseClient.from('purchase_manuals').select('*');
+        if (!pmErr && pms) {
+            state.purchaseManuals = pms.map(mapPurchaseManualFromDb);
+            localStorage.setItem("gk_purchase_manuals", JSON.stringify(state.purchaseManuals));
+        }
+
+        // Sync Work Permits
+        const { data: wps, error: wpErr } = await supabaseClient.from('work_permits').select('*');
+        if (!wpErr && wps) {
+            state.workPermits = wps.map(mapWorkPermitFromDb);
+            localStorage.setItem("gk_work_permits", JSON.stringify(state.workPermits));
+        }
+
+        // Sync Notifications
+        const { data: notifications, error: notifErr } = await supabaseClient.from('notifications').select('*').order('created_at', { ascending: false }).limit(50);
+        if (!notifErr && notifications) {
+            state.notifications = notifications.map(mapNotificationFromDb);
+            localStorage.setItem("gk_notifications", JSON.stringify(state.notifications));
         }
 
         refreshAllDataViews();
@@ -5172,28 +5584,60 @@ async function pushLocalToSupabase() {
     try {
         showToast("Syncing Database", "Uploading local data to Supabase...", "info");
         
-        // Upsert employees
-        if (state.employees && state.employees.length > 0) {
-            const { error: empErr } = await supabaseClient.from('employees').upsert(state.employees);
-            if (empErr) throw new Error("Employees upsert: " + empErr.message);
-        }
-        
-        // Upsert visitors
-        if (state.visitors && state.visitors.length > 0) {
-            const { error: visErr } = await supabaseClient.from('visitors').upsert(state.visitors);
-            if (visErr) throw new Error("Visitors upsert: " + visErr.message);
-        }
-
-        // Upsert blacklist
-        if (state.blacklist && state.blacklist.length > 0) {
-            const { error: blErr } = await supabaseClient.from('blacklist').upsert(state.blacklist);
-            if (blErr) throw new Error("Blacklist upsert: " + blErr.message);
-        }
+        // Upsert branches
+        const branchesToPush = [
+            { name: "Chennai HQ", location: "Chennai, Tamil Nadu, India" },
+            { name: "Coimbatore Plant", location: "Coimbatore, Tamil Nadu, India" },
+            { name: "Bangalore R&D", location: "Bangalore, Karnataka, India" }
+        ];
+        await supabaseClient.from('branches').upsert(branchesToPush, { onConflict: 'name' });
 
         // Upsert departments
         if (state.departments && state.departments.length > 0) {
-            const { error: deptErr } = await supabaseClient.from('departments').upsert(state.departments);
+            const { error: deptErr } = await supabaseClient.from('departments').upsert(state.departments, { onConflict: 'name' });
             if (deptErr) throw new Error("Departments upsert: " + deptErr.message);
+        }
+
+        // Upsert employees
+        if (state.employees && state.employees.length > 0) {
+            const dbEmployees = state.employees.map(mapEmployeeToDb);
+            const { error: empErr } = await supabaseClient.from('employees').upsert(dbEmployees, { onConflict: 'employee_code' });
+            if (empErr) throw new Error("Employees upsert: " + empErr.message);
+        }
+        
+        // Upsert blacklist
+        if (state.blacklist && state.blacklist.length > 0) {
+            const dbBlacklist = state.blacklist.map(mapBlacklistToDb);
+            const { error: blErr } = await supabaseClient.from('blacklist').upsert(dbBlacklist);
+            if (blErr) throw new Error("Blacklist upsert: " + blErr.message);
+        }
+
+        // Upsert visitors
+        if (state.visitors && state.visitors.length > 0) {
+            const dbVisitors = state.visitors.map(mapVisitorToDb);
+            const { error: visErr } = await supabaseClient.from('visitors').upsert(dbVisitors, { onConflict: 'visitor_code' });
+            if (visErr) throw new Error("Visitors upsert: " + visErr.message);
+        }
+
+        // Upsert purchase manuals
+        if (state.purchaseManuals && state.purchaseManuals.length > 0) {
+            const dbPms = state.purchaseManuals.map(mapPurchaseManualToDb);
+            const { error: pmErr } = await supabaseClient.from('purchase_manuals').upsert(dbPms, { onConflict: 'manual_code' });
+            if (pmErr) throw new Error("Purchase manuals upsert: " + pmErr.message);
+        }
+
+        // Upsert work permits
+        if (state.workPermits && state.workPermits.length > 0) {
+            const dbWps = state.workPermits.map(mapWorkPermitToDb);
+            const { error: wpErr } = await supabaseClient.from('work_permits').upsert(dbWps, { onConflict: 'permit_code' });
+            if (wpErr) throw new Error("Work permits upsert: " + wpErr.message);
+        }
+
+        // Upsert notifications
+        if (state.notifications && state.notifications.length > 0) {
+            const dbNotifications = state.notifications.map(mapNotificationToDb);
+            const { error: notifErr } = await supabaseClient.from('notifications').upsert(dbNotifications);
+            if (notifErr) throw new Error("Notifications upsert: " + notifErr.message);
         }
 
         showToast("Cloud Seeding Successful", "Local data pushed to Supabase tables.", "success");
@@ -5207,7 +5651,8 @@ async function pushLocalToSupabase() {
 async function syncSingleVisitorToCloud(visitor) {
     if (supabaseClient) {
         try {
-            const { error } = await supabaseClient.from('visitors').upsert(visitor);
+            const dbRow = mapVisitorToDb(visitor);
+            const { error } = await supabaseClient.from('visitors').upsert(dbRow, { onConflict: 'visitor_code' });
             if (error) {
                 console.error("Failed to sync visitor to Supabase:", error);
             } else {
@@ -5750,6 +6195,10 @@ function savePurchaseManual(e, status) {
     }
     
     saveState();
+    if (supabaseClient) {
+        supabaseClient.from('purchase_manuals').upsert(mapPurchaseManualToDb(pmObj), { onConflict: 'manual_code' })
+            .then(({ error }) => { if (error) console.error("PM cloud sync error:", error); });
+    }
     updateWorkPermitMenuState();
     refreshAllDataViews();
     
@@ -5922,6 +6371,10 @@ window.deletePurchaseManual = function(pmId) {
         state.purchaseManuals = state.purchaseManuals.filter(p => p.id !== pmId);
         state.purchaseManualAttachments = state.purchaseManualAttachments.filter(a => a.purchaseManualId !== pmId);
         saveState();
+        if (supabaseClient) {
+            supabaseClient.from('purchase_manuals').delete().eq('manual_code', pmId)
+                .then(({ error }) => { if (error) console.error("PM cloud delete error:", error); });
+        }
         updateWorkPermitMenuState();
         refreshAllDataViews();
         showToast(
@@ -5946,6 +6399,10 @@ window.approvePurchaseManual = function(pmId) {
         comments: "Approved for work permit application."
     });
     saveState();
+    if (supabaseClient) {
+        supabaseClient.from('purchase_manuals').update({ status: 'Approved', date_approved: getLocalDateStr() }).eq('manual_code', pmId)
+            .then(({ error }) => { if (error) console.error("PM cloud approval sync error:", error); });
+    }
     updateWorkPermitMenuState();
     refreshAllDataViews();
     showToast(
@@ -5970,6 +6427,10 @@ window.rejectPurchaseManual = function(pmId) {
         comments: comments || "Rejected during review."
     });
     saveState();
+    if (supabaseClient) {
+        supabaseClient.from('purchase_manuals').update({ status: 'Rejected' }).eq('manual_code', pmId)
+            .then(({ error }) => { if (error) console.error("PM cloud rejection sync error:", error); });
+    }
     updateWorkPermitMenuState();
     refreshAllDataViews();
     showToast(
@@ -5985,6 +6446,10 @@ window.approveSafetyPermit = function(wpId) {
     state.workPermits[idx].status = "Pending Final Authorization";
     state.workPermits[idx].safetyOfficerApproved = true;
     saveState();
+    if (supabaseClient) {
+        supabaseClient.from('work_permits').update({ status: 'Pending Final Authorization', safety_officer_approved: true }).eq('permit_code', wpId)
+            .then(({ error }) => { if (error) console.error("Work permit safety approval cloud sync error:", error); });
+    }
     refreshAllDataViews();
     
     showToast(
@@ -6001,6 +6466,10 @@ window.authorizePermit = function(wpId) {
     state.workPermits[idx].status = "Approved";
     state.workPermits[idx].finalAuthorized = true;
     saveState();
+    if (supabaseClient) {
+        supabaseClient.from('work_permits').update({ status: 'Approved', final_authorized: true }).eq('permit_code', wpId)
+            .then(({ error }) => { if (error) console.error("Work permit authorization cloud sync error:", error); });
+    }
     refreshAllDataViews();
     
     showToast(
@@ -6166,6 +6635,10 @@ function handleWorkPermitSubmit(e) {
     
     state.workPermits.push(wpObj);
     saveState();
+    if (supabaseClient) {
+        supabaseClient.from('work_permits').upsert(mapWorkPermitToDb(wpObj), { onConflict: 'permit_code' })
+            .then(({ error }) => { if (error) console.error("Work permit submit cloud sync error:", error); });
+    }
     refreshAllDataViews();
     
     showToast(
@@ -6425,6 +6898,13 @@ function addAuditLog(operation, category, details, status = "Success") {
     
     if (state.auditLogs.length > 100) state.auditLogs.pop();
     saveState();
+    if (supabaseClient) {
+        supabaseClient.from('audit_logs').insert({
+            action: operation,
+            actor: operator,
+            details: `${category} - ${details} (${status})`
+        }).then(({ error }) => { if (error) console.error("Audit log cloud sync error:", error); });
+    }
     renderAuditLogsTable();
 }
 
@@ -6855,7 +7335,36 @@ function checkUrlApprovalAction() {
 
         // Wait for app state to fully load before acting
         setTimeout(async function() {
-            // 1. Cloud-Based Approval
+            // 1. Supabase Cloud-Based Approval
+            if (supabaseClient) {
+                showToast('Email Approval Link', 'Connecting to Supabase cloud...', 'info');
+                try {
+                    const statusVal = action === 'approve' ? 'Checked In' : 'Rejected';
+                    const updateObj = { status: statusVal };
+                    if (action === 'approve') {
+                        updateObj.check_in = new Date().toISOString();
+                    }
+                    
+                    const { error } = await supabaseClient
+                        .from('visitors')
+                        .update(updateObj)
+                        .eq('visitor_code', visitorId);
+                    
+                    if (!error) {
+                        showToast('Visitor Status Sync', `Success: Request successfully ${action}d!`, 'success');
+                        syncFromSupabase();
+                    } else {
+                        console.error('[VMS] Supabase approval link execution error:', error);
+                        showToast('Approval Failed', 'Failed to update record in Supabase.', 'warning');
+                    }
+                } catch (err) {
+                    console.error('[VMS] Supabase approval link exception:', err);
+                    showToast('Connection Offline', 'Failed to connect to Supabase server.', 'danger');
+                }
+                return;
+            }
+
+            // Legacy Cloud-Based Approval
             if (state.settings?.gcpBackendUrl) {
                 showToast('Email Approval Link', 'Connecting to secure VMS cloud server...', 'info');
                 try {
