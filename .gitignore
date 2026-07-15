@@ -1,0 +1,22 @@
+# Java
+target/
+*.class
+*.log
+
+# Maven
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.vscode/
+.idea/
+
+# Anti Gravity IDE
+.antigravity-ide/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

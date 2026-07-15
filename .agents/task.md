@@ -1,0 +1,33 @@
+# VMS Upgrade Tasks
+
+- `[x]` 1. Create client-side AI and self-learning engine in `aiEngine.js`
+    - `[x]` Implement K-Means/classification visitor auto-categorizer
+    - `[x]` Implement linear/polynomial regression traffic forecasting
+    - `[x]` Implement local TF-IDF semantic vector database simulator for Chatbot Q&A
+    - `[x]` Implement overstay and security anomaly detector
+    - `[x]` Implement self-learning pipeline hook
+- `[x]` 2. Redesign Navigation, Layout & Header in `index.html`
+    - `[x]` Reposition Reports as first navigation option and Dashboard second
+    - `[x]` Replace sidebar icons with premium unified SVG icons
+    - `[x]` Set `view-reports` as default view in HTML and state
+    - `[x]` Add branch selector in header and breadcrumb trail
+    - `[x]` Integrate loading skeletons and empty states in tables
+- `[x]` 3. Redesign Dashboard UI & Interactive Details Drawers
+    - `[x]` Redesign cards with premium glassmorphism, indicators, and animations
+    - `[x]` Bind click listeners to all dashboard cards to open card detail views
+    - `[x]` Implement dynamic sliders/drawers on dashboard with tables, searches, filtering, and segment charts
+- `[x]` 4. Revamp Reports Module
+    - `[x]` Add custom date range pickers, category, host, company filters
+    - `[x]` Write premium jsPDF multi-page report exporter
+    - `[x]` Update Excel XML/CSV exporter
+    - `[x]` Add scheduled report builder and email log interface
+    - `[x]` Add AI-generated analysis summary section
+- `[x]` 5. Security, RBAC & Performance Optimizations
+    - `[x]` Set view permissions for Admin, Security, and Receptionist
+    - `[x]` Add 15-minute sliding session timeout logic and warning dialog
+    - `[x]` Implement secure admin audit log persistence
+    - `[x]` Index visitor records in Map structures by key fields for fast retrieval
+    - `[x]` Add virtual scroll rendering to list views to handle thousands of records
+- `[x]` 6. Verification and Walkthrough Creation
+    - `[x]` Manually verify all components
+    - `[x]` Update walkthrough.md with features and screenshots
