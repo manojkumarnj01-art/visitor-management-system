@@ -123,7 +123,7 @@ const TRANSLATIONS = {
         "placeholder-password": "••••••••",
         "login-btn": "Login",
         "login-hint": "Use <strong>admin</strong>, <strong>security</strong>, or <strong>receptionist</strong> to log in.",
-        
+
         // Sidebar Navigation
         "nav-dashboard": "Dashboard",
         "nav-register": "Register Visitor",
@@ -133,25 +133,25 @@ const TRANSLATIONS = {
         "nav-reports": "Reports",
         "nav-settings": "Settings & Admin",
         "display-gate-name": "Main Security Gate",
-        
+
         // Header
         "welcome-officer": "Welcome Security Officer",
         "header-user-role": "Gate Operator",
         "logout-btn": "Logout",
-        
+
         // Dashboard Stats
         "visitors-today": "Visitors Today",
         "inside-campus": "Inside Campus",
         "checked-out": "Checked Out",
         "pending-approval": "Pending Approval",
-        
+
         // Dashboard Quick Actions & Tables
         "quick-actions": "Quick Actions Menu",
         "checkout-visitor-btn": "Check-Out Visitor",
         "reports-page-btn": "Reports Page",
         "current-visitors": "Current Visitors inside Campus",
         "filter-visitors-placeholder": "Filter current visitors...",
-        
+
         // Tables & Fields
         "tbl-visitor-id": "Visitor ID",
         "tbl-visitor-details": "Visitor Details",
@@ -164,7 +164,7 @@ const TRANSLATIONS = {
         "tbl-email": "Email",
         "tbl-phone": "Phone",
         "tbl-cabin": "Cabin",
-        
+
         // Intake Portal / New Visitor
         "visitor-flow-btn": "Visitor Entry Flow",
         "emp-flow-btn": "Employee Entry Flow",
@@ -220,7 +220,7 @@ const TRANSLATIONS = {
         "upload-photo-hint": "Or upload a photo file",
         "upload-img-btn": "Upload Image",
         "clear-form-btn": "Clear Form",
-        
+
         // Employee Gate Attendance
         "emp-gate-entry-hdr": "Employee Gate Entry / Exit",
         "search-emp-label": "Search Employee by Name or ID",
@@ -239,14 +239,14 @@ const TRANSLATIONS = {
         "lbl-phone-ext": "Phone Ext",
         "check-in-entry-btn": "Check-In Entry",
         "check-out-exit-btn": "Check-Out Exit",
-        
+
         // Employee Search
         "search-corp-emp-hdr": "Search Corporate Employee",
         "search-emp-input-label": "Search Employee",
         "search-emp-input-placeholder": "Enter Employee ID, Name, or Phone Number...",
         "search-employee-btn": "Search Employee",
         "matching-emp-hdr": "Matching Employees Details",
-        
+
         // Check-Out
         "check-out-hdr": "Enter Visitor ID or Scan QR",
         "checkout-id-placeholder": "e.g. V20260012",
@@ -257,7 +257,7 @@ const TRANSLATIONS = {
         "tbl-checked-in-time": "Check-In Time",
         "tbl-expected-exit": "Expected Exit",
         "mark-checkout-btn": "Mark Check-Out",
-        
+
         // Visitor History
         "visitor-audit-hdr": "Visitor Audit Logs",
         "search-history-label": "Search Visitor/Host Details",
@@ -266,7 +266,7 @@ const TRANSLATIONS = {
         "clear-btn": "Clear",
         "tbl-entry-datetime": "Entry Date / Time",
         "tbl-exit-datetime": "Exit Date / Time",
-        
+
         // Reports
         "total-logged-visits": "Total Logged Visits",
         "active-checks-inside": "Active Checks Inside",
@@ -283,7 +283,7 @@ const TRANSLATIONS = {
         "rep-tbl-title-today": "Today's Visitors List",
         "visit-purposes-breakdown": "Visit Purposes Breakdown",
         "gate-hourly-traffic": "Gate Hourly Traffic profile",
-        
+
         // Settings & Admin Tab Navigation
         "set-tab-emp": "Employee Management",
         "set-tab-users": "Security Users",
@@ -293,7 +293,7 @@ const TRANSLATIONS = {
         "set-tab-blacklist": "Blacklist Management",
         "emp-directories": "Employee Directories",
         "add-host-btn": "Add Host Employee",
-        
+
         // Dynamic Page Titles inside app.js Router
         "title-dashboard": "Dashboard Control Panel",
         "sub-dashboard": "Welcome, {name}",
@@ -425,7 +425,7 @@ const TRANSLATIONS = {
         "placeholder-password": "••••••••",
         "login-btn": "உள்நுழைக",
         "login-hint": "உள்நுழைய <strong>admin</strong>, <strong>security</strong>, அல்லது <strong>receptionist</strong> ஐப் பயன்படுத்தவும்.",
-        
+
         // Sidebar Navigation
         "nav-dashboard": "முகப்புப்பலகை",
         "nav-register": "வருகையாளர் பதிவு",
@@ -435,25 +435,25 @@ const TRANSLATIONS = {
         "nav-reports": "அறிக்கைகள்",
         "nav-settings": "நிர்வாக அமைப்புகள்",
         "display-gate-name": "முதன்மை பாதுகாப்பு வாயில்",
-        
+
         // Header
         "welcome-officer": "பாதுகாப்பு அதிகாரிக்கு வரவேற்பு",
         "header-user-role": "வாயில் ஆபரேட்டர்",
         "logout-btn": "வெளியேறு",
-        
+
         // Dashboard Stats
         "visitors-today": "இன்றைய வருகையாளர்கள்",
         "inside-campus": "வளாகத்திற்குள்",
         "checked-out": "வெளியேறியவர்கள்",
         "pending-approval": "அனுமதி நிலுவையில்",
-        
+
         // Dashboard Quick Actions & Tables
         "quick-actions": "விரைவு செயல்பாடுகள்",
         "checkout-visitor-btn": "வருகையாளர் வெளியேற்றம்",
         "reports-page-btn": "அறிக்கைகள் பக்கம்",
         "current-visitors": "தற்போது வளாகத்தில் உள்ளவர்கள்",
         "filter-visitors-placeholder": "வருகையாளர்களை வடிகட்டவும்...",
-        
+
         // Tables & Fields
         "tbl-visitor-id": "வருகையாளர் ஐடி",
         "tbl-visitor-details": "வருகையாளர் விவரங்கள்",
@@ -466,7 +466,7 @@ const TRANSLATIONS = {
         "tbl-email": "மின்னஞ்சல்",
         "tbl-phone": "தொலைபேசி",
         "tbl-cabin": "அறை எண்",
-        
+
         // Intake Portal / New Visitor
         "visitor-flow-btn": "வருகையாளர் நுழைவு",
         "emp-flow-btn": "பணியாளர் நுழைவு",
@@ -522,7 +522,7 @@ const TRANSLATIONS = {
         "upload-photo-hint": "அல்லது புகைப்பட கோப்பை பதிவேற்றவும்",
         "upload-img-btn": "படத்தைப் பதிவேற்றவும்",
         "clear-form-btn": "படிவத்தை துடைக்கவும்",
-        
+
         // Employee Gate Attendance
         "emp-gate-entry-hdr": "பணியாளர் வாயில் நுழைவு / வெளியேற்றம்",
         "search-emp-label": "பணியாளர் பெயர் அல்லது ஐடி மூலம் தேடவும்",
@@ -541,14 +541,14 @@ const TRANSLATIONS = {
         "lbl-phone-ext": "தொலைபேசி நீட்டிப்பு",
         "check-in-entry-btn": "உள்வருகை பதிவு",
         "check-out-exit-btn": "வெளிவருகை பதிவு",
-        
+
         // Employee Search
         "search-corp-emp-hdr": "நிறுவன பணியாளர் தேடல்",
         "search-emp-input-label": "பணியாளர் தேடல்",
         "search-emp-input-placeholder": "பணியாளர் ஐடி, பெயர் அல்லது தொலைபேசியை உள்ளிடவும்...",
         "search-employee-btn": "பணியாளரைத் தேடு",
         "matching-emp-hdr": "பொருந்தும் பணியாளர்களின் விவரங்கள்",
-        
+
         // Check-Out
         "check-out-hdr": "வருகையாளர் ஐடி உள்ளிடவும் அல்லது QR ஸ்கேன் செய்யவும்",
         "checkout-id-placeholder": "எ.கா. V20260012",
@@ -559,7 +559,7 @@ const TRANSLATIONS = {
         "tbl-checked-in-time": "உள்நுழைந்த நேரம்",
         "tbl-expected-exit": "எதிர்பார்க்கப்பட்ட வெளியேற்றம்",
         "mark-checkout-btn": "வெளியேறியதாகப் பதிவுசெய்",
-        
+
         // Visitor History
         "visitor-audit-hdr": "வருகையாளர் தணிக்கை பதிவுகள்",
         "search-history-label": "வருகையாளர்/அழைப்பாளர் விவரங்களை தேடுக",
@@ -568,7 +568,7 @@ const TRANSLATIONS = {
         "clear-btn": "துடைக்கவும்",
         "tbl-entry-datetime": "நுழைவு தேதி / நேரம்",
         "tbl-exit-datetime": "வெளியேற்றம் தேதி / நேரம்",
-        
+
         // Reports
         "total-logged-visits": "மொத்த வருகைகள்",
         "active-checks-inside": "வளாகத்தினுள் இருப்பவர்கள்",
@@ -585,7 +585,7 @@ const TRANSLATIONS = {
         "rep-tbl-title-today": "இன்றைய வருகையாளர்கள் பட்டியல்",
         "visit-purposes-breakdown": "வருகை நோக்கங்களின் பகுப்பாய்வு",
         "gate-hourly-traffic": "வாயில் மணிநேர போக்குவரத்து விவரம்",
-        
+
         // Settings & Admin Tab Navigation
         "set-tab-emp": "பணியாளர் மேலாண்மை",
         "set-tab-users": "பாதுகாப்பு பயனர்கள்",
@@ -595,7 +595,7 @@ const TRANSLATIONS = {
         "set-tab-blacklist": "கருப்புப்பட்டியல் மேலாண்மை",
         "emp-directories": "பணியாளர் கோப்புகள்",
         "add-host-btn": "புதிய பணியாளரைச் சேர்",
-        
+
         // Dynamic Page Titles inside app.js Router
         "title-dashboard": "முகப்புப்பலகை கட்டுப்பாட்டு மையம்",
         "sub-dashboard": "வரவேற்கிறோம், {name}",
@@ -1064,7 +1064,7 @@ function updateIdNumberPlaceholder() {
     const idTypeSelect = document.getElementById("reg-visitor-id-type");
     const idNumberInput = document.getElementById("reg-visitor-id-number");
     if (!idTypeSelect || !idNumberInput) return;
-    
+
     const idType = idTypeSelect.value;
     let key = "id-serial-placeholder";
     if (idType === "Aadhaar") key = "placeholder-aadhaar";
@@ -1073,9 +1073,9 @@ function updateIdNumberPlaceholder() {
     else if (idType === "Passport") key = "placeholder-passport";
     else if (idType === "Driver License") key = "placeholder-dl";
     else if (idType === "Company ID") key = "placeholder-company-id";
-    
+
     idNumberInput.setAttribute("data-i18n-placeholder", key);
-    
+
     const lang = state.currentLang || "en";
     if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key] !== undefined) {
         idNumberInput.placeholder = TRANSLATIONS[lang][key];
@@ -1093,10 +1093,10 @@ function getTranslatedText(key, defaultVal = "") {
 
 function translatePage() {
     const lang = state.currentLang || "en";
-    
+
     // Update HTML element lang attribute
     document.documentElement.setAttribute("lang", lang);
-    
+
     // Translate standard text nodes
     document.querySelectorAll("[data-i18n]").forEach(elem => {
         const key = elem.getAttribute("data-i18n");
@@ -1126,7 +1126,7 @@ function translatePage() {
     const headerSelect = document.getElementById("header-lang-select");
     if (loginSelect) loginSelect.value = lang;
     if (headerSelect) headerSelect.value = lang;
-    
+
     // Update Welcome greeting and dynamic active page title
     const pageTitle = document.getElementById("page-title");
     const pageSubtitle = document.getElementById("page-subtitle");
@@ -1200,12 +1200,12 @@ function checkAuthSession() {
     if (state.currentUser) {
         loginContainer.classList.add("hidden");
         mainAppContainer.classList.remove("hidden");
-        
+
         // Configure User Profile UI elements in header
         document.getElementById("header-user-name").innerText = state.currentUser.name;
         document.getElementById("header-user-role").innerText = getTranslatedText("role-" + state.currentUser.role.toLowerCase().replace(/ /g, "-"), state.currentUser.role);
         document.getElementById("header-user-avatar").innerText = state.currentUser.name.split(" ").map(n => n[0]).join("");
-        
+
         // Show/Hide navigation links based on role privileges
         document.querySelectorAll(".nav-link").forEach(link => {
             const target = link.getAttribute("data-target");
@@ -1234,12 +1234,12 @@ function isViewAuthorized(viewId) {
     if (!state.currentUser) return false;
     const role = state.currentUser.role;
     if (role === "Administrator") return true;
-    
+
     if (role === "Security Gatekeeper") {
         const allowed = ["view-dashboard", "view-registration", "view-employee-search", "view-checkout", "view-history"];
         return allowed.includes(viewId);
     }
-    
+
     if (role === "Front Desk Operator") {
         const allowed = ["view-registration", "view-employee-search", "view-checkout", "view-history", "view-purchase-manual", "view-work-permit"];
         return allowed.includes(viewId);
@@ -1267,12 +1267,12 @@ function switchView(viewId) {
     }
 
     state.activeView = viewId;
-    
+
     // Toggle active view panel
     document.querySelectorAll(".page-view").forEach(view => {
         view.classList.remove("active");
     });
-    
+
     const activePanel = document.getElementById(viewId);
     if (activePanel) {
         activePanel.classList.add("active");
@@ -1288,33 +1288,33 @@ function switchView(viewId) {
 
     // Update Header Text Titles (Translated)
     const titleMap = {
-        "view-dashboard": { 
-            title: getTranslatedText("title-dashboard", "Dashboard Control Panel"), 
+        "view-dashboard": {
+            title: getTranslatedText("title-dashboard", "Dashboard Control Panel"),
             sub: getTranslatedText("sub-dashboard", "Welcome, {name}").replace("{name}", state.currentUser ? state.currentUser.name : (state.currentLang === "ta" ? 'பாதுகாப்பு அதிகாரி' : 'Officer'))
         },
-        "view-registration": { 
-            title: getTranslatedText("title-registration", "Visitor Intake Portal"), 
-            sub: getTranslatedText("sub-registration", "Capture credentials and details to register walk-ins") 
+        "view-registration": {
+            title: getTranslatedText("title-registration", "Visitor Intake Portal"),
+            sub: getTranslatedText("sub-registration", "Capture credentials and details to register walk-ins")
         },
-        "view-employee-search": { 
-            title: getTranslatedText("title-employee-search", "Employee Corporate Index"), 
-            sub: getTranslatedText("sub-employee-search", "Locate office spaces, extension lines, and duty stations") 
+        "view-employee-search": {
+            title: getTranslatedText("title-employee-search", "Employee Corporate Index"),
+            sub: getTranslatedText("sub-employee-search", "Locate office spaces, extension lines, and duty stations")
         },
-        "view-checkout": { 
-            title: getTranslatedText("title-checkout", "Visitor Gate Clearance Terminal"), 
-            sub: getTranslatedText("sub-checkout", "Enter temporary pass serials to execute check-outs") 
+        "view-checkout": {
+            title: getTranslatedText("title-checkout", "Visitor Gate Clearance Terminal"),
+            sub: getTranslatedText("sub-checkout", "Enter temporary pass serials to execute check-outs")
         },
-        "view-history": { 
-            title: getTranslatedText("title-history", "Gate Audit Logs & Archives"), 
-            sub: getTranslatedText("sub-history", "Historical entries database files registry") 
+        "view-history": {
+            title: getTranslatedText("title-history", "Gate Audit Logs & Archives"),
+            sub: getTranslatedText("sub-history", "Historical entries database files registry")
         },
-        "view-reports": { 
-            title: getTranslatedText("title-reports", "Analytical Reports Hub"), 
-            sub: getTranslatedText("sub-reports", "Export CSV records and review peak operational visitor logs") 
+        "view-reports": {
+            title: getTranslatedText("title-reports", "Analytical Reports Hub"),
+            sub: getTranslatedText("sub-reports", "Export CSV records and review peak operational visitor logs")
         },
-        "view-settings": { 
-            title: getTranslatedText("title-settings", "VMS System Configurations"), 
-            sub: getTranslatedText("sub-settings", "Configure profiles, notifications, and manage backups") 
+        "view-settings": {
+            title: getTranslatedText("title-settings", "VMS System Configurations"),
+            sub: getTranslatedText("sub-settings", "Configure profiles, notifications, and manage backups")
         },
         "view-purchase-manual": {
             title: getTranslatedText("title-purchase-manual", "Purchase Manual Management"),
@@ -1339,7 +1339,7 @@ function switchView(viewId) {
     } else if (viewId === "view-registration") {
         showRegistrationDashboard();
     }
-    
+
     // Hide drawer overlay
     document.getElementById("notifications-panel").classList.remove("active");
 }
@@ -1408,9 +1408,9 @@ function setupEventListeners() {
             if (!file) return;
             const label = document.getElementById("student-id-doc-label");
             if (label) label.innerText = file.name;
-            
+
             const reader = new FileReader();
-            reader.onload = function(evt) {
+            reader.onload = function (evt) {
                 state.tempVisitorIdDoc = evt.target.result;
                 showToast("ID Attached", "College ID document attached successfully.", "success");
             };
@@ -1425,7 +1425,7 @@ function setupEventListeners() {
     document.getElementById("contractor-registration-form").addEventListener("submit", handleContractorRegistrationSubmit);
     document.getElementById("delivery-registration-form").addEventListener("submit", handleDeliveryRegistrationSubmit);
     document.getElementById("service-engineer-registration-form").addEventListener("submit", handleServiceEngineerRegistrationSubmit);
-    
+
     document.getElementById("btn-confirm-registration").addEventListener("click", finalizeVisitorIntake);
 
     const idTypeSelect = document.getElementById("reg-visitor-id-type");
@@ -1477,11 +1477,11 @@ function setupEventListeners() {
         btn.addEventListener("click", (e) => {
             document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
             document.querySelectorAll(".admin-panel-tab").forEach(p => p.classList.remove("active"));
-            
+
             btn.classList.add("active");
             const targetTab = btn.getAttribute("data-tab");
             document.getElementById(targetTab).classList.add("active");
-            
+
             if (targetTab === "admin-tab-audit") {
                 renderAuditLogsTable();
             }
@@ -1500,11 +1500,11 @@ function setupEventListeners() {
         showToast("Settings Updated", "Gate terminal branding name changed.", "success");
         addAuditLog("Update Gate Name", "Settings", `Changed gate branding name to: ${e.target.value}`);
     });
-    
+
     // Add additional settings triggers
     const settingsInputs = [
-        "cfg-sms-provider", "cfg-wa-token", "cfg-wa-phone-id", 
-        "cfg-smtp-host", "cfg-smtp-port", "cfg-camera-select", 
+        "cfg-sms-provider", "cfg-wa-token", "cfg-wa-phone-id",
+        "cfg-smtp-host", "cfg-smtp-port", "cfg-camera-select",
         "cfg-printer-select", "cfg-pass-template"
     ];
     settingsInputs.forEach(id => {
@@ -1537,7 +1537,7 @@ function setupEventListeners() {
         e.stopPropagation();
         document.getElementById("notifications-panel").classList.toggle("active");
     });
-    
+
     document.getElementById("btn-clear-notifications").addEventListener("click", () => {
         state.notifications = [];
         saveState();
@@ -1559,11 +1559,11 @@ function setupEventListeners() {
         btnToggleTheme.addEventListener("click", () => {
             const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
             const newTheme = currentTheme === "dark" ? "light" : "dark";
-            
+
             document.documentElement.setAttribute("data-theme", newTheme);
             localStorage.setItem("gk_theme", newTheme);
             updateThemeIcons(newTheme);
-            
+
             showToast("Theme Switched", `Switched to ${newTheme === "dark" ? "Dark Mode" : "Light Mode"}.`, "info");
         });
     }
@@ -1611,12 +1611,12 @@ function setupEventListeners() {
     // Global document clicks handles popups dismissals
     document.addEventListener("click", (e) => {
         const notificationsPanel = document.getElementById("notifications-panel");
-        if (notificationsPanel.classList.contains("active") && 
-            !notificationsPanel.contains(e.target) && 
+        if (notificationsPanel.classList.contains("active") &&
+            !notificationsPanel.contains(e.target) &&
             !e.target.closest("#trigger-notifications-panel")) {
             notificationsPanel.classList.remove("active");
         }
-        
+
         // Hide autocomplete suggestion box
         document.querySelectorAll(".suggestions-box").forEach(s => s.style.display = "none");
     });
@@ -1639,18 +1639,18 @@ async function handleLoginSubmit(e) {
             if (!email.includes("@")) {
                 email = `${userVal}@acme.corp`;
             }
-            
+
             const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email: email,
                 password: passVal
             });
-            
+
             if (error) {
                 console.error("Supabase Auth error:", error);
                 showToast("Access Denied", error.message || "Invalid credentials.", "danger");
                 return;
             }
-            
+
             if (data && data.user) {
                 // Fetch the security user profile to retrieve the proper role configuration
                 const { data: profile, error: profileErr } = await supabaseClient
@@ -1658,7 +1658,7 @@ async function handleLoginSubmit(e) {
                     .select('*')
                     .eq('id', data.user.id)
                     .single();
-                
+
                 if (profileErr || !profile) {
                     console.warn("Custom profile not found in security_users, using auth default metadata.", profileErr);
                     state.currentUser = {
@@ -1671,12 +1671,12 @@ async function handleLoginSubmit(e) {
                 } else {
                     state.currentUser = mapSecurityUserFromDb(profile);
                 }
-                
+
                 saveState();
                 showToast("Access Granted", getTranslatedText("logged-in-as", "Logged in as {name}").replace("{name}", state.currentUser.name), "success");
                 document.getElementById("login-form").reset();
                 checkAuthSession();
-                
+
                 // Fetch latest state updates from Supabase
                 syncFromSupabase();
             }
@@ -1755,10 +1755,10 @@ function renderDashboardView(searchQuery = "") {
     const tableBody = document.getElementById("db-active-visitors-table");
     tableBody.innerHTML = "";
 
-    const activeList = state.visitors.filter(v => 
+    const activeList = state.visitors.filter(v =>
         (v.status === "Checked In" || v.status === "Pending") &&
-        (v.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-         v.id.toLowerCase().includes(searchQuery.toLowerCase()))
+        (v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            v.id.toLowerCase().includes(searchQuery.toLowerCase()))
     );
 
     if (activeList.length === 0) {
@@ -1774,7 +1774,7 @@ function renderDashboardView(searchQuery = "") {
         activeList.forEach(v => {
             const tr = document.createElement("tr");
             const entryTimeFormatted = v.checkIn ? new Date(v.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Awaiting Approval";
-            
+
             tr.innerHTML = `
                 <td><code>${v.id}</code></td>
                 <td>
@@ -1865,7 +1865,7 @@ function renderDashboardPendingQueue() {
 }
 
 // Quick reject prompt from dashboard table
-window.promptRejectVisitor = function(visitorId) {
+window.promptRejectVisitor = function (visitorId) {
     const reason = prompt("Enter reason for rejection (required):");
     if (reason === null) return; // Cancelled
     const idx = state.visitors.findIndex(v => v.id === visitorId);
@@ -1919,7 +1919,7 @@ async function downloadVisitorPassAsPDF() {
 }
 
 // Actions from Table Buttons
-window.approveEntryAction = function(visitorId) {
+window.approveEntryAction = function (visitorId) {
     const idx = state.visitors.findIndex(v => v.id === visitorId);
     if (idx === -1) return;
 
@@ -1935,7 +1935,7 @@ window.approveEntryAction = function(visitorId) {
     dispatchSimulatedAlerts(state.visitors[idx]);
 };
 
-window.checkoutVisitorById = function(visitorId) {
+window.checkoutVisitorById = function (visitorId) {
     const idx = state.visitors.findIndex(v => v.id === visitorId);
     if (idx === -1) return;
 
@@ -1959,7 +1959,7 @@ window.checkoutVisitorById = function(visitorId) {
     }
 };
 
-window.viewPrintPassModal = function(visitorId) {
+window.viewPrintPassModal = function (visitorId) {
     const visitor = state.visitors.find(v => v.id === visitorId);
     if (visitor) {
         renderBadgeAndOpenModal(visitor);
@@ -1980,7 +1980,7 @@ function handleEmployeeSearch(e) {
         return;
     }
 
-    const matches = state.employees.filter(emp => 
+    const matches = state.employees.filter(emp =>
         emp.id.toLowerCase().includes(query) ||
         emp.name.toLowerCase().includes(query) ||
         emp.phone.toLowerCase().includes(query) ||
@@ -2018,7 +2018,7 @@ function handleEmployeeSearch(e) {
     });
 }
 
-window.selectEmployeeAsHost = function(empId) {
+window.selectEmployeeAsHost = function (empId) {
     const employee = state.employees.find(e => e.id === empId);
     if (!employee) return;
 
@@ -2029,7 +2029,7 @@ window.selectEmployeeAsHost = function(empId) {
     select.dataset.empDept = employee.dept;
 
     showToast("Host Selected", `${employee.name} set as host employee.`, "success");
-    
+
     // Redirect to registration tab
     switchView("view-registration");
 };
@@ -2094,7 +2094,7 @@ function initCamera() {
             video.classList.remove("hidden");
             canvas.classList.add("hidden");
             preview.classList.add("hidden");
-            
+
             btnEnable.classList.add("hidden");
             btnCap.classList.remove("hidden");
             btnRet.classList.add("hidden");
@@ -2165,10 +2165,10 @@ function handlePhotoFileUpload(e) {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = function(evt) {
+    reader.onload = function (evt) {
         const preview = document.getElementById("photo-preview");
         const video = document.getElementById("camera-stream");
-        
+
         video.classList.add("hidden");
         preview.classList.remove("hidden");
         preview.src = evt.target.result;
@@ -2178,7 +2178,7 @@ function handlePhotoFileUpload(e) {
         document.getElementById("btn-capture").classList.add("hidden");
         document.getElementById("btn-retake").classList.add("hidden");
         document.getElementById("camera-status").innerText = "Uploaded Image Selected";
-        
+
         showToast("Photo Loaded", "File uploaded successfully.", "success");
     };
     reader.readAsDataURL(file);
@@ -2189,7 +2189,7 @@ let pendingRegistrationObj = null;
 
 function handleRegistrationSubmit(e) {
     e.preventDefault();
-    
+
     const name = document.getElementById("reg-visitor-name").value.trim();
     const phone = document.getElementById("reg-visitor-phone").value.trim();
     const email = document.getElementById("reg-visitor-email").value.trim();
@@ -2235,7 +2235,7 @@ function handleRegistrationSubmit(e) {
 
     // Capture registration structure
     const visitorId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
-    
+
     pendingRegistrationObj = {
         id: visitorId,
         name,
@@ -2259,20 +2259,20 @@ function handleRegistrationSubmit(e) {
         photo: state.tempVisitorPhoto,
         photoIdDoc: state.tempVisitorIdDoc || ""
     };
- 
+
     // Open Visitor Preview Modal
     openVisitorPreview(pendingRegistrationObj);
-} 
+}
 function openVisitorPreview(visitor) {
     const modal = document.getElementById("modal-visitor-preview");
-    
+
     document.getElementById("prev-visitor-photo").src = visitor.photo || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='1.5'><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>";
     document.getElementById("prev-visitor-name").innerText = visitor.name;
     document.getElementById("prev-visitor-company").innerText = visitor.company;
     document.getElementById("prev-visitor-phone").innerText = visitor.phone;
     document.getElementById("prev-visitor-email").innerText = visitor.email;
-    const idDisplay = (visitor.idType || visitor.idNumber) 
-        ? `${visitor.idType || "Unspecified"} (${visitor.idNumber || "No number"})` 
+    const idDisplay = (visitor.idType || visitor.idNumber)
+        ? `${visitor.idType || "Unspecified"} (${visitor.idNumber || "No number"})`
         : "Not Provided";
     document.getElementById("prev-visitor-id-type").innerText = idDisplay;
     document.getElementById("prev-visitor-address").innerText = visitor.address || "Not Specified";
@@ -2282,7 +2282,7 @@ function openVisitorPreview(visitor) {
     document.getElementById("prev-visitor-count").innerText = `${visitor.numVisitors} Person(s)`;
     document.getElementById("prev-visitor-purpose").innerText = visitor.purpose;
     document.getElementById("prev-visitor-exit").innerText = visitor.expectedExit;
- 
+
     // Render uploaded ID card image
     const prevDocImg = document.getElementById("prev-visitor-id-doc");
     const prevDocNone = document.getElementById("prev-visitor-id-doc-none");
@@ -2312,7 +2312,7 @@ function openVisitorPreview(visitor) {
 
     modal.classList.add("active");
 }
- 
+
 function finalizeVisitorIntake() {
     if (!pendingRegistrationObj) return;
 
@@ -2339,7 +2339,7 @@ async function executeFinalVisitorApprovalFlow() {
     // Set initial status to Pending for Host Approval
     pendingRegistrationObj.status = "Pending";
     pendingRegistrationObj.checkIn = null;
-    
+
     // Add to state list
     state.visitors.unshift(pendingRegistrationObj);
     saveState();
@@ -2347,7 +2347,7 @@ async function executeFinalVisitorApprovalFlow() {
     refreshAllDataViews();
 
     showToast("Approval Requested", `Notification sent to host employee ${pendingRegistrationObj.hostName}.`, "info");
-    
+
     // Add alerts
     addNotificationAlert("Approval Needed", `[Reception] Visitor Waiting: ${pendingRegistrationObj.name} registered. Waiting for host approval.`, "warning");
     addNotificationAlert("Visitor Registered", `[Host] Visitor Waiting: Guest ${pendingRegistrationObj.name} from ${pendingRegistrationObj.company || 'Independent'} is waiting for your clearance.`, "warning");
@@ -2398,7 +2398,7 @@ async function executeFinalVisitorApprovalFlow() {
     document.getElementById("camera-status").innerText = "Camera Inactive";
     state.tempVisitorPhoto = "";
     state.tempVisitorIdDoc = "";
-    
+
     const uploadLabel = document.getElementById("id-doc-upload-label");
     if (uploadLabel) uploadLabel.innerText = "Upload ID Proof";
     document.getElementById("visitor-id-doc-file").value = "";
@@ -2410,13 +2410,13 @@ async function executeFinalVisitorApprovalFlow() {
 function dispatchSimulatedAlerts(visitor) {
     const host = state.employees.find(e => e.id === visitor.hostId);
     const gateName = document.getElementById("cfg-terminal-gate").value;
-    
+
     // 1. SMS to Visitor
     logNotificationSimulator(
         "Welcome Alert",
         "SMS",
         visitor.phone,
-        `ABC INDUSTRIES\nWelcome.\nVisitor ID: ${visitor.id}\nHost: ${visitor.hostName}\nEntry Time: ${new Date(visitor.checkIn).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`
+        `ABC INDUSTRIES\nWelcome.\nVisitor ID: ${visitor.id}\nHost: ${visitor.hostName}\nEntry Time: ${new Date(visitor.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
     );
 
     // 2. SMS to Host Employee
@@ -2427,12 +2427,12 @@ function dispatchSimulatedAlerts(visitor) {
             host.phone,
             `Visitor ${visitor.name} has arrived at ${gateName}.\nPurpose: ${visitor.purpose}\nPlease receive them.`
         );
-        
+
         // Email backup
         logNotificationSimulator(
             "Visitor Arrival Email",
             "Email",
-host.email,
+            host.email,
             `Dear ${host.name},\nThis is an automated alert. Your pre-scheduled guest ${visitor.name} from ${visitor.company} has cleared gate clearance and is checked-in.`
         );
     }
@@ -2481,7 +2481,7 @@ function logNotificationSimulator(subject, channel, destination, content) {
 function renderBadgeAndOpenModal(visitor) {
     const modal = document.getElementById("modal-badge-preview");
     if (!modal) return;
-    
+
     // Setup Pass Card fields
     document.getElementById("badge-serial-id").innerText = visitor.id;
     document.getElementById("badge-name").innerText = visitor.name;
@@ -2489,7 +2489,7 @@ function renderBadgeAndOpenModal(visitor) {
     document.getElementById("badge-host-name").innerText = visitor.hostName;
     document.getElementById("badge-host-dept").innerText = visitor.hostDept;
     document.getElementById("badge-purpose").innerText = visitor.purpose || "Meeting";
-    
+
     const entryDate = visitor.checkIn ? new Date(visitor.checkIn) : new Date();
     document.getElementById("badge-date").innerText = entryDate.toLocaleDateString([], { month: '2-digit', day: '2-digit', year: 'numeric' });
     document.getElementById("badge-time").innerText = entryDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -2518,7 +2518,7 @@ function renderBadgeAndOpenModal(visitor) {
                 dept: visitor.hostDept,
                 purpose: visitor.purpose,
                 date: entryDate.toLocaleDateString(),
-                entry: entryDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                entry: entryDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 exit: visitor.expectedExit || "06:00 PM",
                 phone: visitor.phone,
                 valid: "BARANI-VMS-AUTHORIZED"
@@ -2527,11 +2527,11 @@ function renderBadgeAndOpenModal(visitor) {
                 text: qrPayload,
                 width: 80,
                 height: 80,
-                colorDark : "#0f172a",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.M
+                colorDark: "#0f172a",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
             });
-        } catch(err) {
+        } catch (err) {
             console.error("QR Code library generation error:", err);
             qrContainer.innerText = "[QR CODE]";
         }
@@ -2546,9 +2546,9 @@ let activeCheckoutRecord = null;
 function handleCheckoutSearch(e) {
     if (e) e.preventDefault();
     const idVal = document.getElementById("checkout-visitor-id").value.trim().toUpperCase();
-    
+
     const visitor = visitorsIdMap.get(idVal) || visitorsPhoneMap.get(idVal);
-    
+
     if (!visitor) {
         showToast("Invalid ID", "Visitor code not found in databases.", "danger");
         document.getElementById("checkout-details-card").classList.add("hidden");
@@ -2564,7 +2564,7 @@ function loadCheckoutRecordCard(visitor) {
     const nameEl = document.getElementById("checkout-visitor-name");
     const companyEl = document.getElementById("checkout-visitor-company");
     const statusEl = document.getElementById("checkout-visitor-status");
-    
+
     const infoId = document.getElementById("checkout-info-id");
     const infoHost = document.getElementById("checkout-info-host");
     const infoDept = document.getElementById("checkout-info-dept");
@@ -2577,7 +2577,7 @@ function loadCheckoutRecordCard(visitor) {
     if (photoEl) photoEl.src = visitor.photo || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='1.5'><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>";
     if (nameEl) nameEl.innerText = visitor.name;
     if (companyEl) companyEl.innerText = visitor.company || "Independent";
-    
+
     if (statusEl) {
         statusEl.innerText = visitor.status;
         statusEl.className = "badge-status " + (visitor.status === "Checked In" ? "checked-in" : (visitor.status === "Checked Out" ? "checked-out" : "pending"));
@@ -2690,11 +2690,11 @@ function renderHistoryView() {
 
     const filtered = state.visitors.filter(v => {
         const matchesKeyword = v.id.toLowerCase().includes(keyword) ||
-                               (v.name && v.name.toLowerCase().includes(keyword)) ||
-                               (v.company && v.company.toLowerCase().includes(keyword)) ||
-                               (v.hostName && v.hostName.toLowerCase().includes(keyword));
+            (v.name && v.name.toLowerCase().includes(keyword)) ||
+            (v.company && v.company.toLowerCase().includes(keyword)) ||
+            (v.hostName && v.hostName.toLowerCase().includes(keyword));
         const matchesDate = dateVal === "" || v.visitDate === dateVal;
-        
+
         return matchesKeyword && matchesDate;
     });
 
@@ -2753,7 +2753,7 @@ function renderHistoryView() {
         const exitTime = v.checkOut ? new Date(v.checkOut).toLocaleString() : "?";
         const canDownload = (v.status === 'Checked In' || v.status === 'Checked Out' || v.status === 'Pending');
         const canSendWA = (v.status === 'Checked In' || v.status === 'Checked Out');
-        
+
         tr.innerHTML = `
             <td><code>${v.id}</code></td>
             <td>
@@ -2826,7 +2826,7 @@ function setupReportsConsoleListeners() {
                 const startInput = document.getElementById("report-filter-start-date");
                 const endInput = document.getElementById("report-filter-end-date");
                 const todayStr = getLocalDateStr();
-                
+
                 if (rangeType === "today") {
                     startInput.value = endInput.value = todayStr;
                 } else if (rangeType === "week") {
@@ -2893,9 +2893,9 @@ function renderReportsData() {
         let textMatch = true;
         if (searchVal !== "") {
             textMatch = (v.name && v.name.toLowerCase().includes(searchVal)) ||
-                        (v.id && v.id.toLowerCase().includes(searchVal)) ||
-                        (v.company && v.company.toLowerCase().includes(searchVal)) ||
-                        (v.hostName && v.hostName.toLowerCase().includes(searchVal));
+                (v.id && v.id.toLowerCase().includes(searchVal)) ||
+                (v.company && v.company.toLowerCase().includes(searchVal)) ||
+                (v.hostName && v.hostName.toLowerCase().includes(searchVal));
         }
 
         let catMatch = true;
@@ -2954,7 +2954,7 @@ function renderReportsData() {
     }
 
     tableBody.innerHTML = "";
-    
+
     const totalRecords = reportsFilteredData.length;
     const totalPages = Math.ceil(totalRecords / reportsPageSize);
     if (reportsCurrentPage >= totalPages && totalPages > 0) {
@@ -2972,7 +2972,7 @@ function renderReportsData() {
         pagEl.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-top: 1px solid var(--border-color); font-size: 0.75rem; color: var(--text-secondary);";
         tableBody.closest(".table-container").appendChild(pagEl);
     }
-    
+
     if (totalRecords === 0) {
         pagEl.innerHTML = `<span>Showing 0 to 0 of 0 entries</span>`;
         tableBody.innerHTML = `<tr><td colspan="8" class="empty-state" style="text-align:center; padding:2rem;">No visitor audit logs match the current query criteria.</td></tr>`;
@@ -2984,7 +2984,7 @@ function renderReportsData() {
                 <button type="button" class="btn btn-secondary btn-sm" id="btn-reports-next" style="padding:2px 8px; font-size:0.7rem; cursor:pointer;">Next</button>
             </div>
         `;
-        
+
         document.getElementById("btn-reports-prev").onclick = () => {
             if (reportsCurrentPage > 0) {
                 reportsCurrentPage--;
@@ -3006,8 +3006,8 @@ function renderReportsData() {
                 <td>${v.company || "Private Guest"}</td>
                 <td>${v.hostName} (${v.hostDept})</td>
                 <td>${v.visitDate}</td>
-                <td>${v.checkIn ? new Date(v.checkIn).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '?'}</td>
-                <td>${v.checkOut ? new Date(v.checkOut).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : '?'}</td>
+                <td>${v.checkIn ? new Date(v.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '?'}</td>
+                <td>${v.checkOut ? new Date(v.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '?'}</td>
                 <td><span class="badge-status ${v.status.toLowerCase()}">${v.status}</span></td>
             `;
             tableBody.appendChild(tr);
@@ -3055,7 +3055,7 @@ function renderReportsCharts() {
             const color = purposeColors[purpose] || "#64748b";
 
             const dashArray = `${pct} ${100 - pct}`;
-            const dashOffset = 100 - accumulativePercent + 25; 
+            const dashOffset = 100 - accumulativePercent + 25;
             accumulativePercent += pct;
 
             const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -3113,7 +3113,7 @@ function renderReportsCharts() {
         rect.setAttribute("height", barHeight.toString());
         rect.setAttribute("rx", "2");
         rect.setAttribute("fill", "var(--accent-primary)");
-        
+
         const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
         title.textContent = `Hour Slot: ${idx + 8}:00 | Arrivals: ${count}`;
         rect.appendChild(title);
@@ -3121,7 +3121,7 @@ function renderReportsCharts() {
 
         if (count > 0) {
             const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            txt.setAttribute("x", (xPos + colWidth/2).toString());
+            txt.setAttribute("x", (xPos + colWidth / 2).toString());
             txt.setAttribute("y", (yPos - 2).toString());
             txt.setAttribute("text-anchor", "middle");
             txt.setAttribute("fill", "#64748b");
@@ -3166,13 +3166,13 @@ function exportReportsCSV() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    
+
     const dateStr = getLocalDateStr();
     link.setAttribute("download", `gatekeeper_visitor_reports_${dateStr}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     showToast("Export Completed", "Filtered records downloaded as CSV.", "success");
 }
 
@@ -3253,7 +3253,7 @@ function exportReportsXLS() {
     const blob = new Blob([xlsTemplate], { type: "application/vnd.ms-excel" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    
+
     const dateStr = getLocalDateStr();
     link.download = `gatekeeper_visitor_reports_${dateStr}.xls`;
     document.body.appendChild(link);
@@ -3268,69 +3268,69 @@ function downloadPDFReportFile() {
         showToast("PDF Export Error", "jsPDF library is not loaded.", "danger");
         return;
     }
-    
+
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-    
-    doc.setFillColor(15, 23, 42); 
+
+    doc.setFillColor(15, 23, 42);
     doc.rect(0, 0, 210, 40, "F");
-    
+
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
     doc.text("BARANI HYDRAULICS VMS", 14, 18);
-    
+
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.setTextColor(226, 232, 240);
     doc.text("Corporate Visitor Log Audit Report", 14, 25);
     doc.text("Generated: " + new Date().toLocaleString(), 14, 32);
-    
+
     const branchSelect = document.getElementById("header-branch-select");
     const branchVal = branchSelect ? branchSelect.value : "all";
     doc.text("Security Branch Profile: " + branchVal.toUpperCase(), 140, 25);
     doc.text("Duty Terminal: Main Gate 1", 140, 32);
-    
-    doc.setFillColor(248, 250, 252); 
+
+    doc.setFillColor(248, 250, 252);
     doc.rect(14, 48, 182, 18, "F");
     doc.setStrokeColor(226, 232, 240);
     doc.rect(14, 48, 182, 18);
-    
+
     const total = reportsFilteredData.length;
     const inside = reportsFilteredData.filter(v => v.status === "Checked In").length;
     const exited = reportsFilteredData.filter(v => v.status === "Checked Out").length;
-    
+
     doc.setFontSize(9);
     doc.setTextColor(100, 116, 139);
     doc.text("TOTAL RECORDS", 20, 54);
     doc.text("ACTIVE INSIDE", 85, 54);
     doc.text("CHECKED OUT", 150, 54);
-    
+
     doc.setFontSize(12);
     doc.setTextColor(15, 23, 42);
     doc.text(String(total), 20, 61);
     doc.text(String(inside), 85, 61);
     doc.text(String(exited), 150, 61);
-    
+
     doc.setFontSize(9);
     doc.setFont("helvetica", "bold");
     doc.setFillColor(241, 245, 249);
     doc.rect(14, 74, 182, 8, "F");
     doc.rect(14, 74, 182, 8);
-    
+
     doc.setTextColor(71, 85, 105);
     doc.text("Visitor ID", 16, 79.5);
     doc.text("Visitor Details", 42, 79.5);
     doc.text("Host Details", 90, 79.5);
     doc.text("Entry time", 138, 79.5);
     doc.text("Status", 182, 79.5);
-    
+
     doc.setFont("helvetica", "normal");
     doc.setTextColor(15, 23, 42);
-    
+
     let y = 88;
     const pageHeight = doc.internal.pageSize.getHeight();
-    
+
     reportsFilteredData.forEach((v, idx) => {
         if (y + 14 > pageHeight) {
             doc.addPage();
@@ -3345,32 +3345,32 @@ function downloadPDFReportFile() {
             doc.text("Host Details", 90, y - 0.5);
             doc.text("Entry time", 138, y - 0.5);
             doc.text("Status", 182, y - 0.5);
-            
+
             doc.setFont("helvetica", "normal");
             doc.setTextColor(15, 23, 42);
             y += 8;
         }
-        
+
         doc.setFontSize(8);
         doc.text(v.id, 16, y);
         doc.setFont("helvetica", "bold");
         doc.text(v.name.substring(0, 20), 42, y);
         doc.setFont("helvetica", "normal");
         doc.text(v.company ? v.company.substring(0, 20) : "Independent", 42, y + 4.5);
-        
+
         doc.text(v.hostName.substring(0, 20), 90, y);
         doc.text(v.hostDept, 90, y + 4.5);
-        
+
         const checkInStr = v.checkIn ? new Date(v.checkIn).toLocaleString() : v.visitDate;
         doc.text(checkInStr.substring(0, 22), 138, y);
         doc.text(v.status, 182, y);
-        
+
         doc.setStrokeColor(241, 245, 249);
         doc.line(14, y + 6.5, 196, y + 6.5);
-        
+
         y += 11;
     });
-    
+
     const dateStr = getLocalDateStr();
     doc.save("gatekeeper_audit_report_" + dateStr + ".pdf");
     showToast("PDF Exported", "Analytical report PDF saved successfully.", "success");
@@ -3552,7 +3552,7 @@ function openEmployeeModal(empId = "") {
             document.getElementById("crud-emp-phone").value = emp.phone;
         }
     }
-    
+
     modal.classList.add("active");
 }
 
@@ -3591,9 +3591,9 @@ function saveEmployeeCRUD(e) {
     renderSettingsData();
 }
 
-window.deleteEmployeeCRUD = function(empId) {
+window.deleteEmployeeCRUD = function (empId) {
     if (!confirm("Are you sure you want to delete this employee from the roster?")) return;
-    
+
     const idx = state.employees.findIndex(e => e.id === empId);
     if (idx !== -1) {
         const name = state.employees[idx].name;
@@ -3632,7 +3632,7 @@ function openSecurityModal(username = "") {
             document.getElementById("crud-sec-shift").value = user.shift;
         }
     }
-    
+
     modal.classList.add("active");
 }
 
@@ -3669,12 +3669,12 @@ function saveSecurityCRUD(e) {
     renderSettingsData();
 }
 
-window.deleteSecurityCRUD = function(username) {
+window.deleteSecurityCRUD = function (username) {
     if (username === "admin") {
         showToast("Action Forbidden", "System Admin account cannot be deleted.", "danger");
         return;
     }
-    
+
     if (!confirm(`Remove operator username "${username}"?`)) return;
 
     const idx = state.securityUsers.findIndex(u => u.username === username);
@@ -3714,7 +3714,7 @@ function exportDatabaseJSON() {
     const link = document.createElement("a");
     link.setAttribute("href", encoded);
     link.setAttribute("download", `gatekeeper_database_backup_${getLocalDateStr()}.json`);
-    
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -3732,10 +3732,10 @@ function importDatabaseJSON(e) {
     }
 
     const reader = new FileReader();
-    reader.onload = function(evt) {
+    reader.onload = function (evt) {
         try {
             const dataObj = JSON.parse(evt.target.result);
-            
+
             if (dataObj.employees && dataObj.visitors && dataObj.securityUsers) {
                 state.employees = dataObj.employees;
                 state.visitors = dataObj.visitors;
@@ -3750,17 +3750,17 @@ function importDatabaseJSON(e) {
                 state.contractorMaster = dataObj.contractorMaster || [];
                 state.deliveryMaster = dataObj.deliveryMaster || [];
                 state.serviceEngineerMaster = dataObj.serviceEngineerMaster || [];
-                
+
                 saveState();
                 showToast("Database Restored", "Archives successfully restored.", "success");
-                
+
                 setTimeout(() => {
                     window.location.reload();
                 }, 1500);
             } else {
                 showToast("Import Failed", "Invalid database backup file format structure.", "danger");
             }
-        } catch(err) {
+        } catch (err) {
             console.error(err);
             showToast("Import Error", "Unable to parse files JSON structure.", "danger");
         }
@@ -3873,7 +3873,7 @@ function setupEmployeeEntryAndDocUpload() {
             btnSelectVisitor.className = "btn btn-secondary";
             employeeWrapper.classList.remove("hidden");
             visitorWrapper.classList.add("hidden");
-            
+
             // Populate the employee mock QR dropdown list
             populateEmployeeMockQRDropdown();
         });
@@ -3893,7 +3893,7 @@ function setupEmployeeEntryAndDocUpload() {
                 idDocLabel.innerText = file.name;
             }
             const reader = new FileReader();
-            reader.onload = function(evt) {
+            reader.onload = function (evt) {
                 state.tempVisitorIdDoc = evt.target.result;
                 showToast("ID Attached", `ID Card document attached.`, "success");
             };
@@ -4003,7 +4003,7 @@ function setupEmployeeEntryAndDocUpload() {
             const rejectTextarea = document.getElementById("host-email-rejection-reason");
             const btnApprove = document.getElementById("btn-host-email-approve");
             const btnReject = document.getElementById("btn-host-email-reject");
-            
+
             if (rejectWrapper) rejectWrapper.style.display = "none";
             if (rejectTextarea) rejectTextarea.value = "";
             btnCancelReject.style.display = "none";
@@ -4020,18 +4020,18 @@ function closeHostSimBubble() {
     const btnApprove = document.getElementById("btn-host-email-approve");
     const btnReject = document.getElementById("btn-host-email-reject");
     const btnCancel = document.getElementById("btn-host-email-cancel-reject");
-    
+
     if (hostSimBubble) hostSimBubble.classList.add("hidden");
     if (rejectWrapper) rejectWrapper.style.display = "none";
     if (rejectTextarea) rejectTextarea.value = "";
     if (btnCancel) btnCancel.style.display = "none";
     if (btnReject) btnReject.textContent = "Reject Link";
     if (btnApprove) btnApprove.style.display = "inline-block";
-    
+
     // Hide indicator badge on header host-sim icon
     const headerBadge = document.getElementById("host-header-badge");
     if (headerBadge) headerBadge.style.display = "none";
-    
+
     activeSimulatedVisitor = null;
     clearHostSimTimer();
 }
@@ -4062,9 +4062,9 @@ function setupEmployeeEntryAutocomplete() {
             return;
         }
 
-        const matches = state.employees.filter(emp => 
-            emp.name.toLowerCase().includes(val) || 
-            emp.id.toLowerCase().includes(val) || 
+        const matches = state.employees.filter(emp =>
+            emp.name.toLowerCase().includes(val) ||
+            emp.id.toLowerCase().includes(val) ||
             emp.dept.toLowerCase().includes(val)
         );
 
@@ -4099,7 +4099,7 @@ function setupEmployeeEntryAutocomplete() {
 function loadEmployeeEntryCard(employee) {
     const placeholder = document.getElementById("emp-entry-details-placeholder");
     if (placeholder) placeholder.classList.add("hidden");
-    
+
     const card = document.getElementById("emp-entry-details-card");
     if (card) card.classList.remove("hidden");
 
@@ -4111,14 +4111,14 @@ function loadEmployeeEntryCard(employee) {
     document.getElementById("emp-entry-status").innerText = employee.status || "Active";
     document.getElementById("emp-entry-email").innerText = employee.email;
     document.getElementById("emp-entry-phone").innerText = employee.phone;
-    
+
     // Photo
     document.getElementById("emp-entry-photo").src = employee.photo || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%2364748b'/><path d='M30 75c0-10 10-15 20-15s20 5 20 15' stroke='white' stroke-width='4' fill='none'/><circle cx='50' cy='40' r='12' fill='white'/></svg>";
 
     const campusStatus = employee.campusStatus || "Outside";
     const statusBadge = document.getElementById("emp-entry-campus-status");
     statusBadge.innerText = campusStatus === "Inside" ? "Inside Campus" : "Outside Campus";
-    
+
     if (campusStatus === "Inside") {
         statusBadge.className = "badge-status checked-in";
         document.getElementById("btn-emp-gate-in").disabled = true;
@@ -4158,7 +4158,7 @@ function executeEmployeeGateAction(empId, action) {
 
     // Refresh layout card
     loadEmployeeEntryCard(emp);
-    
+
     // Refresh dashboard calculations
     refreshAllDataViews();
 }
@@ -4176,38 +4176,38 @@ function clearHostSimTimer() {
 
 function triggerHostApprovalNotification(visitor) {
     activeSimulatedVisitor = visitor;
-    
+
     const bubble = document.getElementById("host-sim-bubble");
     const now = new Date();
-    const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    const dateStr = now.toLocaleDateString([], {day:'2-digit', month:'2-digit', year:'numeric'});
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const dateStr = now.toLocaleDateString([], { day: '2-digit', month: '2-digit', year: 'numeric' });
 
     // --- Populate the Corporate Email Client fields ---
     const emailRecipientEl = document.getElementById("host-email-recipient");
-    const emailSubjectEl   = document.getElementById("host-email-subject");
-    const emailHostNameEl  = document.getElementById("host-email-host-name");
+    const emailSubjectEl = document.getElementById("host-email-subject");
+    const emailHostNameEl = document.getElementById("host-email-host-name");
     const emailVisitorName = document.getElementById("host-email-visitor-name");
-    const emailVisitorCo   = document.getElementById("host-email-visitor-company");
+    const emailVisitorCo = document.getElementById("host-email-visitor-company");
     const emailVisitorPurp = document.getElementById("host-email-visitor-purpose");
     const emailVisitorTime = document.getElementById("host-email-visitor-time");
 
     // Resolve host email from employees
     const hostEmp = state.employees.find(e => e.id === visitor.hostId);
-    const hostEmail = hostEmp ? hostEmp.email : `${(visitor.hostName || 'host').toLowerCase().replace(/\s+/g,'')}@barani.corp`;
+    const hostEmail = hostEmp ? hostEmp.email : `${(visitor.hostName || 'host').toLowerCase().replace(/\s+/g, '')}@barani.corp`;
 
-        if (emailRecipientEl) emailRecipientEl.innerText = "?";
-    if (emailSubjectEl)   emailSubjectEl.innerText   = `Visitor Approval Request ? ${visitor.name} (${visitor.id})`;
-    if (emailHostNameEl)  emailHostNameEl.innerText  = visitor.hostName;
-        if (emailVisitorName) emailVisitorName.innerText = "?";
-    if (emailVisitorCo)   emailVisitorCo.innerText   = visitor.company || 'Independent';
-        if (emailVisitorPurp) emailVisitorPurp.innerText = "?";
-        if (emailVisitorTime) emailVisitorTime.innerText = "?";
+    if (emailRecipientEl) emailRecipientEl.innerText = "?";
+    if (emailSubjectEl) emailSubjectEl.innerText = `Visitor Approval Request ? ${visitor.name} (${visitor.id})`;
+    if (emailHostNameEl) emailHostNameEl.innerText = visitor.hostName;
+    if (emailVisitorName) emailVisitorName.innerText = "?";
+    if (emailVisitorCo) emailVisitorCo.innerText = visitor.company || 'Independent';
+    if (emailVisitorPurp) emailVisitorPurp.innerText = "?";
+    if (emailVisitorTime) emailVisitorTime.innerText = "?";
 
     // Also populate legacy phone-sim IDs (if they still exist)
-    const nameEl    = document.getElementById("host-sim-visitor-name");
+    const nameEl = document.getElementById("host-sim-visitor-name");
     const companyEl = document.getElementById("host-sim-visitor-company");
-    const timerEl   = document.getElementById("host-sim-timer");
-    if (nameEl)    nameEl.innerText    = visitor.name;
+    const timerEl = document.getElementById("host-sim-timer");
+    if (nameEl) nameEl.innerText = visitor.name;
     if (companyEl) companyEl.innerText = visitor.company || 'Independent';
 
     // Start countdown timer (2 minutes)
@@ -4233,12 +4233,12 @@ function triggerHostApprovalNotification(visitor) {
     };
     updateTimer();
     _hostSimTimerInterval = setInterval(updateTimer, 1000);
-    
+
     // Show the email client panel automatically
     if (bubble) {
         bubble.classList.remove("hidden");
     }
-    
+
     // Show indicator badge on header envelope icon
     const headerBadge = document.getElementById("host-header-badge");
     if (headerBadge) headerBadge.style.display = "block";
@@ -4246,7 +4246,7 @@ function triggerHostApprovalNotification(visitor) {
     renderSimulatedEmailInbox();
 }
 
-window.approvePendingVisitor = function(visitorId) {
+window.approvePendingVisitor = function (visitorId) {
     const idx = state.visitors.findIndex(v => v.id === visitorId);
     if (idx === -1) return;
 
@@ -4260,10 +4260,10 @@ window.approvePendingVisitor = function(visitorId) {
     refreshAllDataViews();
     renderSimulatedEmailInbox();
 
-    showToast("Visitor Approved & Checked In", `${visitor.name} approved by host ${visitor.hostName} and checked in at ${now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}.`, "success");
-    
+    showToast("Visitor Approved & Checked In", `${visitor.name} approved by host ${visitor.hostName} and checked in at ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.`, "success");
+
     // Reception & Security alerts
-    addNotificationAlert("Visitor Approved", `[Reception] ${visitor.name} approved by host ${visitor.hostName}. Auto checked-in at ${now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}.`, "success");
+    addNotificationAlert("Visitor Approved", `[Reception] ${visitor.name} approved by host ${visitor.hostName}. Auto checked-in at ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.`, "success");
     addNotificationAlert("Security Gate", `[Security] ${visitor.name} (${visitor.id}) has been cleared to enter. Host: ${visitor.hostName} / ${visitor.hostDept}.`, "info");
 
     // SMS to Visitor (Twilio simulation)
@@ -4271,7 +4271,7 @@ window.approvePendingVisitor = function(visitorId) {
         "Visit Approved",
         "SMS",
         visitor.phone,
-        `Dear ${visitor.name}, your visit to Barani Hydraulics has been APPROVED by ${visitor.hostName}. Entry Time: ${now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}. Pass ID: ${visitor.id}.`
+        `Dear ${visitor.name}, your visit to Barani Hydraulics has been APPROVED by ${visitor.hostName}. Entry Time: ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}. Pass ID: ${visitor.id}.`
     );
 
     // Note: Automatic WhatsApp visitor pass dispatch is disabled per user request.
@@ -4314,7 +4314,7 @@ window.approvePendingVisitor = function(visitorId) {
                     console.log('[VMS] Pass image stored for visitor:', visitor.id);
                 }
             }
-        } catch(captureErr) {
+        } catch (captureErr) {
             console.warn('[VMS] Pass image auto-capture failed (non-critical):', captureErr);
         }
     }, 900);
@@ -4328,7 +4328,7 @@ window.approvePendingVisitor = function(visitorId) {
                 if (window.event && (window.event.type === "click" || window.event.type === "submit")) {
                     targetWindow = window.open("", "_blank");
                 }
-            } catch(e) {
+            } catch (e) {
                 console.warn("Could not pre-open window:", e);
             }
         }
@@ -4348,7 +4348,7 @@ window.approvePendingVisitor = function(visitorId) {
  * Download the stored visitor pass PNG directly, or fall back to opening
  * the badge modal for manual download if no cached image is available.
  */
-window.downloadPassDirectly = async function(visitorId) {
+window.downloadPassDirectly = async function (visitorId) {
     const visitor = state.visitors.find(v => v.id === visitorId);
     if (!visitor) {
         showToast('Not Found', 'Visitor record not found.', 'danger');
@@ -4376,7 +4376,7 @@ window.downloadPassDirectly = async function(visitorId) {
  * Re-populate the badge card (needed for html2canvas) and resend the pass
  * image to the visitor's registered WhatsApp number.
  */
-window.resendPassWhatsApp = function(visitorId) {
+window.resendPassWhatsApp = function (visitorId) {
     const visitor = state.visitors.find(v => v.id === visitorId);
     if (!visitor) {
         showToast('Not Found', 'Visitor record not found.', 'danger');
@@ -4391,7 +4391,7 @@ window.resendPassWhatsApp = function(visitorId) {
     if (method !== 'meta' && method !== 'sim') {
         try {
             targetWindow = window.open('', '_blank');
-        } catch(e) {
+        } catch (e) {
             console.warn('[VMS] Could not pre-open window for WA resend:', e);
         }
     }
@@ -4417,7 +4417,7 @@ function rejectPendingVisitor(visitorId) {
     renderSimulatedEmailInbox();
 
     showToast("Visitor Rejected", `${visitor.name} entry was rejected by host ${visitor.hostName}.`, "danger");
-    
+
     // Add reception alerts
     addNotificationAlert("Visitor Rejected", `[Reception] Visitor Rejected: ${visitor.name} entry was denied by host ${visitor.hostName}. Reason: ${reason}`, "danger");
 
@@ -4437,7 +4437,7 @@ function updateThemeIcons(theme) {
     const sunIcon = document.getElementById("theme-icon-sun");
     const moonIcon = document.getElementById("theme-icon-moon");
     if (!sunIcon || !moonIcon) return;
-    
+
     if (theme === "dark") {
         sunIcon.classList.remove("hidden");
         moonIcon.classList.add("hidden");
@@ -4451,7 +4451,7 @@ function updateThemeIcons(theme) {
 // 20. SECURITY FEATURE: Blacklist restrictions checks & alarms
 // ==========================================================================
 function checkBlacklistMatch(name, phone, idNumber) {
-    return state.blacklist.find(b => 
+    return state.blacklist.find(b =>
         b.name.toLowerCase() === name.toLowerCase().trim() ||
         b.phone === phone.trim() ||
         (idNumber && b.idNumber && b.idNumber.trim() === idNumber.trim())
@@ -4461,15 +4461,15 @@ function checkBlacklistMatch(name, phone, idNumber) {
 function openBlacklistAlarmScreen(blacklistItem) {
     // Dismiss preview modal
     document.getElementById("modal-visitor-preview").classList.remove("active");
-    
+
     document.getElementById("alarm-visitor-name").innerText = blacklistItem.name;
     document.getElementById("alarm-reason").innerText = blacklistItem.reason;
     document.getElementById("alarm-phone-info").innerText = blacklistItem.phone;
     document.getElementById("alarm-id-info").innerText = `${blacklistItem.idType || 'ID'} (${blacklistItem.idNumber || 'N/A'})`;
-    
+
     // Play flashing alarm beep
     playSecurityAlarmBeep();
-    
+
     // Create audit log warning
     addNotificationAlert(
         "SECURITY BREACH THREAT",
@@ -4477,14 +4477,14 @@ function openBlacklistAlarmScreen(blacklistItem) {
         "danger"
     );
     addAuditLog("Blacklist Breach Alert", "Security", `Blacklisted visitor ${blacklistItem.name} (${blacklistItem.phone}) attempted system access check. Reason flagged: ${blacklistItem.reason}`, "Failed");
-    
+
     document.getElementById("modal-blacklist-alarm").classList.add("active");
 }
 
 function playSecurityAlarmBeep() {
     try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
+
         const playBeepNode = (freq, duration, delay) => {
             setTimeout(() => {
                 let osc = audioCtx.createOscillator();
@@ -4499,11 +4499,11 @@ function playSecurityAlarmBeep() {
                 osc.stop(audioCtx.currentTime + duration);
             }, delay);
         };
-        
+
         playBeepNode(500, 0.35, 0);
         playBeepNode(500, 0.35, 450);
         playBeepNode(500, 0.35, 900);
-    } catch(err) {
+    } catch (err) {
         console.error("Audio beep synthesis failed:", err);
     }
 }
@@ -4513,7 +4513,7 @@ function handleAdminOverrideBypass() {
     if (password === "admin" || password === "123") {
         showToast("Bypass Authorized", "Admin authorization accepted. Visitor registration cleared.", "warning");
         document.getElementById("modal-blacklist-alarm").classList.remove("active");
-        
+
         // Proceed directly to visitor approval flow (OTP removed)
         executeFinalVisitorApprovalFlow();
     } else {
@@ -4528,11 +4528,11 @@ let generatedOTP = "";
 
 function triggerOTPVerification(visitor) {
     generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
-    
+
     const phone = visitor.phone;
     const masked = phone.substring(0, 4) + " XXXXX XX" + phone.substring(phone.length - 2);
     document.getElementById("otp-phone-display").innerText = masked;
-    
+
     // Log outbound alert simulator logs
     logNotificationSimulator(
         "Verification Code",
@@ -4540,14 +4540,14 @@ function triggerOTPVerification(visitor) {
         visitor.phone,
         `GATEKEEPER SECURITY\nYour registration verification code is: ${generatedOTP}. Validate at front desk.`
     );
-    
+
     // Open Verification modal
     document.getElementById("modal-otp-verify").classList.add("active");
     setTimeout(() => {
         const firstInput = document.getElementById("otp-1");
         if (firstInput) firstInput.focus();
     }, 150);
-    
+
     // Slide SMS bubble to client
     showSimulatedPhoneSMS(visitor.name, `GATEKEEPER VMS: Verification code is ${generatedOTP}. Valid for 5 minutes.`);
 }
@@ -4555,7 +4555,7 @@ function triggerOTPVerification(visitor) {
 function showSimulatedPhoneSMS(name, message) {
     const existing = document.getElementById("simulated-sms-bubble-box");
     if (existing) existing.remove();
-    
+
     const sms = document.createElement("div");
     sms.id = "simulated-sms-bubble-box";
     sms.style.position = "fixed";
@@ -4572,7 +4572,7 @@ function showSimulatedPhoneSMS(name, message) {
     sms.style.fontSize = "0.75rem";
     sms.style.fontFamily = "'Inter', sans-serif";
     sms.style.transition = "transform 0.3s ease, opacity 0.3s ease";
-    
+
     sms.innerHTML = `
         <div style="display:flex; justify-content:space-between; margin-bottom:6px; color:#3b82f6; font-weight:700;">
             <span>?? SMS ALERT</span>
@@ -4580,9 +4580,9 @@ function showSimulatedPhoneSMS(name, message) {
         </div>
         <div style="line-height:1.4;">${message}</div>
     `;
-    
+
     document.body.appendChild(sms);
-    
+
     setTimeout(() => {
         sms.style.opacity = "0";
         sms.style.transform = "translateY(20px)";
@@ -4593,14 +4593,14 @@ function showSimulatedPhoneSMS(name, message) {
 function verifyOTPCode() {
     const digits = document.querySelectorAll(".otp-input-digit");
     const entered = Array.from(digits).map(d => d.value).join("");
-    
+
     if (entered === generatedOTP) {
         showToast("OTP Verified", "Mobile validation successful.", "success");
         document.getElementById("modal-otp-verify").classList.remove("active");
-        
+
         // Reset code values
         digits.forEach(d => d.value = "");
-        
+
         // Complete the entry intake
         executeFinalVisitorApprovalFlow();
     } else {
@@ -4615,20 +4615,20 @@ function verifyOTPCode() {
 // ==========================================================================
 function simulateFaceMatch() {
     if (state.visitors.length === 0) return;
-    
+
     // Scan matching previous visitors names to match templates
     const match = state.visitors[Math.floor(Math.random() * state.visitors.length)];
-    
+
     showToast("AI Face Match Detected", `Recognized Returning Visitor: ${match.name} (99.4% Match)`, "success");
     addNotificationAlert("AI Face Identification", `Matched face biometric template to historic guest ${match.name} (${match.id}).`, "success");
     addAuditLog("AI Face Biometrics Match", "Security", `Recognized returning visitor face profile as: ${match.name} (99.4% match confidence)`);
-    
+
     // Add auto-fill prompt button
     const container = document.querySelector(".photo-fallback");
     if (container) {
         const oldBtn = document.getElementById("btn-ai-autofill-face");
         if (oldBtn) oldBtn.remove();
-        
+
         const btn = document.createElement("button");
         btn.type = "button";
         btn.id = "btn-ai-autofill-face";
@@ -4658,13 +4658,13 @@ function checkDuplicateVisitor(phone, idNumber) {
     if (!dup && idNumber) {
         dup = state.visitors.find(v => v.idNumber === idNumber);
     }
-    
+
     if (dup) {
         const visits = state.visitors.filter(v => v.phone === dup.phone || (idNumber && v.idNumber === idNumber)).length;
-        
+
         showToast("AI Duplicate Alert", `Returning Visitor Detected: ${dup.name} (${dup.company}) - ${visits} previous visits.`, "warning");
         addNotificationAlert("Security Log Check", `AI Check: duplicate visitor matching details: ${dup.name}. Visits: ${visits}.`, "warning");
-        
+
         const badgeSpan = document.getElementById("frequent-visitor-badge");
         if (badgeSpan) {
             badgeSpan.innerText = `Frequent Visitor (${visits} Visits)`;
@@ -4685,22 +4685,22 @@ function checkDuplicateVisitor(phone, idNumber) {
 function triggerOCRScanSimulation() {
     const ocrOverlay = document.getElementById("ocr-scan-overlay");
     if (!ocrOverlay) return;
-    
+
     ocrOverlay.classList.remove("hidden");
     showToast("AI OCR Processor", "Scanning uploaded document file structure...", "info");
-    
+
     setTimeout(() => {
         ocrOverlay.classList.add("hidden");
-        
+
         const mockDocuments = [
             { name: "Manoj Kumar", phone: "+91 98765 01101", idType: "Aadhaar", idNumber: "1234-5678-9012", address: "Peelamedu, Coimbatore, TN", company: "Barani Vendor" },
             { name: "Sarah Jenkins", phone: "+91 99443 88123", idType: "Aadhaar", idNumber: "9876-5432-1098", address: "Gandinagar, Chennai, TN", company: "TUV Sud Audits" },
             { name: "Rahul Sharma", phone: "+91 99887 76655", idType: "Aadhaar", idNumber: "8827-3618-2736", address: "Sector 4, Bangalore, KA", company: "Acme Tech Partner" },
             { name: "Amir Khan", phone: "+92 300 1234567", idType: "CNIC", idNumber: "35201-1234567-8", address: "Lahore, Punjab", company: "Indus Logistics" }
         ];
-        
+
         const doc = mockDocuments[Math.floor(Math.random() * mockDocuments.length)];
-        
+
         // Fill form fields
         document.getElementById("reg-visitor-name").value = doc.name;
         document.getElementById("reg-visitor-phone").value = doc.phone;
@@ -4708,14 +4708,14 @@ function triggerOCRScanSimulation() {
         document.getElementById("reg-visitor-id-number").value = doc.idNumber;
         document.getElementById("reg-visitor-address").value = doc.address;
         document.getElementById("reg-visitor-company").value = doc.company;
-        
+
         const label = document.getElementById("id-doc-upload-label");
         if (label) label.innerText = `${doc.idType}_ID_Proof_Verified.png`;
-        
+
         showToast("AI OCR Completed", `Scanned details for ${doc.name} successfully.`, "success");
         addNotificationAlert("AI OCR Extract", `Scanned ${doc.idType} document with ID number: ${doc.idNumber}.`, "success");
         addAuditLog("OCR Document Scan", "Security", `Processed AI OCR parsing for ${doc.name} (${doc.idType})`);
-        
+
         // Duplicate analyze
         checkDuplicateVisitor(doc.phone, doc.idNumber);
     }, 2000);
@@ -4726,7 +4726,7 @@ function toggleChatbotPanel() {
     const panel = document.getElementById("chatbot-panel");
     if (!panel) return;
     panel.classList.toggle("hidden");
-    
+
     if (!panel.classList.contains("hidden")) {
         const msgs = document.getElementById("chatbot-messages");
         if (msgs.children.length === 0) {
@@ -4744,13 +4744,13 @@ function handleChatbotQuery(e) {
     const input = document.getElementById("chatbot-input");
     const query = input.value.trim();
     if (!query) return;
-    
+
     addChatbotMessage(query, "user");
     input.value = "";
-    
+
     // Simulated thinking bubble
     const typing = addChatbotMessage("Agent is typing...", "bot-typing");
-    
+
     setTimeout(() => {
         typing.remove();
         const reply = processChatbotNLP(query);
@@ -4761,9 +4761,9 @@ function handleChatbotQuery(e) {
 function addChatbotMessage(text, sender) {
     const container = document.getElementById("chatbot-messages");
     if (!container) return;
-    
+
     const bubble = document.createElement("div");
-    
+
     if (sender === "user") {
         bubble.style.background = "var(--accent-primary-gradient)";
         bubble.style.color = "#ffffff";
@@ -4798,7 +4798,7 @@ function addChatbotMessage(text, sender) {
         bubble.style.lineHeight = "1.4";
         bubble.innerHTML = text;
     }
-    
+
     container.appendChild(bubble);
     container.scrollTop = container.scrollHeight;
     return bubble;
@@ -4816,12 +4816,12 @@ function processChatbotNLP(query) {
 // ==========================================================================
 // 25b. ADMIN FEATURE: Blacklist CRUD Operations
 // ==========================================================================
-window.openBlacklistModal = function(id = "") {
+window.openBlacklistModal = function (id = "") {
     const modal = document.getElementById("modal-blacklist");
     const form = document.getElementById("blacklist-crud-form");
     const title = document.getElementById("blacklist-modal-title");
     form.reset();
-    
+
     if (id === "") {
         title.innerText = "Add Blacklist Restricted Record";
         document.getElementById("crud-blacklist-id").value = "";
@@ -4840,7 +4840,7 @@ window.openBlacklistModal = function(id = "") {
     modal.classList.add("active");
 };
 
-window.saveBlacklistCRUD = function(e) {
+window.saveBlacklistCRUD = function (e) {
     e.preventDefault();
     const id = document.getElementById("crud-blacklist-id").value;
     const name = document.getElementById("crud-blacklist-name").value.trim();
@@ -4880,7 +4880,7 @@ window.saveBlacklistCRUD = function(e) {
     renderSettingsData();
 };
 
-window.deleteBlacklistCRUD = function(id) {
+window.deleteBlacklistCRUD = function (id) {
     if (!confirm("Are you sure you want to remove this restriction record?")) return;
     const idx = state.blacklist.findIndex(b => b.id === id);
     if (idx !== -1) {
@@ -4906,29 +4906,29 @@ function initializeNewFeatures() {
     if (btnOcr) {
         btnOcr.addEventListener("click", triggerOCRScanSimulation);
     }
-    
+
     // Blacklist crud button
     const btnAddBlacklist = document.getElementById("btn-add-blacklist-modal");
     if (btnAddBlacklist) {
         btnAddBlacklist.addEventListener("click", () => openBlacklistModal());
     }
-    
+
     const formBlacklist = document.getElementById("blacklist-crud-form");
     if (formBlacklist) {
         formBlacklist.addEventListener("submit", saveBlacklistCRUD);
     }
-    
+
     const btnOverride = document.getElementById("btn-override-blacklist");
     if (btnOverride) {
         btnOverride.addEventListener("click", handleAdminOverrideBypass);
     }
-    
+
     // OTP submit
     const btnSubmitOtp = document.getElementById("btn-submit-otp");
     if (btnSubmitOtp) {
         btnSubmitOtp.addEventListener("click", verifyOTPCode);
     }
-    
+
     const btnResendOtp = document.getElementById("btn-resend-otp");
     if (btnResendOtp) {
         btnResendOtp.addEventListener("click", () => {
@@ -4941,7 +4941,7 @@ function initializeNewFeatures() {
             }, 3000);
         });
     }
-    
+
     // Chatbot toggles (original floating + new header icon)
     const btnToggleBot = document.getElementById("btn-toggle-chatbot");
     if (btnToggleBot) {
@@ -4959,7 +4959,7 @@ function initializeNewFeatures() {
     if (formBot) {
         formBot.addEventListener("submit", handleChatbotQuery);
     }
-    
+
     // Host-sim toggle - new header icon
     const btnToggleHostSimHeader = document.getElementById("btn-toggle-host-sim-header");
     if (btnToggleHostSimHeader) {
@@ -4974,31 +4974,31 @@ function initializeNewFeatures() {
             }
         });
     }
-    
+
     // Export Excel XLS button
     const btnExportXls = document.getElementById("btn-export-reports-xls");
     if (btnExportXls) {
         btnExportXls.addEventListener("click", exportReportsXLS);
     }
-    
+
     // PDF download button
     const btnDownloadPdf = document.getElementById("btn-download-pdf-report");
     if (btnDownloadPdf) {
         btnDownloadPdf.addEventListener("click", downloadPDFReportFile);
     }
-    
+
     // Input digits validation focus shifts, arrow keys, paste support, and auto-submit
     const digits = document.querySelectorAll(".otp-input-digit");
     digits.forEach((digit, index) => {
         digit.addEventListener("input", (e) => {
             // Keep only digits
             e.target.value = e.target.value.replace(/[^0-9]/g, "");
-            
+
             // Auto focus next input
             if (e.target.value.length === 1 && index < 3) {
                 digits[index + 1].focus();
             }
-            
+
             // Auto submit if all fields are populated
             const entered = Array.from(digits).map(d => d.value).join("");
             if (entered.length === 4) {
@@ -5030,7 +5030,7 @@ function initializeNewFeatures() {
             const clipboardData = e.clipboardData || window.clipboardData;
             const pastedText = clipboardData.getData("text") || "";
             const cleanDigits = pastedText.replace(/[^0-9]/g, "").substring(0, 4);
-            
+
             if (cleanDigits.length > 0) {
                 // Populate starting from the first input field
                 for (let i = 0; i < 4; i++) {
@@ -5043,7 +5043,7 @@ function initializeNewFeatures() {
                 // Focus the appropriate digit input
                 const nextFocusIndex = Math.min(cleanDigits.length, 3);
                 digits[nextFocusIndex].focus();
-                
+
                 // If 4 digits were pasted, trigger verification immediately
                 if (cleanDigits.length === 4) {
                     verifyOTPCode();
@@ -5536,7 +5536,7 @@ async function syncFromSupabase() {
     if (!supabaseClient) return;
     try {
         showToast("Syncing Database", "Fetching latest data from Supabase...", "info");
-        
+
         // Sync Branches
         const { data: branches, error: branchErr } = await supabaseClient.from('branches').select('*');
         if (!branchErr && branches) {
@@ -5608,7 +5608,7 @@ async function pushLocalToSupabase() {
     }
     try {
         showToast("Syncing Database", "Uploading local data to Supabase...", "info");
-        
+
         // Upsert branches
         const branchesToPush = [
             { name: "Chennai HQ", location: "Chennai, Tamil Nadu, India" },
@@ -5629,7 +5629,7 @@ async function pushLocalToSupabase() {
             const { error: empErr } = await supabaseClient.from('employees').upsert(dbEmployees, { onConflict: 'employee_code' });
             if (empErr) throw new Error("Employees upsert: " + empErr.message);
         }
-        
+
         // Upsert blacklist
         if (state.blacklist && state.blacklist.length > 0) {
             const dbBlacklist = state.blacklist.map(mapBlacklistToDb);
@@ -5702,12 +5702,12 @@ function loadSettingsIntoForm() {
         document.getElementById("cfg-terminal-gate").value = s.terminalGate || "Barani Security Gate";
         document.getElementById("display-gate-name").innerText = s.terminalGate || "Barani Security Gate";
     }
-    
+
     // Cloud Sync Settings
     if (document.getElementById("cfg-supabase-url")) document.getElementById("cfg-supabase-url").value = s.supabaseUrl || "";
     if (document.getElementById("cfg-supabase-key")) document.getElementById("cfg-supabase-key").value = s.supabaseKey || "";
     if (document.getElementById("cfg-supabase-bucket")) document.getElementById("cfg-supabase-bucket").value = s.supabaseBucket || "visitor-passes";
-    
+
     // GCP Settings (Legacy/Deprecated)
     if (document.getElementById("cfg-gcp-backend-url")) document.getElementById("cfg-gcp-backend-url").value = s.gcpBackendUrl || "";
     if (document.getElementById("cfg-gcp-ai-url")) document.getElementById("cfg-gcp-ai-url").value = s.gcpAiUrl || "";
@@ -5720,10 +5720,10 @@ function loadSettingsIntoForm() {
 function initializeCloudSettings() {
     // Inject inputs values
     loadSettingsIntoForm();
-    
+
     // Listen for settings inputs changes
     const cloudInputs = [
-        "cfg-sms-provider", "cfg-wa-token", "cfg-wa-phone-id", 
+        "cfg-sms-provider", "cfg-wa-token", "cfg-wa-phone-id",
         "cfg-smtp-host", "cfg-smtp-port", "cfg-terminal-gate",
         "cfg-supabase-url", "cfg-supabase-key", "cfg-supabase-bucket",
         "cfg-gcp-backend-url", "cfg-gcp-ai-url", "cfg-public-web-url",
@@ -5737,12 +5737,12 @@ function initializeCloudSettings() {
                 state.settings = state.settings || {};
                 state.settings[prop] = el.value;
                 localStorage.setItem("gk_settings", JSON.stringify(state.settings));
-                
+
                 // Re-initialize Supabase client
                 if (prop === "supabaseUrl" || prop === "supabaseKey") {
                     initSupabase();
                 }
-                
+
                 showToast("Settings Updated", `Configured value saved for ${id.replace('cfg-', '').toUpperCase()}`, "success");
                 addAuditLog("Update System Config", "Settings", `Modified configuration parameter: ${id}`);
             });
@@ -5765,7 +5765,7 @@ function initializeCloudSettings() {
     if (btnSeedCloud) {
         btnSeedCloud.addEventListener("click", pushLocalToSupabase);
     }
-    
+
     const btnSyncCloud = document.getElementById("btn-sync-cloud-db");
     if (btnSyncCloud) {
         btnSyncCloud.addEventListener("click", syncFromSupabase);
@@ -5775,7 +5775,7 @@ function initializeCloudSettings() {
 
     // Initialize Supabase Client
     initSupabase();
-    
+
     // Trigger sync
     if (supabaseClient) {
         syncFromSupabase();
@@ -5785,16 +5785,16 @@ function initializeCloudSettings() {
 // Base64 Data URL to Blob Converter helper
 function dataURLtoBlob(dataurl) {
     try {
-        var arr = dataurl.split(','), 
+        var arr = dataurl.split(','),
             mime = arr[0].match(/:(.*?);/)[1],
-            bstr = atob(arr[1]), 
-            n = bstr.length, 
+            bstr = atob(arr[1]),
+            n = bstr.length,
             u8arr = new Uint8Array(n);
-        while(n--){
+        while (n--) {
             u8arr[n] = bstr.charCodeAt(n);
         }
-        return new Blob([u8arr], {type:mime});
-    } catch(err) {
+        return new Blob([u8arr], { type: mime });
+    } catch (err) {
         console.error("dataURLtoBlob conversion error:", err);
         return null;
     }
@@ -5824,11 +5824,11 @@ function handlePmAttachmentsUpload(e) {
 
     const files = e.target.files;
     if (!files || files.length === 0) return;
-    
+
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const reader = new FileReader();
-        reader.onload = function(evt) {
+        reader.onload = function (evt) {
             const fileData = {
                 id: "ATT" + Date.now() + "_" + Math.floor(Math.random() * 1000),
                 fileName: file.name,
@@ -5852,7 +5852,7 @@ function renderPmFilesList() {
     uploadedFiles.forEach(file => {
         const div = document.createElement("div");
         div.className = "file-item";
-        
+
         let removeButton = "";
         if (!isViewOnly) {
             removeButton = `<button type="button" class="btn-remove-file" onclick="removeUploadedFile('${file.id}')">&times;</button>`;
@@ -5866,7 +5866,7 @@ function renderPmFilesList() {
     });
 }
 
-window.removeUploadedFile = function(fileId) {
+window.removeUploadedFile = function (fileId) {
     uploadedFiles = uploadedFiles.filter(f => f.id !== fileId);
     renderPmFilesList();
 };
@@ -5888,14 +5888,14 @@ function enablePmFormFields(isEnabled) {
         const el = document.getElementById(id);
         if (el) el.disabled = !isEnabled;
     });
-    
+
     const draftBtn = document.getElementById("btn-pm-draft");
     const submitBtn = document.getElementById("btn-pm-submit");
     const editBtn = document.getElementById("btn-pm-edit");
-    
+
     if (draftBtn) draftBtn.style.display = isEnabled ? "block" : "none";
     if (submitBtn) submitBtn.style.display = isEnabled ? "block" : "none";
-    
+
     if (editBtn) {
         if (!isEnabled) {
             const editId = document.getElementById("pm-edit-id").value;
@@ -5929,23 +5929,23 @@ function enablePmFormFields(isEnabled) {
 
 function savePurchaseManual(e, status) {
     if (e) e.preventDefault();
-    
+
     const dept = document.getElementById("pm-dept").value.trim();
     const agentName = document.getElementById("pm-agent-name").value.trim();
     const companyName = document.getElementById("pm-company-name").value.trim();
     const contactNumber = document.getElementById("pm-contact-number").value.trim();
     const numWorkersVal = document.getElementById("pm-num-workers").value;
-    
+
     if (status === "Submitted") {
         if (!dept || !agentName || !companyName || !contactNumber || !numWorkersVal) {
             showToast("Required Fields Missing", "Please fill in all mandatory fields before submitting.", "warning");
             return;
         }
     }
-    
+
     const editId = document.getElementById("pm-edit-id").value;
     let pmObj = {};
-    
+
     if (editId) {
         const existingIdx = state.purchaseManuals.findIndex(pm => pm.id === editId);
         if (existingIdx !== -1) {
@@ -5955,7 +5955,7 @@ function savePurchaseManual(e, status) {
         pmObj.id = "PM" + (1001 + state.purchaseManuals.length);
         pmObj.dateCreated = getLocalDateStr();
     }
-    
+
     pmObj.dept = dept;
     pmObj.agentName = agentName;
     pmObj.agentAuthDetail = document.getElementById("pm-agent-auth-detail").value.trim();
@@ -5966,7 +5966,7 @@ function savePurchaseManual(e, status) {
     pmObj.contractNo = document.getElementById("pm-contract-no").value.trim();
     pmObj.contractDate = document.getElementById("pm-contract-date").value;
     pmObj.noContract = document.getElementById("pm-no-contract").value;
-    
+
     pmObj.natureWork = document.getElementById("pm-nature-work").value.trim();
     pmObj.requiredOutput = document.getElementById("pm-required-output").value.trim();
     pmObj.experience = parseInt(document.getElementById("pm-experience").value) || 0;
@@ -5974,7 +5974,7 @@ function savePurchaseManual(e, status) {
     pmObj.eligibility = document.getElementById("pm-eligibility").value;
     pmObj.risksInvolved = document.getElementById("pm-risks-involved").value.trim();
     pmObj.qualityReq = document.getElementById("pm-quality-req").value.trim();
-    
+
     pmObj.duration = document.getElementById("pm-duration").value.trim();
     pmObj.specialToolNeeded = document.getElementById("pm-special-tool-needed").value;
     pmObj.specialEquip = document.getElementById("pm-special-equip").value.trim();
@@ -5982,21 +5982,21 @@ function savePurchaseManual(e, status) {
     pmObj.skillTrainingReq = document.getElementById("pm-skill-training-req").value;
     pmObj.specialSkills = document.getElementById("pm-special-skills").value.trim();
     pmObj.sparesProvider = document.getElementById("pm-spares-provider").value.trim();
-    
+
     pmObj.inspectReq = document.getElementById("pm-inspect-req").value;
     pmObj.procedureAvail = document.getElementById("pm-procedure-avail").value;
     pmObj.inspectRepReq = document.getElementById("pm-inspect-rep-req").value;
     pmObj.estDefectiveProb = document.getElementById("pm-est-defective-prob").value;
     pmObj.correctionPlanPrepared = document.getElementById("pm-correction-plan-prepared").value;
     pmObj.sparePartsReq = document.getElementById("pm-spare-parts-req").value;
-    
+
     pmObj.envHaz = document.getElementById("pm-env-haz").value;
     pmObj.envWaste = document.getElementById("pm-env-waste").value;
     pmObj.envEmissions = document.getElementById("pm-env-emissions").value;
     pmObj.envLegal = document.getElementById("pm-env-legal").value;
     pmObj.envOcpsFollowed = document.getElementById("pm-env-ocps-followed").value;
     pmObj.envControls = document.getElementById("pm-env-controls").value.trim();
-    
+
     pmObj.numWorkers = parseInt(numWorkersVal) || 1;
     pmObj.safInsurance = document.getElementById("pm-saf-insurance").value;
     pmObj.safRisk = document.getElementById("pm-saf-risk").value;
@@ -6011,13 +6011,13 @@ function savePurchaseManual(e, status) {
     pmObj.safPermitProvided = document.getElementById("pm-saf-permit-provided").value;
     pmObj.safConductBriefed = document.getElementById("pm-saf-conduct-briefed").value;
     pmObj.safPpe = document.getElementById("pm-saf-ppe").value;
-    
+
     pmObj.status = status;
-    
+
     if (status === "Submitted") {
         pmObj.dateSubmitted = getLocalDateStr();
     }
-    
+
     pmObj.attachments = [];
     uploadedFiles.forEach(file => {
         pmObj.attachments.push({ id: file.id, fileName: file.fileName });
@@ -6031,11 +6031,11 @@ function savePurchaseManual(e, status) {
             });
         }
     });
-    
+
     if (!editId) {
         state.purchaseManuals.push(pmObj);
     }
-    
+
     saveState();
     if (supabaseClient) {
         supabaseClient.from('purchase_manuals').upsert(mapPurchaseManualToDb(pmObj), { onConflict: 'manual_code' })
@@ -6043,16 +6043,16 @@ function savePurchaseManual(e, status) {
     }
     updateWorkPermitMenuState();
     refreshAllDataViews();
-    
-    const toastTitle = status === "Draft" ? 
-        (state.currentLang === "ta" ? "வரைவு சேமிக்கப்பட்டது" : "Draft Saved") : 
+
+    const toastTitle = status === "Draft" ?
+        (state.currentLang === "ta" ? "வரைவு சேமிக்கப்பட்டது" : "Draft Saved") :
         (state.currentLang === "ta" ? "சமர்ப்பிக்கப்பட்டது" : "Manual Submitted");
-    const toastMsg = status === "Draft" ? 
-        (state.currentLang === "ta" ? "கொள்முதல் கையேடு வரைவாக சேமிக்கப்பட்டது." : "Purchase manual saved as draft.") : 
+    const toastMsg = status === "Draft" ?
+        (state.currentLang === "ta" ? "கொள்முதல் கையேடு வரைவாக சேமிக்கப்பட்டது." : "Purchase manual saved as draft.") :
         (state.currentLang === "ta" ? "கொள்முதல் கையேடு மேலாளர் ஒப்புதலுக்கு சமர்ப்பிக்கப்பட்டது." : "Purchase manual submitted for manager approval.");
-    
+
     showToast(toastTitle, toastMsg, "success");
-    
+
     document.getElementById("pm-list-container").classList.remove("hidden");
     document.getElementById("pm-form-container").classList.add("hidden");
 }
@@ -6061,7 +6061,7 @@ function renderPurchaseManuals() {
     const body = document.getElementById("pm-list-table-body");
     if (!body) return;
     body.innerHTML = "";
-    
+
     if (state.purchaseManuals.length === 0) {
         body.innerHTML = `
             <tr>
@@ -6073,11 +6073,11 @@ function renderPurchaseManuals() {
         `;
         return;
     }
-    
+
     state.purchaseManuals.forEach(pm => {
         const tr = document.createElement("tr");
         let actionButtons = "";
-        
+
         if (pm.status === "Draft") {
             actionButtons = `
                 <button class="btn btn-secondary btn-sm" onclick="editPurchaseManual('${pm.id}')">${state.currentLang === "ta" ? "தொகு" : "Edit"}</button>
@@ -6095,11 +6095,11 @@ function renderPurchaseManuals() {
         } else {
             actionButtons = `<span class="text-secondary text-xs">${state.currentLang === "ta" ? "செயல்கள் இல்லை" : "No Actions"}</span>`;
         }
-        
-        const statusText = state.currentLang === "ta" ? 
+
+        const statusText = state.currentLang === "ta" ?
             (pm.status === "Draft" ? "வரைவு" : pm.status === "Submitted" ? "நிலுவையில்" : pm.status === "Approved" ? "அனுமதிக்கப்பட்டது" : "நிராகரிக்கப்பட்டது") :
             pm.status;
-        
+
         tr.innerHTML = `
             <td><code>${pm.id}</code></td>
             <td>${pm.dept}</td>
@@ -6118,18 +6118,18 @@ function renderPurchaseManuals() {
     });
 }
 
-window.editPurchaseManual = function(pmId) {
+window.editPurchaseManual = function (pmId) {
     const pm = state.purchaseManuals.find(p => p.id === pmId);
     if (!pm) return;
-    
+
     document.getElementById("pm-list-container").classList.add("hidden");
     document.getElementById("pm-form-container").classList.remove("hidden");
-    
+
     document.getElementById("pm-edit-id").value = pm.id;
     document.getElementById("pm-form-title").innerText = (state.currentLang === "ta" ? "கொள்முதல் கையேட்டைத் தொகு" : "Edit Purchase Manual") + " - " + pm.id;
-    
+
     const getYesNoVal = (val) => (val === true || val === "Yes") ? "Yes" : "No";
-    
+
     document.getElementById("pm-dept").value = pm.dept;
     document.getElementById("pm-agent-name").value = pm.agentName;
     document.getElementById("pm-agent-auth-detail").value = pm.agentAuthDetail || "";
@@ -6140,7 +6140,7 @@ window.editPurchaseManual = function(pmId) {
     document.getElementById("pm-contract-no").value = pm.contractNo || "";
     document.getElementById("pm-contract-date").value = pm.contractDate || "";
     document.getElementById("pm-no-contract").value = pm.noContract || "No";
-    
+
     document.getElementById("pm-nature-work").value = pm.natureWork || "";
     document.getElementById("pm-required-output").value = pm.requiredOutput || "";
     document.getElementById("pm-experience").value = pm.experience || 0;
@@ -6148,7 +6148,7 @@ window.editPurchaseManual = function(pmId) {
     document.getElementById("pm-eligibility").value = (pm.eligibility === "No" || pm.eligibility === "Yes") ? pm.eligibility : "Yes";
     document.getElementById("pm-risks-involved").value = pm.risksInvolved || "";
     document.getElementById("pm-quality-req").value = pm.qualityReq || "";
-    
+
     document.getElementById("pm-duration").value = pm.duration || "";
     document.getElementById("pm-special-tool-needed").value = pm.specialToolNeeded || "No";
     document.getElementById("pm-special-equip").value = pm.specialEquip || "";
@@ -6156,27 +6156,27 @@ window.editPurchaseManual = function(pmId) {
     document.getElementById("pm-skill-training-req").value = pm.skillTrainingReq || "No";
     document.getElementById("pm-special-skills").value = pm.specialSkills || "";
     document.getElementById("pm-spares-provider").value = pm.sparesProvider || "";
-    
+
     document.getElementById("pm-inspect-req").value = getYesNoVal(pm.inspectReq);
     document.getElementById("pm-procedure-avail").value = getYesNoVal(pm.procedureAvail);
     document.getElementById("pm-inspect-rep-req").value = getYesNoVal(pm.inspectRepReq);
     document.getElementById("pm-est-defective-prob").value = getYesNoVal(pm.estDefectiveProb);
     document.getElementById("pm-correction-plan-prepared").value = getYesNoVal(pm.correctionPlanPrepared);
     document.getElementById("pm-spare-parts-req").value = getYesNoVal(pm.sparePartsReq);
-    
+
     document.getElementById("pm-env-haz").value = getYesNoVal(pm.envHaz);
     document.getElementById("pm-env-waste").value = getYesNoVal(pm.envWaste);
     document.getElementById("pm-env-emissions").value = getYesNoVal(pm.envEmissions);
     document.getElementById("pm-env-legal").value = getYesNoVal(pm.envLegal);
     document.getElementById("pm-env-ocps-followed").value = getYesNoVal(pm.envOcpsFollowed);
-    
+
     // For legacy envControls which was boolean, handle it safely:
     if (typeof pm.envControls === "boolean") {
         document.getElementById("pm-env-controls").value = pm.envControls ? "Yes, control measures implemented." : "None";
     } else {
         document.getElementById("pm-env-controls").value = pm.envControls || "";
     }
-    
+
     document.getElementById("pm-num-workers").value = pm.numWorkers || 1;
     document.getElementById("pm-saf-insurance").value = getYesNoVal(pm.safInsurance);
     document.getElementById("pm-saf-risk").value = getYesNoVal(pm.safRisk);
@@ -6191,9 +6191,9 @@ window.editPurchaseManual = function(pmId) {
     document.getElementById("pm-saf-permit-provided").value = getYesNoVal(pm.safPermitProvided);
     document.getElementById("pm-saf-conduct-briefed").value = getYesNoVal(pm.safConductBriefed);
     document.getElementById("pm-saf-ppe").value = getYesNoVal(pm.safPpe);
-    
+
     enablePmFormFields(true);
-    
+
     uploadedFiles = [];
     const manualAttachments = state.purchaseManualAttachments.filter(a => a.purchaseManualId === pm.id);
     manualAttachments.forEach(att => {
@@ -6202,13 +6202,13 @@ window.editPurchaseManual = function(pmId) {
     renderPmFilesList();
 };
 
-window.viewPurchaseManualDetail = function(pmId) {
+window.viewPurchaseManualDetail = function (pmId) {
     editPurchaseManual(pmId);
     enablePmFormFields(false);
     document.getElementById("pm-form-title").innerText = (state.currentLang === "ta" ? "கொள்முதல் கையேடு விவரங்கள்" : "Purchase Manual Details") + " - " + pmId;
 };
 
-window.deletePurchaseManual = function(pmId) {
+window.deletePurchaseManual = function (pmId) {
     if (confirm(state.currentLang === "ta" ? "இந்த கொள்முதல் கையேட்டை நிச்சயமாக நீக்க விரும்புகிறீர்களா?" : "Are you sure you want to delete this Purchase Manual?")) {
         state.purchaseManuals = state.purchaseManuals.filter(p => p.id !== pmId);
         state.purchaseManualAttachments = state.purchaseManualAttachments.filter(a => a.purchaseManualId !== pmId);
@@ -6227,7 +6227,7 @@ window.deletePurchaseManual = function(pmId) {
     }
 };
 
-window.approvePurchaseManual = function(pmId) {
+window.approvePurchaseManual = function (pmId) {
     const idx = state.purchaseManuals.findIndex(p => p.id === pmId);
     if (idx === -1) return;
     state.purchaseManuals[idx].status = "Approved";
@@ -6254,7 +6254,7 @@ window.approvePurchaseManual = function(pmId) {
     );
 };
 
-window.rejectPurchaseManual = function(pmId) {
+window.rejectPurchaseManual = function (pmId) {
     const comments = prompt(state.currentLang === "ta" ? "நிராகரிப்புக்கான காரணம்:" : "Reason for rejection:");
     if (comments === null) return;
     const idx = state.purchaseManuals.findIndex(p => p.id === pmId);
@@ -6281,10 +6281,10 @@ window.rejectPurchaseManual = function(pmId) {
         "danger"
     );
 };
-window.approveSafetyPermit = function(wpId) {
+window.approveSafetyPermit = function (wpId) {
     const idx = state.workPermits.findIndex(w => w.id === wpId);
     if (idx === -1) return;
-    
+
     state.workPermits[idx].status = "Pending Final Authorization";
     state.workPermits[idx].safetyOfficerApproved = true;
     saveState();
@@ -6293,7 +6293,7 @@ window.approveSafetyPermit = function(wpId) {
             .then(({ error }) => { if (error) console.error("Work permit safety approval cloud sync error:", error); });
     }
     refreshAllDataViews();
-    
+
     showToast(
         state.currentLang === "ta" ? "பாதுகாப்பு அங்கீகரிக்கப்பட்டது" : "Safety Approved",
         state.currentLang === "ta" ? `வேலை அனுமதிச்சீட்டு ${wpId} பாதுகாப்பு அதிகாரி ஒப்புதல் அளித்தார்.` : `Work permit ${wpId} safety checks approved. Awaiting final authorization.`,
@@ -6301,10 +6301,10 @@ window.approveSafetyPermit = function(wpId) {
     );
 };
 
-window.authorizePermit = function(wpId) {
+window.authorizePermit = function (wpId) {
     const idx = state.workPermits.findIndex(w => w.id === wpId);
     if (idx === -1) return;
-    
+
     state.workPermits[idx].status = "Approved";
     state.workPermits[idx].finalAuthorized = true;
     saveState();
@@ -6313,7 +6313,7 @@ window.authorizePermit = function(wpId) {
             .then(({ error }) => { if (error) console.error("Work permit authorization cloud sync error:", error); });
     }
     refreshAllDataViews();
-    
+
     showToast(
         state.currentLang === "ta" ? "முழுமையாக அங்கீகரிக்கப்பட்டது" : "Fully Authorized",
         state.currentLang === "ta" ? `வேலை அனுமதிச்சீட்டு ${wpId} இறுதி அனுமதி வழங்கப்பட்டது.` : `Work permit ${wpId} is now active and fully authorized.`,
@@ -6321,39 +6321,39 @@ window.authorizePermit = function(wpId) {
     );
 };
 
-window.viewWorkPermitDetail = function(wpId) {
+window.viewWorkPermitDetail = function (wpId) {
     const wp = state.workPermits.find(w => w.id === wpId);
     if (!wp) return;
-    
+
     const pm = state.purchaseManuals.find(p => p.id === wp.purchaseManualId) || {};
-    
+
     // Set content in the preview modal
     document.getElementById("wp-preview-id").innerText = wp.id;
     document.getElementById("wp-preview-pm-id").innerText = wp.purchaseManualId;
     document.getElementById("wp-preview-contractor").innerText = wp.companyEntity || pm.companyName || "N/A";
     document.getElementById("wp-preview-location").innerText = wp.locationSite || "N/A";
     document.getElementById("wp-preview-date").innerText = wp.conductedOn || "N/A";
-    
+
     document.getElementById("wp-preview-start-date").innerText = wp.startDate;
     document.getElementById("wp-preview-end-date").innerText = wp.endDate;
     document.getElementById("wp-preview-start-time").innerText = wp.startTime || "N/A";
     document.getElementById("wp-preview-end-time").innerText = wp.endTime || "N/A";
-    
+
     document.getElementById("wp-preview-risk-type").innerText = wp.highRiskWork || "General";
     document.getElementById("wp-preview-desc").innerText = wp.description || wp.workActivity || "N/A";
-    
+
     // Safety Protocols Checklist
     document.getElementById("wp-preview-check-risk").innerText = wp.decRiskReviewed || "N/A";
     document.getElementById("wp-preview-check-controls").innerText = wp.decControlsAdequate || "N/A";
     document.getElementById("wp-preview-check-coord").innerText = wp.decCompetentCoord || "N/A";
-    
+
     // Safety & Security Clearances
     document.getElementById("wp-preview-safety-approved").innerText = wp.safetyOfficerApproved ? "Approved (Yes)" : "Pending";
     document.getElementById("wp-preview-final-auth").innerText = wp.finalAuthorized ? "Authorized (Yes)" : "Pending";
-    
+
     const statusEl = document.getElementById("wp-preview-status");
     statusEl.innerText = wp.status;
-    
+
     // Set status styling class
     if (wp.status === "Approved") {
         statusEl.style.color = "var(--accent-success)";
@@ -6362,7 +6362,7 @@ window.viewWorkPermitDetail = function(wpId) {
     } else {
         statusEl.style.color = "var(--accent-danger)";
     }
-    
+
     // Signatures
     document.getElementById("wp-preview-sig-supervisor").innerText = wp.decSupervisorSig || "N/A";
     document.getElementById("wp-preview-sig-contractor").innerText = wp.engContractorSig || "N/A";
@@ -6384,7 +6384,7 @@ function populateApprovedPMDropdown() {
     const select = document.getElementById("wp-pm-id");
     if (!select) return;
     select.innerHTML = `<option value="">${state.currentLang === "ta" ? "-- அனுமதிக்கப்பட்ட கொள்முதல் கையேட்டைத் தேர்ந்தெடுக்கவும் --" : "-- Choose Approved Purchase Manual --"}</option>`;
-    
+
     const approvedPMs = state.purchaseManuals.filter(pm => pm.status === "Approved");
     approvedPMs.forEach(pm => {
         const opt = document.createElement("option");
@@ -6396,14 +6396,14 @@ function populateApprovedPMDropdown() {
 
 function handleWorkPermitSubmit(e) {
     if (e) e.preventDefault();
-    
+
     const pmId = document.getElementById("wp-pm-id").value;
     const repName = document.getElementById("wp-rep-name").value.trim();
     const startDate = document.getElementById("wp-start-date").value;
     const endDate = document.getElementById("wp-end-date").value;
     const description = document.getElementById("wp-description").value.trim();
     const chkStandards = document.getElementById("wp-chk-standards").checked;
-    
+
     const companyEntity = document.getElementById("wp-company-entity").value.trim();
     const locationSite = document.getElementById("wp-location-site").value.trim();
     const conductedOn = document.getElementById("wp-conducted-on").value;
@@ -6411,7 +6411,7 @@ function handleWorkPermitSubmit(e) {
     const highRiskWork = document.getElementById("wp-high-risk-work").value;
     const startTime = document.getElementById("wp-start-time").value;
     const endTime = document.getElementById("wp-end-time").value;
-    
+
     const decRiskReviewed = document.getElementById("wp-dec-risk-reviewed").value;
     const decControlsAdequate = document.getElementById("wp-dec-controls-adequate").value;
     const decCompetentCoord = document.getElementById("wp-dec-competent-coord").value;
@@ -6420,21 +6420,21 @@ function handleWorkPermitSubmit(e) {
     const decMonitorHazards = document.getElementById("wp-dec-monitor-hazards").value;
     const decReqApproval = document.getElementById("wp-dec-req-approval").value;
     const decSupervisorSig = document.getElementById("wp-dec-supervisor-sig").value.trim();
-    
+
     const engReviewedDocs = document.getElementById("wp-eng-reviewed-docs").value;
     const engMonitorMethods = document.getElementById("wp-eng-monitor-methods").value;
     const engInformedPersons = document.getElementById("wp-eng-informed-persons").value;
     const engContractorSig = document.getElementById("wp-eng-contractor-sig").value.trim();
-    
+
     const authReviewedDocs = document.getElementById("wp-auth-reviewed-docs").value;
     const authRegistered = document.getElementById("wp-auth-registered").value;
     const authPersonSig = document.getElementById("wp-auth-person-sig").value.trim();
-    
+
     if (!pmId || !repName || !startDate || !endDate || !chkStandards || !companyEntity || !locationSite || !conductedOn || !startTime || !endTime || !decSupervisorSig || !engContractorSig || !authPersonSig) {
         showToast("Required Fields Missing", "Please fill in all required fields and signatures, and accept safety terms.", "warning");
         return;
     }
-    
+
     const wpObj = {
         id: "WP" + (20260000 + state.workPermits.length + 1),
         purchaseManualId: pmId,
@@ -6450,7 +6450,7 @@ function handleWorkPermitSubmit(e) {
         endDate: endDate,
         description: description,
         chkStandards: chkStandards,
-        
+
         decRiskReviewed: decRiskReviewed,
         decControlsAdequate: decControlsAdequate,
         decCompetentCoord: decCompetentCoord,
@@ -6459,22 +6459,22 @@ function handleWorkPermitSubmit(e) {
         decMonitorHazards: decMonitorHazards,
         decReqApproval: decReqApproval,
         decSupervisorSig: decSupervisorSig,
-        
+
         engReviewedDocs: engReviewedDocs,
         engMonitorMethods: engMonitorMethods,
         engInformedPersons: engInformedPersons,
         engContractorSig: engContractorSig,
-        
+
         authReviewedDocs: authReviewedDocs,
         authRegistered: authRegistered,
         authPersonSig: authPersonSig,
-        
+
         status: "Pending Safety Officer Approval",
         safetyOfficerApproved: false,
         finalAuthorized: false,
         dateCreated: getLocalDateStr()
     };
-    
+
     state.workPermits.push(wpObj);
     saveState();
     if (supabaseClient) {
@@ -6482,13 +6482,13 @@ function handleWorkPermitSubmit(e) {
             .then(({ error }) => { if (error) console.error("Work permit submit cloud sync error:", error); });
     }
     refreshAllDataViews();
-    
+
     showToast(
         state.currentLang === "ta" ? "அனுமதிச்சீட்டு சமர்ப்பிக்கப்பட்டது" : "Work Permit Submitted",
         state.currentLang === "ta" ? "வேலை அனுமதிச்சீட்டு விண்ணப்பம் சமர்ப்பிக்கப்பட்டு பாதுகாப்பு அதிகாரி ஒப்புதலுக்கு அனுப்பப்பட்டது." : "Work permit application submitted. Pending Safety Officer approval.",
         "success"
     );
-    
+
     document.getElementById("wp-list-container").classList.remove("hidden");
     document.getElementById("wp-form-container").classList.add("hidden");
     document.getElementById("work-permit-form").reset();
@@ -6498,7 +6498,7 @@ function renderWorkPermits() {
     const body = document.getElementById("wp-list-table-body");
     if (!body) return;
     body.innerHTML = "";
-    
+
     if (state.workPermits.length === 0) {
         body.innerHTML = `
             <tr>
@@ -6510,12 +6510,12 @@ function renderWorkPermits() {
         `;
         return;
     }
-    
+
     state.workPermits.forEach(wp => {
         const pm = state.purchaseManuals.find(p => p.id === wp.purchaseManualId) || {};
         const tr = document.createElement("tr");
         let actionButtons = "";
-        
+
         if (wp.status === "Pending Safety Officer Approval") {
             if (state.currentUser && state.currentUser.role === "Administrator") {
                 actionButtons = `<button class="btn btn-accent btn-sm" onclick="approveSafetyPermit('${wp.id}')">${state.currentLang === "ta" ? "பாதுகாப்பு ஒப்புதல்" : "Safety Approve"}</button>`;
@@ -6531,11 +6531,11 @@ function renderWorkPermits() {
         } else {
             actionButtons = `<span class="text-secondary text-xs">${state.currentLang === "ta" ? "செயல்கள் இல்லை" : "Authorized"}</span>`;
         }
-        
-        const statusText = state.currentLang === "ta" ? 
+
+        const statusText = state.currentLang === "ta" ?
             (wp.status === "Approved" ? "அங்கீகரிக்கப்பட்டது" : wp.status === "Rejected" ? "நிராகரிக்கப்பட்டது" : wp.status === "Pending Safety Officer Approval" ? "பாதுகாப்பு நிலுவையில்" : "இறுதி அனுமதி நிலுவையில்") :
             wp.status;
-        
+
         tr.innerHTML = `
              <td><code>${wp.id}</code></td>
              <td><code>${wp.purchaseManualId}</code></td>
@@ -6590,7 +6590,7 @@ function renderDashboardCharts() {
     const ctxVolume = document.getElementById("chart-visitor-volume");
     if (ctxVolume) {
         if (chartsInstance.volume) chartsInstance.volume.destroy();
-        
+
         const labels = [];
         const data = [];
         for (let i = 6; i >= 0; i--) {
@@ -6598,11 +6598,11 @@ function renderDashboardCharts() {
             d.setDate(d.getDate() - i);
             const dateStr = d.toISOString().split("T")[0];
             labels.push(d.toLocaleDateString([], { weekday: 'short', day: 'numeric' }));
-            
+
             const count = state.visitors.filter(v => v.visitDate === dateStr).length;
             data.push(count);
         }
-        
+
         chartsInstance.volume = new Chart(ctxVolume, {
             type: 'line',
             data: {
@@ -6630,13 +6630,13 @@ function renderDashboardCharts() {
     const ctxDept = document.getElementById("chart-dept-visitors");
     if (ctxDept) {
         if (chartsInstance.dept) chartsInstance.dept.destroy();
-        
+
         const depts = {};
         state.visitors.forEach(v => {
             const dept = v.hostDept || "Other";
             depts[dept] = (depts[dept] || 0) + 1;
         });
-        
+
         chartsInstance.dept = new Chart(ctxDept, {
             type: 'bar',
             data: {
@@ -6661,12 +6661,12 @@ function renderDashboardCharts() {
     const ctxCategories = document.getElementById("chart-visitor-categories");
     if (ctxCategories) {
         if (chartsInstance.categories) chartsInstance.categories.destroy();
-        
+
         const purposes = {};
         state.visitors.forEach(v => {
             purposes[v.purpose || "Other"] = (purposes[v.purpose || "Other"] || 0) + 1;
         });
-        
+
         chartsInstance.categories = new Chart(ctxCategories, {
             type: 'doughnut',
             data: {
@@ -6688,18 +6688,18 @@ function renderDashboardCharts() {
     const ctxCompanies = document.getElementById("chart-top-companies");
     if (ctxCompanies) {
         if (chartsInstance.companies) chartsInstance.companies.destroy();
-        
+
         const companies = {};
         state.visitors.forEach(v => {
             if (v.company) {
                 companies[v.company] = (companies[v.company] || 0) + 1;
             }
         });
-        
+
         const sorted = Object.entries(companies)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 5);
-        
+
         chartsInstance.companies = new Chart(ctxCompanies, {
             type: 'bar',
             data: {
@@ -6728,7 +6728,7 @@ function renderDashboardCharts() {
 function addAuditLog(operation, category, details, status = "Success") {
     if (!state.auditLogs) state.auditLogs = [];
     const operator = state.currentUser ? state.currentUser.name : "System";
-    
+
     state.auditLogs.unshift({
         timestamp: new Date().toLocaleString(),
         operation,
@@ -6737,7 +6737,7 @@ function addAuditLog(operation, category, details, status = "Success") {
         details,
         status
     });
-    
+
     if (state.auditLogs.length > 100) state.auditLogs.pop();
     saveState();
     if (supabaseClient) {
@@ -6754,19 +6754,19 @@ function renderAuditLogsTable() {
     const tbody = document.getElementById("admin-audit-logs-body");
     if (!tbody) return;
     tbody.innerHTML = "";
-    
+
     if (!state.auditLogs || state.auditLogs.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No audit trail records found.</td></tr>`;
         return;
     }
-    
+
     state.auditLogs.forEach(log => {
         const tr = document.createElement("tr");
         let badgeClass = "inside";
         if (log.category === "Security") badgeClass = "denied";
         if (log.category === "Host Approval") badgeClass = "approved";
         if (log.category === "Communications") badgeClass = "expected";
-        
+
         tr.innerHTML = `
             <td><code>${log.timestamp}</code></td>
             <td><strong>${log.operation}</strong></td>
@@ -6789,23 +6789,23 @@ function sendHostApprovalGmail(visitor, hostEmployee) {
             : ((visitor.hostName || 'host').toLowerCase().replace(/\s+/g, '') + '@barani.corp');
 
         var visitorTime = visitor.visitDate
-            ? (visitor.visitDate + ' ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}))
+            ? (visitor.visitDate + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))
             : new Date().toLocaleString();
 
         var approveUrl = "";
         var rejectUrl = "";
-        
+
         if (state.settings?.gcpBackendUrl) {
             approveUrl = state.settings.gcpBackendUrl + '/api/visitors/approve?token=' + encodeURIComponent(visitor.approveToken || '');
-            rejectUrl  = state.settings.gcpBackendUrl + '/api/visitors/reject?token=' + encodeURIComponent(visitor.rejectToken || '');
+            rejectUrl = state.settings.gcpBackendUrl + '/api/visitors/reject?token=' + encodeURIComponent(visitor.rejectToken || '');
         } else {
             var baseUrl = (state.settings?.publicWebUrl && state.settings.publicWebUrl.trim() !== "")
                 ? state.settings.publicWebUrl.trim()
                 : (window.location.protocol + '//' + window.location.host + window.location.pathname);
-            
+
             var connector = baseUrl.includes('?') ? '&' : '?';
             approveUrl = baseUrl + connector + 'va_action=approve&va_id=' + encodeURIComponent(visitor.id);
-            rejectUrl  = baseUrl + connector + 'va_action=reject&va_id='  + encodeURIComponent(visitor.id);
+            rejectUrl = baseUrl + connector + 'va_action=reject&va_id=' + encodeURIComponent(visitor.id);
         }
 
         var subject = '[VMS] Visitor Approval Request - ' + visitor.name + ' (' + visitor.id + ')';
@@ -6868,7 +6868,7 @@ function sendHostApprovalGmail(visitor, hostEmployee) {
    ========================================================================== */
 async function autoSendPassToWhatsApp(visitor, isManual = false, preOpenedWindow = null) {
     if (!visitor) return;
-    
+
     // Check if auto-send is disabled (only for automatic trigger, manual bypasses this check)
     if (!isManual && state.settings && state.settings.autoSendWhatsApp === false) {
         console.log("[VMS WhatsApp] Auto-send WhatsApp is disabled in settings.");
@@ -6912,14 +6912,14 @@ async function autoSendPassToWhatsApp(visitor, isManual = false, preOpenedWindow
             if (blob) {
                 var fileName = 'pass-' + visitor.id + '.png';
                 var bucketName = state.settings.supabaseBucket || 'visitor-passes';
-                
+
                 var { data, error } = await supabaseClient.storage
                     .from(bucketName)
                     .upload(fileName, blob, {
                         cacheControl: '3600',
                         upsert: true
                     });
-                
+
                 if (error) {
                     console.error('[VMS Cloud] Supabase Storage upload error:', error);
                     showToast('Cloud Upload Failed', 'Failed to host pass in cloud. Falling back to local send.', 'warning');
@@ -6931,1398 +6931,1398 @@ async function autoSendPassToWhatsApp(visitor, isManual = false, preOpenedWindow
                     showToast('Cloud Uploaded', 'Visitor pass image hosted on cloud.', 'success');
                 }
             }
-
+        }
 
         var cleanPhone = visitor.phone.replace(/[^0-9]/g, '');
-        if (cleanPhone.length === 10) { cleanPhone = '91' + cleanPhone; }
+            if (cleanPhone.length === 10) { cleanPhone = '91' + cleanPhone; }
 
-        var now = new Date();
-        var timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-        
-        var waLines = [
-            '*Welcome to Barani Hydraulics India Pvt. Ltd!*',
-            '',
-            'Your visit has been *APPROVED*.',
-            '',
-            '*Visitor ID:* ' + visitor.id,
-            '*Name:* ' + visitor.name,
-            '*Host:* ' + visitor.hostName + ' - ' + visitor.hostDept,
-            '*Purpose:* ' + (visitor.purpose || 'Meeting'),
-            '*Entry Time:* ' + timeStr,
-            '*Exit Time:* ' + (visitor.expectedExit || '06:00 PM'),
-            ''
-        ];
+            var now = new Date();
+            var timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        if (publicUrl) {
-            waLines.push('*Digital Pass Image:* ' + publicUrl);
-            waLines.push('Please show this digital QR pass at the security gate.');
-        } else {
-            waLines.push('Your visitor pass image has been downloaded.');
-            waLines.push('Please attach the downloaded PNG image and show this QR pass at the security gate.');
-        }
-        
-        waLines.push('');
-        waLines.push('_Barani Hydraulics VMS_');
-        var waMessage = waLines.join('\n');
+            var waLines = [
+                '*Welcome to Barani Hydraulics India Pvt. Ltd!*',
+                '',
+                'Your visit has been *APPROVED*.',
+                '',
+                '*Visitor ID:* ' + visitor.id,
+                '*Name:* ' + visitor.name,
+                '*Host:* ' + visitor.hostName + ' - ' + visitor.hostDept,
+                '*Purpose:* ' + (visitor.purpose || 'Meeting'),
+                '*Entry Time:* ' + timeStr,
+                '*Exit Time:* ' + (visitor.expectedExit || '06:00 PM'),
+                ''
+            ];
 
-        // Execute Dispatch based on method
-        if (method === "meta" && state.settings.waToken && state.settings.waPhoneId && publicUrl) {
-            // Background Meta Cloud API call
-            showToast('Sending WhatsApp', 'Dispatching via Meta WhatsApp Business Cloud API...', 'info');
-            
-            var token = state.settings.waToken;
-            var phoneId = state.settings.waPhoneId;
-            
-            var response = await fetch('https://graph.facebook.com/v20.0/' + phoneId + '/messages', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + token,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    messaging_product: "whatsapp",
-                    recipient_type: "individual",
-                    to: cleanPhone,
-                    type: "image",
-                    image: {
-                        link: publicUrl
-                    }
-                })
-            });
-            
-            var resData = await response.json();
-            if (response.ok) {
-                showToast('WhatsApp Sent', 'Pass image sent directly to visitor WhatsApp!', 'success');
-                logNotificationSimulator(
-                    'WhatsApp API Sent', 
-                    'WhatsApp', 
-                    visitor.phone,
-                    '[API SUCCESS] Pass image sent: "' + waMessage.replace(/\n/g, ' ') + '"'
-                );
-                addAuditLog('WhatsApp API Send Success', 'Communications', 'Dispatched pass image to ' + visitor.name + ' via WhatsApp Cloud API');
+            if (publicUrl) {
+                waLines.push('*Digital Pass Image:* ' + publicUrl);
+                waLines.push('Please show this digital QR pass at the security gate.');
             } else {
-                console.error('[VMS WhatsApp] Meta API error:', resData);
-                var errMsg = resData.error?.message || "Unknown error";
-                showToast('API Send Failed', errMsg + '. Redirecting to WhatsApp Web...', 'warning');
-                
-                // Fallback to URL Web Redirect
+                waLines.push('Your visitor pass image has been downloaded.');
+                waLines.push('Please attach the downloaded PNG image and show this QR pass at the security gate.');
+            }
+
+            waLines.push('');
+            waLines.push('_Barani Hydraulics VMS_');
+            var waMessage = waLines.join('\n');
+
+            // Execute Dispatch based on method
+            if (method === "meta" && state.settings.waToken && state.settings.waPhoneId && publicUrl) {
+                // Background Meta Cloud API call
+                showToast('Sending WhatsApp', 'Dispatching via Meta WhatsApp Business Cloud API...', 'info');
+
+                var token = state.settings.waToken;
+                var phoneId = state.settings.waPhoneId;
+
+                var response = await fetch('https://graph.facebook.com/v20.0/' + phoneId + '/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        messaging_product: "whatsapp",
+                        recipient_type: "individual",
+                        to: cleanPhone,
+                        type: "image",
+                        image: {
+                            link: publicUrl
+                        }
+                    })
+                });
+
+                var resData = await response.json();
+                if (response.ok) {
+                    showToast('WhatsApp Sent', 'Pass image sent directly to visitor WhatsApp!', 'success');
+                    logNotificationSimulator(
+                        'WhatsApp API Sent',
+                        'WhatsApp',
+                        visitor.phone,
+                        '[API SUCCESS] Pass image sent: "' + waMessage.replace(/\n/g, ' ') + '"'
+                    );
+                    addAuditLog('WhatsApp API Send Success', 'Communications', 'Dispatched pass image to ' + visitor.name + ' via WhatsApp Cloud API');
+                } else {
+                    console.error('[VMS WhatsApp] Meta API error:', resData);
+                    var errMsg = resData.error?.message || "Unknown error";
+                    showToast('API Send Failed', errMsg + '. Redirecting to WhatsApp Web...', 'warning');
+
+                    // Fallback to URL Web Redirect
+                    var waUrl = 'https://api.whatsapp.com/send?phone=' + cleanPhone + '&text=' + encodeURIComponent(waMessage);
+                    if (preOpenedWindow) {
+                        preOpenedWindow.location.href = waUrl;
+                    } else {
+                        window.open(waUrl, '_blank', 'noopener,noreferrer');
+                    }
+                }
+
+            } else if (method === "url-cloud" && publicUrl) {
+                // URL Redirect with Cloud link
                 var waUrl = 'https://api.whatsapp.com/send?phone=' + cleanPhone + '&text=' + encodeURIComponent(waMessage);
                 if (preOpenedWindow) {
                     preOpenedWindow.location.href = waUrl;
                 } else {
                     window.open(waUrl, '_blank', 'noopener,noreferrer');
                 }
-            }
-            
-        } else if (method === "url-cloud" && publicUrl) {
-            // URL Redirect with Cloud link
-            var waUrl = 'https://api.whatsapp.com/send?phone=' + cleanPhone + '&text=' + encodeURIComponent(waMessage);
-            if (preOpenedWindow) {
-                preOpenedWindow.location.href = waUrl;
+
+                showToast('WhatsApp Web Opened', 'Opening WhatsApp Web. The message contains the pass image link.', 'success');
+                logNotificationSimulator(
+                    'WhatsApp Web (Cloud Link)',
+                    'WhatsApp',
+                    visitor.phone,
+                    waMessage
+                );
+                addAuditLog('WhatsApp Web Redirect', 'Communications', 'Opened WhatsApp Web redirect with cloud link for ' + visitor.name);
+
+            } else if (method === "sim") {
+                // Simulator Only
+                showToast('Simulated Dispatch', 'Pass dispatch simulated in logs.', 'success');
+                logNotificationSimulator(
+                    'WhatsApp Simulated',
+                    'WhatsApp',
+                    visitor.phone,
+                    '[SIMULATED] ' + waMessage
+                );
+                addAuditLog('WhatsApp Simulated Dispatch', 'Communications', 'Simulated WhatsApp pass dispatch to ' + visitor.name);
+
             } else {
-                window.open(waUrl, '_blank', 'noopener,noreferrer');
-            }
-            
-            showToast('WhatsApp Web Opened', 'Opening WhatsApp Web. The message contains the pass image link.', 'success');
-            logNotificationSimulator(
-                'WhatsApp Web (Cloud Link)', 
-                'WhatsApp', 
-                visitor.phone,
-                waMessage
-            );
-            addAuditLog('WhatsApp Web Redirect', 'Communications', 'Opened WhatsApp Web redirect with cloud link for ' + visitor.name);
-            
-        } else if (method === "sim") {
-            // Simulator Only
-            showToast('Simulated Dispatch', 'Pass dispatch simulated in logs.', 'success');
-            logNotificationSimulator(
-                'WhatsApp Simulated', 
-                'WhatsApp', 
-                visitor.phone,
-                '[SIMULATED] ' + waMessage
-            );
-            addAuditLog('WhatsApp Simulated Dispatch', 'Communications', 'Simulated WhatsApp pass dispatch to ' + visitor.name);
-            
-        } else {
-            // Default `url-local`: Smart dispatch with Web Share API → Clipboard → Download fallback
-            var passBlob = dataURLtoBlob(imgData);
-            var passFile = passBlob ? new File([passBlob], 'Barani_Visitor_Pass_' + visitor.id + '.png', { type: 'image/png' }) : null;
-            var waUrl = 'https://api.whatsapp.com/send?phone=' + cleanPhone + '&text=' + encodeURIComponent(waMessage);
-            
-            // STRATEGY 1: Web Share API — works on mobile browsers (Android/iPhone)
-            // This lets the user share the image DIRECTLY to WhatsApp from the browser share sheet.
-            if (passFile && navigator.share && navigator.canShare && navigator.canShare({ files: [passFile] })) {
-                if (preOpenedWindow) { preOpenedWindow.close(); preOpenedWindow = null; }
-                try {
-                    await navigator.share({
-                        title: 'Visitor Pass — ' + visitor.name,
-                        text: waMessage,
-                        files: [passFile]
-                    });
-                    showToast('Pass Shared ✅', 'Choose WhatsApp in the share sheet to send the pass image directly.', 'success');
-                    logNotificationSimulator('WhatsApp Direct Share', 'WhatsApp', visitor.phone, '[WEB SHARE] ' + waMessage);
-                    addAuditLog('WhatsApp Direct Share', 'Communications', 'Shared pass image via Web Share API for ' + visitor.name);
-                    return; // Done — no fallback needed
-                } catch (shareErr) {
-                    if (shareErr.name !== 'AbortError') {
-                        console.warn('[VMS] Web Share failed, falling back:', shareErr);
-                    } else {
-                        // User cancelled the share sheet — do nothing
-                        if (preOpenedWindow) preOpenedWindow.close();
-                        return;
+                // Default `url-local`: Smart dispatch with Web Share API → Clipboard → Download fallback
+                var passBlob = dataURLtoBlob(imgData);
+                var passFile = passBlob ? new File([passBlob], 'Barani_Visitor_Pass_' + visitor.id + '.png', { type: 'image/png' }) : null;
+                var waUrl = 'https://api.whatsapp.com/send?phone=' + cleanPhone + '&text=' + encodeURIComponent(waMessage);
+
+                // STRATEGY 1: Web Share API — works on mobile browsers (Android/iPhone)
+                // This lets the user share the image DIRECTLY to WhatsApp from the browser share sheet.
+                if (passFile && navigator.share && navigator.canShare && navigator.canShare({ files: [passFile] })) {
+                    if (preOpenedWindow) { preOpenedWindow.close(); preOpenedWindow = null; }
+                    try {
+                        await navigator.share({
+                            title: 'Visitor Pass — ' + visitor.name,
+                            text: waMessage,
+                            files: [passFile]
+                        });
+                        showToast('Pass Shared ✅', 'Choose WhatsApp in the share sheet to send the pass image directly.', 'success');
+                        logNotificationSimulator('WhatsApp Direct Share', 'WhatsApp', visitor.phone, '[WEB SHARE] ' + waMessage);
+                        addAuditLog('WhatsApp Direct Share', 'Communications', 'Shared pass image via Web Share API for ' + visitor.name);
+                        return; // Done — no fallback needed
+                    } catch (shareErr) {
+                        if (shareErr.name !== 'AbortError') {
+                            console.warn('[VMS] Web Share failed, falling back:', shareErr);
+                        } else {
+                            // User cancelled the share sheet — do nothing
+                            if (preOpenedWindow) preOpenedWindow.close();
+                            return;
+                        }
                     }
                 }
+
+                // STRATEGY 2: Clipboard API — desktop Chrome/Edge
+                // Copies image to clipboard so user just Ctrl+V in WhatsApp Web.
+                var clipboardUsed = false;
+                if (passBlob && window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+                    try {
+                        await navigator.clipboard.write([new ClipboardItem({ 'image/png': passBlob })]);
+                        clipboardUsed = true;
+                    } catch (clipErr) {
+                        console.warn('[VMS] Clipboard write failed, falling back to download:', clipErr);
+                    }
+                }
+
+                if (clipboardUsed) {
+                    // Open WhatsApp Web and tell the user to paste
+                    if (preOpenedWindow) {
+                        preOpenedWindow.location.href = waUrl;
+                    } else {
+                        window.open(waUrl, '_blank', 'noopener,noreferrer');
+                    }
+                    showToast('✅ Pass Copied to Clipboard!', 'WhatsApp Web opened. Just press Ctrl+V (or Cmd+V) to paste the pass image and send.', 'success');
+                    logNotificationSimulator('WhatsApp Clipboard Paste', 'WhatsApp', visitor.phone, '[CLIPBOARD COPY] ' + waMessage);
+                    addAuditLog('WhatsApp Clipboard Send', 'Communications', 'Copied pass to clipboard and opened WhatsApp Web for ' + visitor.name);
+                } else {
+                    // STRATEGY 3: Classic fallback — download file + redirect (user attaches manually)
+                    var downloadLink = document.createElement('a');
+                    downloadLink.href = imgData;
+                    downloadLink.download = 'Barani_Visitor_Pass_' + visitor.id + '.png';
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+
+                    if (preOpenedWindow) {
+                        preOpenedWindow.location.href = waUrl;
+                    } else {
+                        window.open(waUrl, '_blank', 'noopener,noreferrer');
+                    }
+                    showToast('Pass Downloaded 📎', 'WhatsApp Web opened. Attach the downloaded PNG from your Downloads folder and send.', 'info');
+                    logNotificationSimulator('WhatsApp Local Download', 'WhatsApp', visitor.phone, '[LOCAL DOWNLOAD] ' + waMessage);
+                    addAuditLog('WhatsApp Local Send', 'Communications', 'Downloaded pass card and opened WhatsApp Web for ' + visitor.name);
+                }
             }
 
-            // STRATEGY 2: Clipboard API — desktop Chrome/Edge
-            // Copies image to clipboard so user just Ctrl+V in WhatsApp Web.
-            var clipboardUsed = false;
-            if (passBlob && window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
-                try {
-                    await navigator.clipboard.write([new ClipboardItem({ 'image/png': passBlob })]);
-                    clipboardUsed = true;
-                } catch (clipErr) {
-                    console.warn('[VMS] Clipboard write failed, falling back to download:', clipErr);
-                }
-            }
-
-            if (clipboardUsed) {
-                // Open WhatsApp Web and tell the user to paste
-                if (preOpenedWindow) {
-                    preOpenedWindow.location.href = waUrl;
-                } else {
-                    window.open(waUrl, '_blank', 'noopener,noreferrer');
-                }
-                showToast('✅ Pass Copied to Clipboard!', 'WhatsApp Web opened. Just press Ctrl+V (or Cmd+V) to paste the pass image and send.', 'success');
-                logNotificationSimulator('WhatsApp Clipboard Paste', 'WhatsApp', visitor.phone, '[CLIPBOARD COPY] ' + waMessage);
-                addAuditLog('WhatsApp Clipboard Send', 'Communications', 'Copied pass to clipboard and opened WhatsApp Web for ' + visitor.name);
-            } else {
-                // STRATEGY 3: Classic fallback — download file + redirect (user attaches manually)
-                var downloadLink = document.createElement('a');
-                downloadLink.href = imgData;
-                downloadLink.download = 'Barani_Visitor_Pass_' + visitor.id + '.png';
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-                
-                if (preOpenedWindow) {
-                    preOpenedWindow.location.href = waUrl;
-                } else {
-                    window.open(waUrl, '_blank', 'noopener,noreferrer');
-                }
-                showToast('Pass Downloaded 📎', 'WhatsApp Web opened. Attach the downloaded PNG from your Downloads folder and send.', 'info');
-                logNotificationSimulator('WhatsApp Local Download', 'WhatsApp', visitor.phone, '[LOCAL DOWNLOAD] ' + waMessage);
-                addAuditLog('WhatsApp Local Send', 'Communications', 'Downloaded pass card and opened WhatsApp Web for ' + visitor.name);
-            }
+        } catch (err) {
+            console.error('[VMS] autoSendPassToWhatsApp error:', err);
+            if (preOpenedWindow) preOpenedWindow.close();
+            try {
+                var fb_phone = visitor.phone.replace(/[^0-9]/g, '');
+                if (fb_phone.length === 10) fb_phone = '91' + fb_phone;
+                var fb_msg = 'Welcome to Barani Hydraulics! Your visit has been APPROVED. Visitor ID: ' + visitor.id + '. Host: ' + visitor.hostName + '. Please show your ID at the gate.';
+                window.open('https://api.whatsapp.com/send?phone=' + fb_phone + '&text=' + encodeURIComponent(fb_msg), '_blank');
+            } catch (e2) { /* silently fail */ }
         }
-
-    } catch (err) {
-        console.error('[VMS] autoSendPassToWhatsApp error:', err);
-        if (preOpenedWindow) preOpenedWindow.close();
-        try {
-            var fb_phone = visitor.phone.replace(/[^0-9]/g, '');
-            if (fb_phone.length === 10) fb_phone = '91' + fb_phone;
-            var fb_msg = 'Welcome to Barani Hydraulics! Your visit has been APPROVED. Visitor ID: ' + visitor.id + '. Host: ' + visitor.hostName + '. Please show your ID at the gate.';
-            window.open('https://api.whatsapp.com/send?phone=' + fb_phone + '&text=' + encodeURIComponent(fb_msg), '_blank');
-        } catch(e2) { /* silently fail */ }
     }
-}
 
 /* ==========================================================================
    22. URL Param Action Handler ? Auto-approve/reject when host clicks email link
    ========================================================================== */
 function checkUrlApprovalAction() {
-    try {
-        var params = new URLSearchParams(window.location.search);
-        var action = params.get('va_action');
-        var visitorId = params.get('va_id');
+        try {
+            var params = new URLSearchParams(window.location.search);
+            var action = params.get('va_action');
+            var visitorId = params.get('va_id');
 
-        if (!action || !visitorId) return;
+            if (!action || !visitorId) return;
 
-        // Clean URL immediately so it does not re-trigger on refresh
-        window.history.replaceState({}, document.title, window.location.pathname);
+            // Clean URL immediately so it does not re-trigger on refresh
+            window.history.replaceState({}, document.title, window.location.pathname);
 
-        // Wait for app state to fully load before acting
-        setTimeout(async function() {
-            // 1. Supabase Cloud-Based Approval
-            if (supabaseClient) {
-                showToast('Email Approval Link', 'Connecting to Supabase cloud...', 'info');
-                try {
-                    const statusVal = action === 'approve' ? 'Checked In' : 'Rejected';
-                    const updateObj = { status: statusVal };
-                    if (action === 'approve') {
-                        updateObj.check_in = new Date().toISOString();
+            // Wait for app state to fully load before acting
+            setTimeout(async function () {
+                // 1. Supabase Cloud-Based Approval
+                if (supabaseClient) {
+                    showToast('Email Approval Link', 'Connecting to Supabase cloud...', 'info');
+                    try {
+                        const statusVal = action === 'approve' ? 'Checked In' : 'Rejected';
+                        const updateObj = { status: statusVal };
+                        if (action === 'approve') {
+                            updateObj.check_in = new Date().toISOString();
+                        }
+
+                        const { error } = await supabaseClient
+                            .from('visitors')
+                            .update(updateObj)
+                            .eq('visitor_code', visitorId);
+
+                        if (!error) {
+                            showToast('Visitor Status Sync', `Success: Request successfully ${action}d!`, 'success');
+                            syncFromSupabase();
+                        } else {
+                            console.error('[VMS] Supabase approval link execution error:', error);
+                            showToast('Approval Failed', 'Failed to update record in Supabase.', 'warning');
+                        }
+                    } catch (err) {
+                        console.error('[VMS] Supabase approval link exception:', err);
+                        showToast('Connection Offline', 'Failed to connect to Supabase server.', 'danger');
                     }
-                    
-                    const { error } = await supabaseClient
-                        .from('visitors')
-                        .update(updateObj)
-                        .eq('visitor_code', visitorId);
-                    
-                    if (!error) {
-                        showToast('Visitor Status Sync', `Success: Request successfully ${action}d!`, 'success');
-                        syncFromSupabase();
-                    } else {
-                        console.error('[VMS] Supabase approval link execution error:', error);
-                        showToast('Approval Failed', 'Failed to update record in Supabase.', 'warning');
-                    }
-                } catch (err) {
-                    console.error('[VMS] Supabase approval link exception:', err);
-                    showToast('Connection Offline', 'Failed to connect to Supabase server.', 'danger');
+                    return;
                 }
-                return;
-            }
 
 
 
-            // 2. Offline Browser-Local Fallback
-            var visitor = state.visitors.find(function(v) { return v.id === visitorId; });
-            if (!visitor) {
-                showToast('Not Found', 'Visitor record ' + visitorId + ' not found. It may have already been processed.', 'warning');
-                return;
-            }
-            if (visitor.status === 'Checked In' || visitor.status === 'Rejected') {
-                showToast('Already Processed', 'Visitor ' + visitor.name + ' request was already ' + visitor.status.toLowerCase() + '.', 'info');
-                return;
-            }
-            if (action === 'approve') {
-                showToast('Host Approved via Email', 'Auto-approving visitor ' + visitor.name + '...', 'success');
-                setTimeout(function() { approvePendingVisitor(visitorId); }, 700);
-            } else if (action === 'reject') {
-                visitor.rejectionReason = 'Rejected by host via email link.';
-                showToast('Host Rejected via Email', 'Auto-rejecting visitor ' + visitor.name + '.', 'warning');
-                setTimeout(function() { rejectPendingVisitor(visitorId); }, 700);
-            }
-        }, 1800);
+                // 2. Offline Browser-Local Fallback
+                var visitor = state.visitors.find(function (v) { return v.id === visitorId; });
+                if (!visitor) {
+                    showToast('Not Found', 'Visitor record ' + visitorId + ' not found. It may have already been processed.', 'warning');
+                    return;
+                }
+                if (visitor.status === 'Checked In' || visitor.status === 'Rejected') {
+                    showToast('Already Processed', 'Visitor ' + visitor.name + ' request was already ' + visitor.status.toLowerCase() + '.', 'info');
+                    return;
+                }
+                if (action === 'approve') {
+                    showToast('Host Approved via Email', 'Auto-approving visitor ' + visitor.name + '...', 'success');
+                    setTimeout(function () { approvePendingVisitor(visitorId); }, 700);
+                } else if (action === 'reject') {
+                    visitor.rejectionReason = 'Rejected by host via email link.';
+                    showToast('Host Rejected via Email', 'Auto-rejecting visitor ' + visitor.name + '.', 'warning');
+                    setTimeout(function () { rejectPendingVisitor(visitorId); }, 700);
+                }
+            }, 1800);
 
-    } catch (err) {
-        console.error('[VMS] checkUrlApprovalAction error:', err);
-    }
-}
-
-/* ==========================================================================
-   23. Simulated Email Inbox List Renderers
-   ========================================================================== */
-function renderSimulatedEmailInbox() {
-    const inboxList = document.getElementById("host-email-inbox-list");
-    if (!inboxList) return;
-
-    const pendingVisitors = state.visitors.filter(v => v.status === "Pending");
-    inboxList.innerHTML = "";
-
-    if (pendingVisitors.length === 0) {
-        inboxList.innerHTML = `<div style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.7rem;">Inbox Empty</div>`;
-        
-        // Clear reading pane
-        const emailVisitorName = document.getElementById("host-email-visitor-name");
-        const emailVisitorCo   = document.getElementById("host-email-visitor-company");
-        const emailVisitorPurp = document.getElementById("host-email-visitor-purpose");
-        const emailVisitorTime = document.getElementById("host-email-visitor-time");
-        const emailSubjectEl   = document.getElementById("host-email-subject");
-        const emailRecipientEl = document.getElementById("host-email-recipient");
-        const emailHostNameEl  = document.getElementById("host-email-host-name");
-
-        if (emailVisitorName) emailVisitorName.innerText = "?";
-        if (emailVisitorCo) emailVisitorCo.innerText = "?";
-        if (emailVisitorPurp) emailVisitorPurp.innerText = "?";
-        if (emailVisitorTime) emailVisitorTime.innerText = "?";
-        if (emailSubjectEl) emailSubjectEl.innerText = "No Pending Request";
-        if (emailRecipientEl) emailRecipientEl.innerText = "?";
-        if (emailHostNameEl) emailHostNameEl.innerText = "?";
-
-        activeSimulatedVisitor = null;
-        return;
+        } catch (err) {
+            console.error('[VMS] checkUrlApprovalAction error:', err);
+        }
     }
 
-    pendingVisitors.forEach((v, idx) => {
-        const item = document.createElement("div");
-        item.style.cssText = "padding: 8px; border-bottom: 1px solid var(--border-color); cursor: pointer; border-left: 3px solid transparent;";
-        
-        // Highlight active item
-        if ((activeSimulatedVisitor && activeSimulatedVisitor.id === v.id) || (!activeSimulatedVisitor && idx === 0)) {
-            item.style.borderLeft = "3px solid var(--accent-primary)";
-            item.style.background = "rgba(37,99,235,0.05)";
-            if (!activeSimulatedVisitor || activeSimulatedVisitor.id !== v.id) {
-                selectSimulatedEmailVisitor(v);
-            }
+    /* ==========================================================================
+       23. Simulated Email Inbox List Renderers
+       ========================================================================== */
+    function renderSimulatedEmailInbox() {
+        const inboxList = document.getElementById("host-email-inbox-list");
+        if (!inboxList) return;
+
+        const pendingVisitors = state.visitors.filter(v => v.status === "Pending");
+        inboxList.innerHTML = "";
+
+        if (pendingVisitors.length === 0) {
+            inboxList.innerHTML = `<div style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.7rem;">Inbox Empty</div>`;
+
+            // Clear reading pane
+            const emailVisitorName = document.getElementById("host-email-visitor-name");
+            const emailVisitorCo = document.getElementById("host-email-visitor-company");
+            const emailVisitorPurp = document.getElementById("host-email-visitor-purpose");
+            const emailVisitorTime = document.getElementById("host-email-visitor-time");
+            const emailSubjectEl = document.getElementById("host-email-subject");
+            const emailRecipientEl = document.getElementById("host-email-recipient");
+            const emailHostNameEl = document.getElementById("host-email-host-name");
+
+            if (emailVisitorName) emailVisitorName.innerText = "?";
+            if (emailVisitorCo) emailVisitorCo.innerText = "?";
+            if (emailVisitorPurp) emailVisitorPurp.innerText = "?";
+            if (emailVisitorTime) emailVisitorTime.innerText = "?";
+            if (emailSubjectEl) emailSubjectEl.innerText = "No Pending Request";
+            if (emailRecipientEl) emailRecipientEl.innerText = "?";
+            if (emailHostNameEl) emailHostNameEl.innerText = "?";
+
+            activeSimulatedVisitor = null;
+            return;
         }
 
-        item.innerHTML = `
+        pendingVisitors.forEach((v, idx) => {
+            const item = document.createElement("div");
+            item.style.cssText = "padding: 8px; border-bottom: 1px solid var(--border-color); cursor: pointer; border-left: 3px solid transparent;";
+
+            // Highlight active item
+            if ((activeSimulatedVisitor && activeSimulatedVisitor.id === v.id) || (!activeSimulatedVisitor && idx === 0)) {
+                item.style.borderLeft = "3px solid var(--accent-primary)";
+                item.style.background = "rgba(37,99,235,0.05)";
+                if (!activeSimulatedVisitor || activeSimulatedVisitor.id !== v.id) {
+                    selectSimulatedEmailVisitor(v);
+                }
+            }
+
+            item.innerHTML = `
             <div style="font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary);">${v.hostName}</div>
             <div style="color: var(--text-secondary); font-size: 0.65rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 2px 0;">Request: ${v.name}</div>
             <div style="color: var(--accent-primary); font-size: 0.6rem; text-align: right; font-weight: 500;">Pending</div>
         `;
 
-        item.addEventListener("click", () => {
-            selectSimulatedEmailVisitor(v);
-            renderSimulatedEmailInbox();
+            item.addEventListener("click", () => {
+                selectSimulatedEmailVisitor(v);
+                renderSimulatedEmailInbox();
+            });
+
+            inboxList.appendChild(item);
         });
+    }
 
-        inboxList.appendChild(item);
-    });
-}
+    function selectSimulatedEmailVisitor(visitor) {
+        activeSimulatedVisitor = visitor;
 
-function selectSimulatedEmailVisitor(visitor) {
-    activeSimulatedVisitor = visitor;
+        const emailRecipientEl = document.getElementById("host-email-recipient");
+        const emailSubjectEl = document.getElementById("host-email-subject");
+        const emailHostNameEl = document.getElementById("host-email-host-name");
+        const emailVisitorName = document.getElementById("host-email-visitor-name");
+        const emailVisitorCo = document.getElementById("host-email-visitor-company");
+        const emailVisitorPurp = document.getElementById("host-email-visitor-purpose");
+        const emailVisitorTime = document.getElementById("host-email-visitor-time");
 
-    const emailRecipientEl = document.getElementById("host-email-recipient");
-    const emailSubjectEl   = document.getElementById("host-email-subject");
-    const emailHostNameEl  = document.getElementById("host-email-host-name");
-    const emailVisitorName = document.getElementById("host-email-visitor-name");
-    const emailVisitorCo   = document.getElementById("host-email-visitor-company");
-    const emailVisitorPurp = document.getElementById("host-email-visitor-purpose");
-    const emailVisitorTime = document.getElementById("host-email-visitor-time");
-
-    const hostEmp = state.employees.find(e => e.id === visitor.hostId);
-    const hostEmail = hostEmp ? hostEmp.email : `${(visitor.hostName || 'host').toLowerCase().replace(/\s+/g,'')}@barani.corp`;
+        const hostEmp = state.employees.find(e => e.id === visitor.hostId);
+        const hostEmail = hostEmp ? hostEmp.email : `${(visitor.hostName || 'host').toLowerCase().replace(/\s+/g, '')}@barani.corp`;
 
         if (emailRecipientEl) emailRecipientEl.innerText = "?";
-    if (emailSubjectEl)   emailSubjectEl.innerText   = `Visitor Approval Request ? ${visitor.name} (${visitor.id})`;
-    if (emailHostNameEl)  emailHostNameEl.innerText  = visitor.hostName;
+        if (emailSubjectEl) emailSubjectEl.innerText = `Visitor Approval Request ? ${visitor.name} (${visitor.id})`;
+        if (emailHostNameEl) emailHostNameEl.innerText = visitor.hostName;
         if (emailVisitorName) emailVisitorName.innerText = "?";
-    if (emailVisitorCo)   emailVisitorCo.innerText   = visitor.company || 'Independent';
+        if (emailVisitorCo) emailVisitorCo.innerText = visitor.company || 'Independent';
         if (emailVisitorPurp) emailVisitorPurp.innerText = "?";
         if (emailVisitorTime) emailVisitorTime.innerText = "?";
 
-    // Reset rejection fields in simulator UI
-    const rejectWrapper = document.getElementById("host-email-reject-wrapper");
-    const rejectTextarea = document.getElementById("host-email-rejection-reason");
-    const btnApprove = document.getElementById("btn-host-email-approve");
-    const btnReject = document.getElementById("btn-host-email-reject");
-    const btnCancel = document.getElementById("btn-host-email-cancel-reject");
+        // Reset rejection fields in simulator UI
+        const rejectWrapper = document.getElementById("host-email-reject-wrapper");
+        const rejectTextarea = document.getElementById("host-email-rejection-reason");
+        const btnApprove = document.getElementById("btn-host-email-approve");
+        const btnReject = document.getElementById("btn-host-email-reject");
+        const btnCancel = document.getElementById("btn-host-email-cancel-reject");
 
-    if (rejectWrapper) rejectWrapper.style.display = "none";
-    if (rejectTextarea) rejectTextarea.value = "";
-    if (btnCancel) btnCancel.style.display = "none";
-    if (btnReject) btnReject.textContent = "Reject Link";
-    if (btnApprove) btnApprove.style.display = "inline-block";
-}
-
-/* ==========================================================================
-   24. Redesigned Category Registration Dashboard & Form Helpers
-   ========================================================================== */
-
-window.showRegistrationDashboard = function() {
-    // Hide all forms and records viewer
-    document.getElementById("registration-dashboard-wrapper").classList.remove("hidden");
-    document.getElementById("student-registration-wrapper").classList.add("hidden");
-    document.getElementById("customer-registration-wrapper").classList.add("hidden");
-    document.getElementById("vendor-registration-wrapper").classList.add("hidden");
-    document.getElementById("contractor-registration-wrapper").classList.add("hidden");
-    document.getElementById("delivery-registration-wrapper").classList.add("hidden");
-    document.getElementById("service-engineer-registration-wrapper").classList.add("hidden");
-    document.getElementById("view-category-records-wrapper").classList.add("hidden");
-    
-    // Stop camera stream
-    stopCategoryCameras();
-
-    // Update counts
-    updateRegistrationDashboardStats();
-};
-
-window.openCategoryForm = function(category) {
-    // Hide dashboard and all other wrappers
-    document.getElementById("registration-dashboard-wrapper").classList.add("hidden");
-    document.getElementById("student-registration-wrapper").classList.add("hidden");
-    document.getElementById("customer-registration-wrapper").classList.add("hidden");
-    document.getElementById("vendor-registration-wrapper").classList.add("hidden");
-    document.getElementById("contractor-registration-wrapper").classList.add("hidden");
-    document.getElementById("delivery-registration-wrapper").classList.add("hidden");
-    document.getElementById("service-engineer-registration-wrapper").classList.add("hidden");
-    document.getElementById("view-category-records-wrapper").classList.add("hidden");
-
-    // Show form
-    const wrapper = document.getElementById(`${category}-registration-wrapper`);
-    if (wrapper) {
-        wrapper.classList.remove("hidden");
+        if (rejectWrapper) rejectWrapper.style.display = "none";
+        if (rejectTextarea) rejectTextarea.value = "";
+        if (btnCancel) btnCancel.style.display = "none";
+        if (btnReject) btnReject.textContent = "Reject Link";
+        if (btnApprove) btnApprove.style.display = "inline-block";
     }
 
-    // Set default date to today
-    const dateInput = document.getElementById(`reg-${category}-visit-date`);
-    if (dateInput) {
-        dateInput.value = getLocalDateStr();
-    }
+    /* ==========================================================================
+       24. Redesigned Category Registration Dashboard & Form Helpers
+       ========================================================================== */
 
-    // Reset fields & states
-    resetCategoryFormState(category);
+    window.showRegistrationDashboard = function () {
+        // Hide all forms and records viewer
+        document.getElementById("registration-dashboard-wrapper").classList.remove("hidden");
+        document.getElementById("student-registration-wrapper").classList.add("hidden");
+        document.getElementById("customer-registration-wrapper").classList.add("hidden");
+        document.getElementById("vendor-registration-wrapper").classList.add("hidden");
+        document.getElementById("contractor-registration-wrapper").classList.add("hidden");
+        document.getElementById("delivery-registration-wrapper").classList.add("hidden");
+        document.getElementById("service-engineer-registration-wrapper").classList.add("hidden");
+        document.getElementById("view-category-records-wrapper").classList.add("hidden");
 
-    // Populate dropdowns if contractor
-    if (category === "contractor") {
-        populateContractorPMDropdown();
-    }
-};
+        // Stop camera stream
+        stopCategoryCameras();
 
-function updateRegistrationDashboardStats() {
-    const todayStr = getLocalDateStr();
+        // Update counts
+        updateRegistrationDashboardStats();
+    };
 
-    // Students
-    if (document.getElementById("count-student-total")) {
-        document.getElementById("count-student-total").innerText = state.studentMaster.length;
-    }
-    if (document.getElementById("count-student-today")) {
-        document.getElementById("count-student-today").innerText = state.visitors.filter(v => v.purpose === "Student" && v.visitDate === todayStr).length;
-    }
+    window.openCategoryForm = function (category) {
+        // Hide dashboard and all other wrappers
+        document.getElementById("registration-dashboard-wrapper").classList.add("hidden");
+        document.getElementById("student-registration-wrapper").classList.add("hidden");
+        document.getElementById("customer-registration-wrapper").classList.add("hidden");
+        document.getElementById("vendor-registration-wrapper").classList.add("hidden");
+        document.getElementById("contractor-registration-wrapper").classList.add("hidden");
+        document.getElementById("delivery-registration-wrapper").classList.add("hidden");
+        document.getElementById("service-engineer-registration-wrapper").classList.add("hidden");
+        document.getElementById("view-category-records-wrapper").classList.add("hidden");
 
-    // Customers
-    if (document.getElementById("count-customer-total")) {
-        document.getElementById("count-customer-total").innerText = state.customerMaster.length;
-    }
-    if (document.getElementById("count-customer-today")) {
-        document.getElementById("count-customer-today").innerText = state.visitors.filter(v => v.purpose === "Customer" && v.visitDate === todayStr).length;
-    }
-
-    // Vendors
-    if (document.getElementById("count-vendor-total")) {
-        document.getElementById("count-vendor-total").innerText = state.vendorMaster.length;
-    }
-    if (document.getElementById("count-vendor-today")) {
-        document.getElementById("count-vendor-today").innerText = state.visitors.filter(v => v.purpose === "Vendor" && v.visitDate === todayStr).length;
-    }
-
-    // Contractors
-    if (document.getElementById("count-contractor-total")) {
-        document.getElementById("count-contractor-total").innerText = state.contractorMaster.length;
-    }
-    if (document.getElementById("count-contractor-today")) {
-        document.getElementById("count-contractor-today").innerText = state.visitors.filter(v => v.purpose === "Contractor" && v.visitDate === todayStr).length;
-    }
-
-    // Delivery
-    if (document.getElementById("count-delivery-total")) {
-        document.getElementById("count-delivery-total").innerText = state.deliveryMaster.length;
-    }
-    if (document.getElementById("count-delivery-today")) {
-        document.getElementById("count-delivery-today").innerText = state.visitors.filter(v => v.purpose === "Delivery" && v.visitDate === todayStr).length;
-    }
-
-    // Service Engineers
-    if (document.getElementById("count-service-engineer-total")) {
-        document.getElementById("count-service-engineer-total").innerText = state.serviceEngineerMaster.length;
-    }
-    if (document.getElementById("count-service-engineer-today")) {
-        document.getElementById("count-service-engineer-today").innerText = state.visitors.filter(v => v.purpose === "Service Engineer" && v.visitDate === todayStr).length;
-    }
-}
-
-function stopCategoryCameras() {
-    if (state.cameraStream) {
-        state.cameraStream.getTracks().forEach(track => track.stop());
-        state.cameraStream = null;
-    }
-    const categories = ["student", "customer", "vendor", "contractor", "delivery", "service-engineer"];
-    categories.forEach(cat => {
-        const video = document.getElementById(`camera-stream-${cat}`);
-        if (video) video.classList.add("hidden");
-        const status = document.getElementById(`camera-status-${cat}`);
-        if (status) status.textContent = "Camera Inactive";
-        const enableBtn = document.getElementById(`btn-enable-camera-${cat}`);
-        if (enableBtn) enableBtn.classList.remove("hidden");
-        const captureBtn = document.getElementById(`btn-capture-${cat}`);
-        if (captureBtn) captureBtn.classList.add("hidden");
-        const retakeBtn = document.getElementById(`btn-retake-${cat}`);
-        if (retakeBtn) retakeBtn.classList.add("hidden");
-    });
-}
-
-window.initCategoryCamera = function(category) {
-    stopCategoryCameras(); // Stop any active camera first
-    
-    const video = document.getElementById(`camera-stream-${category}`);
-    const status = document.getElementById(`camera-status-${category}`);
-    const enableBtn = document.getElementById(`btn-enable-camera-${category}`);
-    const captureBtn = document.getElementById(`btn-capture-${category}`);
-    
-    if (!video) return;
-    
-    status.textContent = "Initializing camera...";
-    
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-        .then(stream => {
-            state.cameraStream = stream;
-            video.srcObject = stream;
-            video.classList.remove("hidden");
-            status.textContent = "Live Camera Feed Active";
-            enableBtn.classList.add("hidden");
-            captureBtn.classList.remove("hidden");
-        })
-        .catch(err => {
-            console.error("Camera access error:", err);
-            status.textContent = "Camera access denied or unavailable";
-            showToast("Camera Error", "Could not start camera feed.", "danger");
-        });
-};
-
-window.captureCategoryPhoto = function(category) {
-    const video = document.getElementById(`camera-stream-${category}`);
-    const canvas = document.getElementById(`photo-canvas-${category}`);
-    const preview = document.getElementById(`photo-preview-${category}`);
-    const status = document.getElementById(`camera-status-${category}`);
-    const captureBtn = document.getElementById(`btn-capture-${category}`);
-    const retakeBtn = document.getElementById(`btn-retake-${category}`);
-    
-    if (!video || !canvas || !preview) return;
-    
-    const ctx = canvas.getContext("2d");
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-    const dataUrl = canvas.toDataURL("image/jpeg");
-    state.tempVisitorPhoto = dataUrl; // save in state
-    
-    preview.src = dataUrl;
-    video.classList.add("hidden");
-    status.textContent = "Photo Captured";
-    
-    captureBtn.classList.add("hidden");
-    retakeBtn.classList.remove("hidden");
-    
-    // Stop camera stream tracks
-    if (state.cameraStream) {
-        state.cameraStream.getTracks().forEach(track => track.stop());
-        state.cameraStream = null;
-    }
-};
-
-window.retakeCategoryPhoto = function(category) {
-    const preview = document.getElementById(`photo-preview-${category}`);
-    if (preview) {
-        preview.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>";
-    }
-    state.tempVisitorPhoto = "";
-    initCategoryCamera(category);
-};
-
-function handleCategoryPhotoFileUpload(e, category) {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-        const preview = document.getElementById(`photo-preview-${category}`);
-        if (preview) {
-            preview.src = evt.target.result;
+        // Show form
+        const wrapper = document.getElementById(`${category}-registration-wrapper`);
+        if (wrapper) {
+            wrapper.classList.remove("hidden");
         }
-        state.tempVisitorPhoto = evt.target.result;
-        const status = document.getElementById(`camera-status-${category}`);
-        if (status) {
-            status.textContent = "Photo Uploaded";
+
+        // Set default date to today
+        const dateInput = document.getElementById(`reg-${category}-visit-date`);
+        if (dateInput) {
+            dateInput.value = getLocalDateStr();
         }
-        const enableBtn = document.getElementById(`btn-enable-camera-${category}`);
-        if (enableBtn) enableBtn.classList.remove("hidden");
-        const captureBtn = document.getElementById(`btn-capture-${category}`);
-        if (captureBtn) captureBtn.classList.add("hidden");
-        const retakeBtn = document.getElementById(`btn-retake-${category}`);
-        if (retakeBtn) retakeBtn.classList.add("hidden");
-        
-        // Stop stream if active
+
+        // Reset fields & states
+        resetCategoryFormState(category);
+
+        // Populate dropdowns if contractor
+        if (category === "contractor") {
+            populateContractorPMDropdown();
+        }
+    };
+
+    function updateRegistrationDashboardStats() {
+        const todayStr = getLocalDateStr();
+
+        // Students
+        if (document.getElementById("count-student-total")) {
+            document.getElementById("count-student-total").innerText = state.studentMaster.length;
+        }
+        if (document.getElementById("count-student-today")) {
+            document.getElementById("count-student-today").innerText = state.visitors.filter(v => v.purpose === "Student" && v.visitDate === todayStr).length;
+        }
+
+        // Customers
+        if (document.getElementById("count-customer-total")) {
+            document.getElementById("count-customer-total").innerText = state.customerMaster.length;
+        }
+        if (document.getElementById("count-customer-today")) {
+            document.getElementById("count-customer-today").innerText = state.visitors.filter(v => v.purpose === "Customer" && v.visitDate === todayStr).length;
+        }
+
+        // Vendors
+        if (document.getElementById("count-vendor-total")) {
+            document.getElementById("count-vendor-total").innerText = state.vendorMaster.length;
+        }
+        if (document.getElementById("count-vendor-today")) {
+            document.getElementById("count-vendor-today").innerText = state.visitors.filter(v => v.purpose === "Vendor" && v.visitDate === todayStr).length;
+        }
+
+        // Contractors
+        if (document.getElementById("count-contractor-total")) {
+            document.getElementById("count-contractor-total").innerText = state.contractorMaster.length;
+        }
+        if (document.getElementById("count-contractor-today")) {
+            document.getElementById("count-contractor-today").innerText = state.visitors.filter(v => v.purpose === "Contractor" && v.visitDate === todayStr).length;
+        }
+
+        // Delivery
+        if (document.getElementById("count-delivery-total")) {
+            document.getElementById("count-delivery-total").innerText = state.deliveryMaster.length;
+        }
+        if (document.getElementById("count-delivery-today")) {
+            document.getElementById("count-delivery-today").innerText = state.visitors.filter(v => v.purpose === "Delivery" && v.visitDate === todayStr).length;
+        }
+
+        // Service Engineers
+        if (document.getElementById("count-service-engineer-total")) {
+            document.getElementById("count-service-engineer-total").innerText = state.serviceEngineerMaster.length;
+        }
+        if (document.getElementById("count-service-engineer-today")) {
+            document.getElementById("count-service-engineer-today").innerText = state.visitors.filter(v => v.purpose === "Service Engineer" && v.visitDate === todayStr).length;
+        }
+    }
+
+    function stopCategoryCameras() {
         if (state.cameraStream) {
             state.cameraStream.getTracks().forEach(track => track.stop());
             state.cameraStream = null;
         }
+        const categories = ["student", "customer", "vendor", "contractor", "delivery", "service-engineer"];
+        categories.forEach(cat => {
+            const video = document.getElementById(`camera-stream-${cat}`);
+            if (video) video.classList.add("hidden");
+            const status = document.getElementById(`camera-status-${cat}`);
+            if (status) status.textContent = "Camera Inactive";
+            const enableBtn = document.getElementById(`btn-enable-camera-${cat}`);
+            if (enableBtn) enableBtn.classList.remove("hidden");
+            const captureBtn = document.getElementById(`btn-capture-${cat}`);
+            if (captureBtn) captureBtn.classList.add("hidden");
+            const retakeBtn = document.getElementById(`btn-retake-${cat}`);
+            if (retakeBtn) retakeBtn.classList.add("hidden");
+        });
+    }
+
+    window.initCategoryCamera = function (category) {
+        stopCategoryCameras(); // Stop any active camera first
+
         const video = document.getElementById(`camera-stream-${category}`);
-        if (video) video.classList.add("hidden");
+        const status = document.getElementById(`camera-status-${category}`);
+        const enableBtn = document.getElementById(`btn-enable-camera-${category}`);
+        const captureBtn = document.getElementById(`btn-capture-${category}`);
+
+        if (!video) return;
+
+        status.textContent = "Initializing camera...";
+
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+            .then(stream => {
+                state.cameraStream = stream;
+                video.srcObject = stream;
+                video.classList.remove("hidden");
+                status.textContent = "Live Camera Feed Active";
+                enableBtn.classList.add("hidden");
+                captureBtn.classList.remove("hidden");
+            })
+            .catch(err => {
+                console.error("Camera access error:", err);
+                status.textContent = "Camera access denied or unavailable";
+                showToast("Camera Error", "Could not start camera feed.", "danger");
+            });
     };
-    reader.readAsDataURL(file);
-}
 
-function resetCategoryFormState(category) {
-    state.tempVisitorPhoto = "";
-    state.tempVisitorIdDoc = "";
-    
-    const form = document.getElementById(`${category}-registration-form`);
-    if (form) {
-        form.reset();
-    }
-    
-    const preview = document.getElementById(`photo-preview-${category}`);
-    if (preview) {
-        preview.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>";
-    }
-    
-    // Clear badge or alert classes
-    const badge = document.getElementById(`${category}-badge-alert`);
-    if (badge) {
-        badge.classList.add("hidden");
-    }
-    
-    // For student/customer, enable name/phone editing
-    if (category === "student") {
-        document.getElementById("reg-student-name").readOnly = false;
-        document.getElementById("reg-student-phone").readOnly = false;
-        document.getElementById("reg-student-email").readOnly = false;
-        document.getElementById("reg-student-college").readOnly = false;
-        document.getElementById("reg-student-dept").readOnly = false;
-        document.getElementById("reg-student-rollno").readOnly = false;
-        const uploadBtn = document.getElementById("student-id-doc-label");
-        if (uploadBtn) uploadBtn.innerText = "Upload College ID";
-    } else if (category === "customer") {
-        document.getElementById("reg-customer-name").readOnly = false;
-        document.getElementById("reg-customer-phone").readOnly = false;
-        document.getElementById("reg-customer-email").readOnly = false;
-        document.getElementById("reg-customer-company").readOnly = false;
-        document.getElementById("reg-customer-id").value = "CUST" + Math.floor(10000 + Math.random() * 90000);
-        document.getElementById("reg-customer-id").readOnly = false;
-    }
-}
+    window.captureCategoryPhoto = function (category) {
+        const video = document.getElementById(`camera-stream-${category}`);
+        const canvas = document.getElementById(`photo-canvas-${category}`);
+        const preview = document.getElementById(`photo-preview-${category}`);
+        const status = document.getElementById(`camera-status-${category}`);
+        const captureBtn = document.getElementById(`btn-capture-${category}`);
+        const retakeBtn = document.getElementById(`btn-retake-${category}`);
 
-window.lookupStudentProfile = function() {
-    const inputVal = document.getElementById("student-lookup-input").value.trim().toLowerCase();
-    if (!inputVal) {
-        showToast("Validation Error", "Please enter Student ID, Phone or scan QR to search.", "warning");
-        return;
-    }
-    
-    const match = state.studentMaster.find(s => 
-        (s.studentId && s.studentId.toLowerCase() === inputVal) || 
-        (s.rollNumber && s.rollNumber.toLowerCase() === inputVal) || 
-        (s.phone && s.phone.toLowerCase() === inputVal) ||
-        (s.qrCodeData && s.qrCodeData.toLowerCase() === inputVal)
-    );
-    
-    if (match) {
-        // Load details and lock fields
-        document.getElementById("reg-student-name").value = match.name;
-        document.getElementById("reg-student-name").readOnly = true;
-        document.getElementById("reg-student-phone").value = match.phone;
-        document.getElementById("reg-student-phone").readOnly = true;
-        document.getElementById("reg-student-email").value = match.email;
-        document.getElementById("reg-student-email").readOnly = true;
-        document.getElementById("reg-student-college").value = match.college;
-        document.getElementById("reg-student-college").readOnly = true;
-        document.getElementById("reg-student-dept").value = match.department;
-        document.getElementById("reg-student-dept").readOnly = true;
-        document.getElementById("reg-student-rollno").value = match.rollNumber;
-        document.getElementById("reg-student-rollno").readOnly = true;
-        
-        if (match.photo) {
-            const preview = document.getElementById("photo-preview-student");
-            if (preview) preview.src = match.photo;
-            state.tempVisitorPhoto = match.photo;
-            const status = document.getElementById("camera-status-student");
-            if (status) status.textContent = "Profile Photo Loaded";
+        if (!video || !canvas || !preview) return;
+
+        const ctx = canvas.getContext("2d");
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 480;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const dataUrl = canvas.toDataURL("image/jpeg");
+        state.tempVisitorPhoto = dataUrl; // save in state
+
+        preview.src = dataUrl;
+        video.classList.add("hidden");
+        status.textContent = "Photo Captured";
+
+        captureBtn.classList.add("hidden");
+        retakeBtn.classList.remove("hidden");
+
+        // Stop camera stream tracks
+        if (state.cameraStream) {
+            state.cameraStream.getTracks().forEach(track => track.stop());
+            state.cameraStream = null;
         }
-        
-        const label = document.getElementById("student-id-doc-label");
-        if (label) label.innerText = "College ID Verified";
-        
-        const alertBadge = document.getElementById("student-badge-alert");
-        if (alertBadge) alertBadge.classList.remove("hidden");
-        
-        showToast("Profile Found", `Welcome back, ${match.name}! Permanent profile loaded.`, "success");
-    } else {
-        showToast("Profile Not Found", "No registered student profile matches search criteria.", "warning");
-    }
-};
+    };
 
-window.lookupCustomerProfile = function() {
-    const inputVal = document.getElementById("customer-lookup-input").value.trim().toLowerCase();
-    if (!inputVal) {
-        showToast("Validation Error", "Please enter Customer ID, Phone or scan QR to search.", "warning");
-        return;
-    }
-    
-    const match = state.customerMaster.find(c => 
-        (c.customerId && c.customerId.toLowerCase() === inputVal) || 
-        (c.phone && c.phone.toLowerCase() === inputVal) ||
-        (c.qrCodeData && c.qrCodeData.toLowerCase() === inputVal)
-    );
-    
-    if (match) {
-        // Load details and lock fields
-        document.getElementById("reg-customer-name").value = match.name;
-        document.getElementById("reg-customer-name").readOnly = true;
-        document.getElementById("reg-customer-phone").value = match.phone;
-        document.getElementById("reg-customer-phone").readOnly = true;
-        document.getElementById("reg-customer-email").value = match.email;
-        document.getElementById("reg-customer-email").readOnly = true;
-        document.getElementById("reg-customer-company").value = match.company;
-        document.getElementById("reg-customer-company").readOnly = true;
-        document.getElementById("reg-customer-id").value = match.customerId;
-        document.getElementById("reg-customer-id").readOnly = true;
-        
-        if (match.photo) {
-            const preview = document.getElementById("photo-preview-customer");
-            if (preview) preview.src = match.photo;
-            state.tempVisitorPhoto = match.photo;
-            const status = document.getElementById("camera-status-customer");
-            if (status) status.textContent = "Profile Photo Loaded";
+    window.retakeCategoryPhoto = function (category) {
+        const preview = document.getElementById(`photo-preview-${category}`);
+        if (preview) {
+            preview.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>";
         }
-        
-        const alertBadge = document.getElementById("customer-badge-alert");
-        if (alertBadge) alertBadge.classList.remove("hidden");
-        
-        showToast("Profile Found", `Welcome back, ${match.name}! Profile loaded.`, "success");
-    } else {
-        showToast("Profile Not Found", "No registered customer profile matches search criteria.", "warning");
-    }
-};
+        state.tempVisitorPhoto = "";
+        initCategoryCamera(category);
+    };
 
-window.populateContractorPMDropdown = function() {
-    const pmDropdown = document.getElementById("reg-contractor-pm");
-    if (!pmDropdown) return;
-    pmDropdown.innerHTML = '<option value="">-- Choose Approved Purchase Manual --</option>';
-    
-    const approvedPMs = state.purchaseManuals.filter(pm => pm.status === "Approved");
-    approvedPMs.forEach(pm => {
-        const opt = document.createElement("option");
-        opt.value = pm.id;
-        opt.textContent = `${pm.id} - ${pm.companyName} (${pm.natureWork})`;
-        pmDropdown.appendChild(opt);
-    });
-};
+    function handleCategoryPhotoFileUpload(e, category) {
+        const file = e.target.files[0];
+        if (!file) return;
 
-window.populateContractorWPDropdown = function() {
-    const pmDropdown = document.getElementById("reg-contractor-pm");
-    const wpDropdown = document.getElementById("reg-contractor-wp");
-    if (!pmDropdown || !wpDropdown) return;
-    
-    wpDropdown.innerHTML = '<option value="">-- Choose Active Work Permit --</option>';
-    const selectedPmId = pmDropdown.value;
-    if (!selectedPmId) return;
-    
-    const approvedWPs = state.workPermits.filter(wp => wp.purchaseManualId === selectedPmId && wp.status === "Approved");
-    approvedWPs.forEach(wp => {
-        const opt = document.createElement("option");
-        opt.value = wp.id;
-        opt.textContent = `${wp.id} - ${wp.workActivity}`;
-        wpDropdown.appendChild(opt);
-    });
-};
-
-window.handleStudentRegistrationSubmit = function(e) {
-    e.preventDefault();
-    
-    const name = document.getElementById("reg-student-name").value.trim();
-    const phone = document.getElementById("reg-student-phone").value.trim();
-    const email = document.getElementById("reg-student-email").value.trim();
-    const college = document.getElementById("reg-student-college").value.trim();
-    const department = document.getElementById("reg-student-dept").value.trim();
-    const rollNumber = document.getElementById("reg-student-rollno").value.trim();
-    const purpose = document.getElementById("reg-student-purpose").value;
-    const hostNameVal = document.getElementById("reg-student-host").value.trim();
-    const visitDate = document.getElementById("reg-student-visit-date").value;
-    const expectedExit = document.getElementById("reg-student-expected-exit").value;
-
-    const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
-    if (!matchedHost) {
-        showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
-        return;
-    }
-
-    const isLocked = document.getElementById("reg-student-name").readOnly;
-    let studentId = "";
-    
-    if (isLocked) {
-        // Fields are locked — user searched first, just reuse the master record
-        const existing = state.studentMaster.find(s => s.phone === phone || s.rollNumber === rollNumber);
-        if (existing) {
-            studentId = existing.studentId;
-            // Refresh photo from master if not captured fresh
-            if (existing.photo && !state.tempVisitorPhoto) {
-                state.tempVisitorPhoto = existing.photo;
+        const reader = new FileReader();
+        reader.onload = function (evt) {
+            const preview = document.getElementById(`photo-preview-${category}`);
+            if (preview) {
+                preview.src = evt.target.result;
             }
-        }
-    } else {
-        // New manual entry — check for an existing profile by phone OR roll number
-        const existing = state.studentMaster.find(s => s.phone === phone || s.rollNumber === rollNumber);
-        if (existing) {
-            // Auto-load the existing profile instead of blocking
-            studentId = existing.studentId;
-            if (existing.photo && !state.tempVisitorPhoto) {
-                state.tempVisitorPhoto = existing.photo;
+            state.tempVisitorPhoto = evt.target.result;
+            const status = document.getElementById(`camera-status-${category}`);
+            if (status) {
+                status.textContent = "Photo Uploaded";
             }
-            showToast("Returning Student", `Existing profile for ${existing.name} loaded automatically. Creating new visit.`, "info");
+            const enableBtn = document.getElementById(`btn-enable-camera-${category}`);
+            if (enableBtn) enableBtn.classList.remove("hidden");
+            const captureBtn = document.getElementById(`btn-capture-${category}`);
+            if (captureBtn) captureBtn.classList.add("hidden");
+            const retakeBtn = document.getElementById(`btn-retake-${category}`);
+            if (retakeBtn) retakeBtn.classList.add("hidden");
+
+            // Stop stream if active
+            if (state.cameraStream) {
+                state.cameraStream.getTracks().forEach(track => track.stop());
+                state.cameraStream = null;
+            }
+            const video = document.getElementById(`camera-stream-${category}`);
+            if (video) video.classList.add("hidden");
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function resetCategoryFormState(category) {
+        state.tempVisitorPhoto = "";
+        state.tempVisitorIdDoc = "";
+
+        const form = document.getElementById(`${category}-registration-form`);
+        if (form) {
+            form.reset();
+        }
+
+        const preview = document.getElementById(`photo-preview-${category}`);
+        if (preview) {
+            preview.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>";
+        }
+
+        // Clear badge or alert classes
+        const badge = document.getElementById(`${category}-badge-alert`);
+        if (badge) {
+            badge.classList.add("hidden");
+        }
+
+        // For student/customer, enable name/phone editing
+        if (category === "student") {
+            document.getElementById("reg-student-name").readOnly = false;
+            document.getElementById("reg-student-phone").readOnly = false;
+            document.getElementById("reg-student-email").readOnly = false;
+            document.getElementById("reg-student-college").readOnly = false;
+            document.getElementById("reg-student-dept").readOnly = false;
+            document.getElementById("reg-student-rollno").readOnly = false;
+            const uploadBtn = document.getElementById("student-id-doc-label");
+            if (uploadBtn) uploadBtn.innerText = "Upload College ID";
+        } else if (category === "customer") {
+            document.getElementById("reg-customer-name").readOnly = false;
+            document.getElementById("reg-customer-phone").readOnly = false;
+            document.getElementById("reg-customer-email").readOnly = false;
+            document.getElementById("reg-customer-company").readOnly = false;
+            document.getElementById("reg-customer-id").value = "CUST" + Math.floor(10000 + Math.random() * 90000);
+            document.getElementById("reg-customer-id").readOnly = false;
+        }
+    }
+
+    window.lookupStudentProfile = function () {
+        const inputVal = document.getElementById("student-lookup-input").value.trim().toLowerCase();
+        if (!inputVal) {
+            showToast("Validation Error", "Please enter Student ID, Phone or scan QR to search.", "warning");
+            return;
+        }
+
+        const match = state.studentMaster.find(s =>
+            (s.studentId && s.studentId.toLowerCase() === inputVal) ||
+            (s.rollNumber && s.rollNumber.toLowerCase() === inputVal) ||
+            (s.phone && s.phone.toLowerCase() === inputVal) ||
+            (s.qrCodeData && s.qrCodeData.toLowerCase() === inputVal)
+        );
+
+        if (match) {
+            // Load details and lock fields
+            document.getElementById("reg-student-name").value = match.name;
+            document.getElementById("reg-student-name").readOnly = true;
+            document.getElementById("reg-student-phone").value = match.phone;
+            document.getElementById("reg-student-phone").readOnly = true;
+            document.getElementById("reg-student-email").value = match.email;
+            document.getElementById("reg-student-email").readOnly = true;
+            document.getElementById("reg-student-college").value = match.college;
+            document.getElementById("reg-student-college").readOnly = true;
+            document.getElementById("reg-student-dept").value = match.department;
+            document.getElementById("reg-student-dept").readOnly = true;
+            document.getElementById("reg-student-rollno").value = match.rollNumber;
+            document.getElementById("reg-student-rollno").readOnly = true;
+
+            if (match.photo) {
+                const preview = document.getElementById("photo-preview-student");
+                if (preview) preview.src = match.photo;
+                state.tempVisitorPhoto = match.photo;
+                const status = document.getElementById("camera-status-student");
+                if (status) status.textContent = "Profile Photo Loaded";
+            }
+
+            const label = document.getElementById("student-id-doc-label");
+            if (label) label.innerText = "College ID Verified";
+
+            const alertBadge = document.getElementById("student-badge-alert");
+            if (alertBadge) alertBadge.classList.remove("hidden");
+
+            showToast("Profile Found", `Welcome back, ${match.name}! Permanent profile loaded.`, "success");
         } else {
-            // Genuinely new student — create master record
-            studentId = "STU" + (state.studentMaster.length + 10001);
-            
-            const newStudent = {
-                studentId,
+            showToast("Profile Not Found", "No registered student profile matches search criteria.", "warning");
+        }
+    };
+
+    window.lookupCustomerProfile = function () {
+        const inputVal = document.getElementById("customer-lookup-input").value.trim().toLowerCase();
+        if (!inputVal) {
+            showToast("Validation Error", "Please enter Customer ID, Phone or scan QR to search.", "warning");
+            return;
+        }
+
+        const match = state.customerMaster.find(c =>
+            (c.customerId && c.customerId.toLowerCase() === inputVal) ||
+            (c.phone && c.phone.toLowerCase() === inputVal) ||
+            (c.qrCodeData && c.qrCodeData.toLowerCase() === inputVal)
+        );
+
+        if (match) {
+            // Load details and lock fields
+            document.getElementById("reg-customer-name").value = match.name;
+            document.getElementById("reg-customer-name").readOnly = true;
+            document.getElementById("reg-customer-phone").value = match.phone;
+            document.getElementById("reg-customer-phone").readOnly = true;
+            document.getElementById("reg-customer-email").value = match.email;
+            document.getElementById("reg-customer-email").readOnly = true;
+            document.getElementById("reg-customer-company").value = match.company;
+            document.getElementById("reg-customer-company").readOnly = true;
+            document.getElementById("reg-customer-id").value = match.customerId;
+            document.getElementById("reg-customer-id").readOnly = true;
+
+            if (match.photo) {
+                const preview = document.getElementById("photo-preview-customer");
+                if (preview) preview.src = match.photo;
+                state.tempVisitorPhoto = match.photo;
+                const status = document.getElementById("camera-status-customer");
+                if (status) status.textContent = "Profile Photo Loaded";
+            }
+
+            const alertBadge = document.getElementById("customer-badge-alert");
+            if (alertBadge) alertBadge.classList.remove("hidden");
+
+            showToast("Profile Found", `Welcome back, ${match.name}! Profile loaded.`, "success");
+        } else {
+            showToast("Profile Not Found", "No registered customer profile matches search criteria.", "warning");
+        }
+    };
+
+    window.populateContractorPMDropdown = function () {
+        const pmDropdown = document.getElementById("reg-contractor-pm");
+        if (!pmDropdown) return;
+        pmDropdown.innerHTML = '<option value="">-- Choose Approved Purchase Manual --</option>';
+
+        const approvedPMs = state.purchaseManuals.filter(pm => pm.status === "Approved");
+        approvedPMs.forEach(pm => {
+            const opt = document.createElement("option");
+            opt.value = pm.id;
+            opt.textContent = `${pm.id} - ${pm.companyName} (${pm.natureWork})`;
+            pmDropdown.appendChild(opt);
+        });
+    };
+
+    window.populateContractorWPDropdown = function () {
+        const pmDropdown = document.getElementById("reg-contractor-pm");
+        const wpDropdown = document.getElementById("reg-contractor-wp");
+        if (!pmDropdown || !wpDropdown) return;
+
+        wpDropdown.innerHTML = '<option value="">-- Choose Active Work Permit --</option>';
+        const selectedPmId = pmDropdown.value;
+        if (!selectedPmId) return;
+
+        const approvedWPs = state.workPermits.filter(wp => wp.purchaseManualId === selectedPmId && wp.status === "Approved");
+        approvedWPs.forEach(wp => {
+            const opt = document.createElement("option");
+            opt.value = wp.id;
+            opt.textContent = `${wp.id} - ${wp.workActivity}`;
+            wpDropdown.appendChild(opt);
+        });
+    };
+
+    window.handleStudentRegistrationSubmit = function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("reg-student-name").value.trim();
+        const phone = document.getElementById("reg-student-phone").value.trim();
+        const email = document.getElementById("reg-student-email").value.trim();
+        const college = document.getElementById("reg-student-college").value.trim();
+        const department = document.getElementById("reg-student-dept").value.trim();
+        const rollNumber = document.getElementById("reg-student-rollno").value.trim();
+        const purpose = document.getElementById("reg-student-purpose").value;
+        const hostNameVal = document.getElementById("reg-student-host").value.trim();
+        const visitDate = document.getElementById("reg-student-visit-date").value;
+        const expectedExit = document.getElementById("reg-student-expected-exit").value;
+
+        const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
+        if (!matchedHost) {
+            showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
+            return;
+        }
+
+        const isLocked = document.getElementById("reg-student-name").readOnly;
+        let studentId = "";
+
+        if (isLocked) {
+            // Fields are locked — user searched first, just reuse the master record
+            const existing = state.studentMaster.find(s => s.phone === phone || s.rollNumber === rollNumber);
+            if (existing) {
+                studentId = existing.studentId;
+                // Refresh photo from master if not captured fresh
+                if (existing.photo && !state.tempVisitorPhoto) {
+                    state.tempVisitorPhoto = existing.photo;
+                }
+            }
+        } else {
+            // New manual entry — check for an existing profile by phone OR roll number
+            const existing = state.studentMaster.find(s => s.phone === phone || s.rollNumber === rollNumber);
+            if (existing) {
+                // Auto-load the existing profile instead of blocking
+                studentId = existing.studentId;
+                if (existing.photo && !state.tempVisitorPhoto) {
+                    state.tempVisitorPhoto = existing.photo;
+                }
+                showToast("Returning Student", `Existing profile for ${existing.name} loaded automatically. Creating new visit.`, "info");
+            } else {
+                // Genuinely new student — create master record
+                studentId = "STU" + (state.studentMaster.length + 10001);
+
+                const newStudent = {
+                    studentId,
+                    name,
+                    phone,
+                    email: email || `${name.toLowerCase().replace(/ /g, "")}@college.edu`,
+                    college,
+                    department,
+                    rollNumber,
+                    photo: state.tempVisitorPhoto || "",
+                    photoIdDoc: state.tempVisitorIdDoc || "",
+                    qrCodeData: studentId,
+                    dateRegistered: getLocalDateStr()
+                };
+
+                state.studentMaster.push(newStudent);
+                saveState();
+            }
+        }
+
+        const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+        const visitObj = {
+            id: visitId,
+            masterId: studentId,
+            name,
+            phone,
+            email: email || `${name.toLowerCase().replace(/ /g, "")}@college.edu`,
+            company: college,
+            address: "College Institution",
+            purpose: "Student",
+            vehicle: "None",
+            numVisitors: 1,
+            idType: "College ID",
+            idNumber: rollNumber,
+            hostId: matchedHost.id,
+            hostName: matchedHost.name,
+            hostDept: matchedHost.dept,
+            visitDate,
+            checkIn: null,
+            checkOut: null,
+            expectedExit,
+            status: "Pending",
+            photo: state.tempVisitorPhoto || "",
+            photoIdDoc: state.tempVisitorIdDoc || ""
+        };
+
+        pendingRegistrationObj = visitObj;
+        openVisitorPreview(pendingRegistrationObj);
+    };
+
+    window.handleCustomerRegistrationSubmit = function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("reg-customer-name").value.trim();
+        const phone = document.getElementById("reg-customer-phone").value.trim();
+        const email = document.getElementById("reg-customer-email").value.trim();
+        const company = document.getElementById("reg-customer-company").value.trim();
+        const customerIdInput = document.getElementById("reg-customer-id").value.trim();
+        const purpose = document.getElementById("reg-customer-purpose").value;
+        const idType = document.getElementById("reg-customer-id-type").value;
+        const idNumber = document.getElementById("reg-customer-id-number").value.trim();
+        const vehicle = document.getElementById("reg-customer-vehicle").value.trim();
+        const hostNameVal = document.getElementById("reg-customer-host").value.trim();
+        const visitDate = document.getElementById("reg-customer-visit-date").value;
+        const expectedExit = document.getElementById("reg-customer-expected-exit").value;
+
+        const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
+        if (!matchedHost) {
+            showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
+            return;
+        }
+
+        const isLocked = document.getElementById("reg-customer-name").readOnly;
+        let customerId = customerIdInput;
+
+        if (isLocked) {
+            // Fields are locked — user used Search Profile, reuse existing master record
+            const existing = state.customerMaster.find(c => c.phone === phone);
+            if (existing) {
+                customerId = existing.customerId;
+                if (existing.photo && !state.tempVisitorPhoto) {
+                    state.tempVisitorPhoto = existing.photo;
+                }
+            }
+        } else {
+            // Manual entry — check if a customer with same phone or ID already exists
+            const existing = state.customerMaster.find(c => c.phone === phone || (customerId && c.customerId === customerId));
+            if (existing) {
+                // Auto-load instead of blocking
+                customerId = existing.customerId;
+                if (existing.photo && !state.tempVisitorPhoto) {
+                    state.tempVisitorPhoto = existing.photo;
+                }
+                showToast("Returning Customer", `Existing profile for ${existing.name} loaded automatically. Creating new visit.`, "info");
+            } else {
+                // Genuinely new customer — create master record
+                if (!customerId) customerId = "CUST" + (state.customerMaster.length + 10001);
+                const newCustomer = {
+                    customerId,
+                    name,
+                    phone,
+                    email: email || `${name.toLowerCase().replace(/ /g, "")}@example.com`,
+                    company,
+                    photo: state.tempVisitorPhoto || "",
+                    qrCodeData: customerId,
+                    dateRegistered: getLocalDateStr()
+                };
+
+                state.customerMaster.push(newCustomer);
+                saveState();
+            }
+        }
+
+        const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+        const visitObj = {
+            id: visitId,
+            masterId: customerId,
+            name,
+            phone,
+            email: email || `${name.toLowerCase().replace(/ /g, "")}@example.com`,
+            company,
+            address: "Business Customer Location",
+            purpose: "Customer",
+            vehicle,
+            numVisitors: 1,
+            idType,
+            idNumber,
+            hostId: matchedHost.id,
+            hostName: matchedHost.name,
+            hostDept: matchedHost.dept,
+            visitDate,
+            checkIn: null,
+            checkOut: null,
+            expectedExit,
+            status: "Pending",
+            photo: state.tempVisitorPhoto || "",
+            photoIdDoc: ""
+        };
+
+        pendingRegistrationObj = visitObj;
+        openVisitorPreview(pendingRegistrationObj);
+    };
+
+    window.handleVendorRegistrationSubmit = function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("reg-vendor-name").value.trim();
+        const phone = document.getElementById("reg-vendor-phone").value.trim();
+        const company = document.getElementById("reg-vendor-company").value.trim();
+        const invoice = document.getElementById("reg-vendor-invoice").value.trim();
+        const idType = document.getElementById("reg-vendor-id-type").value;
+        const idNumber = document.getElementById("reg-vendor-id-number").value.trim();
+        const vehicle = document.getElementById("reg-vendor-vehicle").value.trim();
+        const hostNameVal = document.getElementById("reg-vendor-host").value.trim();
+        const visitDate = document.getElementById("reg-vendor-visit-date").value;
+        const expectedExit = document.getElementById("reg-vendor-expected-exit").value;
+
+        const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
+        if (!matchedHost) {
+            showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
+            return;
+        }
+
+        let vendorId = "";
+        const existing = state.vendorMaster.find(v => v.phone === phone);
+        if (existing) {
+            vendorId = existing.vendorId;
+        } else {
+            vendorId = "VND" + (state.vendorMaster.length + 10001);
+            const newVendor = {
+                vendorId,
                 name,
                 phone,
-                email: email || `${name.toLowerCase().replace(/ /g, "")}@college.edu`,
-                college,
-                department,
-                rollNumber,
-                photo: state.tempVisitorPhoto || "",
-                photoIdDoc: state.tempVisitorIdDoc || "",
-                qrCodeData: studentId,
-                dateRegistered: getLocalDateStr()
-            };
-            
-            state.studentMaster.push(newStudent);
-            saveState();
-        }
-    }
-    
-    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
-    const visitObj = {
-        id: visitId,
-        masterId: studentId,
-        name,
-        phone,
-        email: email || `${name.toLowerCase().replace(/ /g, "")}@college.edu`,
-        company: college,
-        address: "College Institution",
-        purpose: "Student",
-        vehicle: "None",
-        numVisitors: 1,
-        idType: "College ID",
-        idNumber: rollNumber,
-        hostId: matchedHost.id,
-        hostName: matchedHost.name,
-        hostDept: matchedHost.dept,
-        visitDate,
-        checkIn: null,
-        checkOut: null,
-        expectedExit,
-        status: "Pending",
-        photo: state.tempVisitorPhoto || "",
-        photoIdDoc: state.tempVisitorIdDoc || ""
-    };
-    
-    pendingRegistrationObj = visitObj;
-    openVisitorPreview(pendingRegistrationObj);
-};
-
-window.handleCustomerRegistrationSubmit = function(e) {
-    e.preventDefault();
-    
-    const name = document.getElementById("reg-customer-name").value.trim();
-    const phone = document.getElementById("reg-customer-phone").value.trim();
-    const email = document.getElementById("reg-customer-email").value.trim();
-    const company = document.getElementById("reg-customer-company").value.trim();
-    const customerIdInput = document.getElementById("reg-customer-id").value.trim();
-    const purpose = document.getElementById("reg-customer-purpose").value;
-    const idType = document.getElementById("reg-customer-id-type").value;
-    const idNumber = document.getElementById("reg-customer-id-number").value.trim();
-    const vehicle = document.getElementById("reg-customer-vehicle").value.trim();
-    const hostNameVal = document.getElementById("reg-customer-host").value.trim();
-    const visitDate = document.getElementById("reg-customer-visit-date").value;
-    const expectedExit = document.getElementById("reg-customer-expected-exit").value;
-
-    const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
-    if (!matchedHost) {
-        showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
-        return;
-    }
-
-    const isLocked = document.getElementById("reg-customer-name").readOnly;
-    let customerId = customerIdInput;
-    
-    if (isLocked) {
-        // Fields are locked — user used Search Profile, reuse existing master record
-        const existing = state.customerMaster.find(c => c.phone === phone);
-        if (existing) {
-            customerId = existing.customerId;
-            if (existing.photo && !state.tempVisitorPhoto) {
-                state.tempVisitorPhoto = existing.photo;
-            }
-        }
-    } else {
-        // Manual entry — check if a customer with same phone or ID already exists
-        const existing = state.customerMaster.find(c => c.phone === phone || (customerId && c.customerId === customerId));
-        if (existing) {
-            // Auto-load instead of blocking
-            customerId = existing.customerId;
-            if (existing.photo && !state.tempVisitorPhoto) {
-                state.tempVisitorPhoto = existing.photo;
-            }
-            showToast("Returning Customer", `Existing profile for ${existing.name} loaded automatically. Creating new visit.`, "info");
-        } else {
-            // Genuinely new customer — create master record
-            if (!customerId) customerId = "CUST" + (state.customerMaster.length + 10001);
-            const newCustomer = {
-                customerId,
-                name,
-                phone,
-                email: email || `${name.toLowerCase().replace(/ /g, "")}@example.com`,
                 company,
-                photo: state.tempVisitorPhoto || "",
-                qrCodeData: customerId,
                 dateRegistered: getLocalDateStr()
             };
-            
-            state.customerMaster.push(newCustomer);
+            state.vendorMaster.push(newVendor);
             saveState();
         }
-    }
-    
-    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
-    const visitObj = {
-        id: visitId,
-        masterId: customerId,
-        name,
-        phone,
-        email: email || `${name.toLowerCase().replace(/ /g, "")}@example.com`,
-        company,
-        address: "Business Customer Location",
-        purpose: "Customer",
-        vehicle,
-        numVisitors: 1,
-        idType,
-        idNumber,
-        hostId: matchedHost.id,
-        hostName: matchedHost.name,
-        hostDept: matchedHost.dept,
-        visitDate,
-        checkIn: null,
-        checkOut: null,
-        expectedExit,
-        status: "Pending",
-        photo: state.tempVisitorPhoto || "",
-        photoIdDoc: ""
-    };
-    
-    pendingRegistrationObj = visitObj;
-    openVisitorPreview(pendingRegistrationObj);
-};
 
-window.handleVendorRegistrationSubmit = function(e) {
-    e.preventDefault();
-    
-    const name = document.getElementById("reg-vendor-name").value.trim();
-    const phone = document.getElementById("reg-vendor-phone").value.trim();
-    const company = document.getElementById("reg-vendor-company").value.trim();
-    const invoice = document.getElementById("reg-vendor-invoice").value.trim();
-    const idType = document.getElementById("reg-vendor-id-type").value;
-    const idNumber = document.getElementById("reg-vendor-id-number").value.trim();
-    const vehicle = document.getElementById("reg-vendor-vehicle").value.trim();
-    const hostNameVal = document.getElementById("reg-vendor-host").value.trim();
-    const visitDate = document.getElementById("reg-vendor-visit-date").value;
-    const expectedExit = document.getElementById("reg-vendor-expected-exit").value;
-
-    const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
-    if (!matchedHost) {
-        showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
-        return;
-    }
-
-    let vendorId = "";
-    const existing = state.vendorMaster.find(v => v.phone === phone);
-    if (existing) {
-        vendorId = existing.vendorId;
-    } else {
-        vendorId = "VND" + (state.vendorMaster.length + 10001);
-        const newVendor = {
-            vendorId,
+        const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+        const visitObj = {
+            id: visitId,
+            masterId: vendorId,
             name,
             phone,
+            email: `${name.toLowerCase().replace(/ /g, "")}@vendor.com`,
             company,
-            dateRegistered: getLocalDateStr()
+            address: invoice ? `Delivery Invoice: ${invoice}` : "Vendor Delivery Site",
+            purpose: "Vendor",
+            vehicle,
+            numVisitors: 1,
+            idType,
+            idNumber,
+            hostId: matchedHost.id,
+            hostName: matchedHost.name,
+            hostDept: matchedHost.dept,
+            visitDate,
+            checkIn: null,
+            checkOut: null,
+            expectedExit,
+            status: "Pending",
+            photo: state.tempVisitorPhoto || "",
+            photoIdDoc: ""
         };
-        state.vendorMaster.push(newVendor);
-        saveState();
-    }
 
-    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
-    const visitObj = {
-        id: visitId,
-        masterId: vendorId,
-        name,
-        phone,
-        email: `${name.toLowerCase().replace(/ /g, "")}@vendor.com`,
-        company,
-        address: invoice ? `Delivery Invoice: ${invoice}` : "Vendor Delivery Site",
-        purpose: "Vendor",
-        vehicle,
-        numVisitors: 1,
-        idType,
-        idNumber,
-        hostId: matchedHost.id,
-        hostName: matchedHost.name,
-        hostDept: matchedHost.dept,
-        visitDate,
-        checkIn: null,
-        checkOut: null,
-        expectedExit,
-        status: "Pending",
-        photo: state.tempVisitorPhoto || "",
-        photoIdDoc: ""
+        pendingRegistrationObj = visitObj;
+        openVisitorPreview(pendingRegistrationObj);
     };
 
-    pendingRegistrationObj = visitObj;
-    openVisitorPreview(pendingRegistrationObj);
-};
+    window.handleContractorRegistrationSubmit = function (e) {
+        e.preventDefault();
 
-window.handleContractorRegistrationSubmit = function(e) {
-    e.preventDefault();
-    
-    const name = document.getElementById("reg-contractor-name").value.trim();
-    const phone = document.getElementById("reg-contractor-phone").value.trim();
-    const company = document.getElementById("reg-contractor-company").value.trim();
-    const vehicle = document.getElementById("reg-contractor-vehicle").value.trim();
-    const pmId = document.getElementById("reg-contractor-pm").value;
-    const wpId = document.getElementById("reg-contractor-wp").value;
-    const idType = document.getElementById("reg-contractor-id-type").value;
-    const idNumber = document.getElementById("reg-contractor-id-number").value.trim();
-    const hostNameVal = document.getElementById("reg-contractor-host").value.trim();
-    const visitDate = document.getElementById("reg-contractor-visit-date").value;
-    const expectedExit = document.getElementById("reg-contractor-expected-exit").value;
+        const name = document.getElementById("reg-contractor-name").value.trim();
+        const phone = document.getElementById("reg-contractor-phone").value.trim();
+        const company = document.getElementById("reg-contractor-company").value.trim();
+        const vehicle = document.getElementById("reg-contractor-vehicle").value.trim();
+        const pmId = document.getElementById("reg-contractor-pm").value;
+        const wpId = document.getElementById("reg-contractor-wp").value;
+        const idType = document.getElementById("reg-contractor-id-type").value;
+        const idNumber = document.getElementById("reg-contractor-id-number").value.trim();
+        const hostNameVal = document.getElementById("reg-contractor-host").value.trim();
+        const visitDate = document.getElementById("reg-contractor-visit-date").value;
+        const expectedExit = document.getElementById("reg-contractor-expected-exit").value;
 
-    const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
-    if (!matchedHost) {
-        showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
-        return;
-    }
-
-    let contractorId = "";
-    const existing = state.contractorMaster.find(c => c.phone === phone);
-    if (existing) {
-        contractorId = existing.contractorId;
-    } else {
-        contractorId = "CNT" + (state.contractorMaster.length + 10001);
-        const newContractor = {
-            contractorId,
-            name,
-            phone,
-            company,
-            dateRegistered: getLocalDateStr()
-        };
-        state.contractorMaster.push(newContractor);
-        saveState();
-    }
-
-    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
-    const visitObj = {
-        id: visitId,
-        masterId: contractorId,
-        name,
-        phone,
-        email: `${name.toLowerCase().replace(/ /g, "")}@contractor.com`,
-        company,
-        address: `Linked PM: ${pmId} | WP: ${wpId}`,
-        purpose: "Contractor",
-        vehicle,
-        numVisitors: 1,
-        idType,
-        idNumber,
-        hostId: matchedHost.id,
-        hostName: matchedHost.name,
-        hostDept: matchedHost.dept,
-        visitDate,
-        checkIn: null,
-        checkOut: null,
-        expectedExit,
-        status: "Pending",
-        photo: state.tempVisitorPhoto || "",
-        photoIdDoc: ""
-    };
-
-    pendingRegistrationObj = visitObj;
-    openVisitorPreview(pendingRegistrationObj);
-};
-
-window.handleDeliveryRegistrationSubmit = function(e) {
-    e.preventDefault();
-    
-    const name = document.getElementById("reg-delivery-name").value.trim();
-    const phone = document.getElementById("reg-delivery-phone").value.trim();
-    const agency = document.getElementById("reg-delivery-agency").value;
-    const invoice = document.getElementById("reg-delivery-invoice").value.trim();
-    const items = document.getElementById("reg-delivery-items").value.trim();
-    const vehicle = document.getElementById("reg-delivery-vehicle").value.trim();
-    const hostNameVal = document.getElementById("reg-delivery-host").value.trim();
-    const visitDate = document.getElementById("reg-delivery-visit-date").value;
-    const expectedExit = document.getElementById("reg-delivery-expected-exit").value;
-
-    const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
-    if (!matchedHost) {
-        showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
-        return;
-    }
-
-    let deliveryId = "";
-    const existing = state.deliveryMaster.find(d => d.phone === phone);
-    if (existing) {
-        deliveryId = existing.deliveryId;
-    } else {
-        deliveryId = "DLV" + (state.deliveryMaster.length + 10001);
-        const newDelivery = {
-            deliveryId,
-            name,
-            phone,
-            agency,
-            dateRegistered: getLocalDateStr()
-        };
-        state.deliveryMaster.push(newDelivery);
-        saveState();
-    }
-
-    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
-    const visitObj = {
-        id: visitId,
-        masterId: deliveryId,
-        name,
-        phone,
-        email: `${name.toLowerCase().replace(/ /g, "")}@delivery.com`,
-        company: agency,
-        address: `Challan: ${invoice} | Items: ${items}`,
-        purpose: "Delivery",
-        vehicle,
-        numVisitors: 1,
-        idType: "Delivery Challan",
-        idNumber: invoice,
-        hostId: matchedHost.id,
-        hostName: matchedHost.name,
-        hostDept: matchedHost.dept,
-        visitDate,
-        checkIn: null,
-        checkOut: null,
-        expectedExit,
-        status: "Pending",
-        photo: state.tempVisitorPhoto || "",
-        photoIdDoc: ""
-    };
-
-    pendingRegistrationObj = visitObj;
-    openVisitorPreview(pendingRegistrationObj);
-};
-
-window.handleServiceEngineerRegistrationSubmit = function(e) {
-    e.preventDefault();
-    
-    const name = document.getElementById("reg-service-engineer-name").value.trim();
-    const phone = document.getElementById("reg-service-engineer-phone").value.trim();
-    const company = document.getElementById("reg-service-engineer-company").value.trim();
-    const machine = document.getElementById("reg-service-engineer-machine").value.trim();
-    const callNo = document.getElementById("reg-service-engineer-callno").value.trim();
-    const vehicle = document.getElementById("reg-service-engineer-vehicle").value.trim();
-    const idType = document.getElementById("reg-service-engineer-id-type").value;
-    const idNumber = document.getElementById("reg-service-engineer-id-number").value.trim();
-    const hostNameVal = document.getElementById("reg-service-engineer-host").value.trim();
-    const visitDate = document.getElementById("reg-service-engineer-visit-date").value;
-    const expectedExit = document.getElementById("reg-service-engineer-expected-exit").value;
-
-    const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
-    if (!matchedHost) {
-        showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
-        return;
-    }
-
-    let engineerId = "";
-    const existing = state.serviceEngineerMaster.find(s => s.phone === phone);
-    if (existing) {
-        engineerId = existing.engineerId;
-    } else {
-        engineerId = "ENG" + (state.serviceEngineerMaster.length + 10001);
-        const newEngineer = {
-            engineerId,
-            name,
-            phone,
-            company,
-            dateRegistered: getLocalDateStr()
-        };
-        state.serviceEngineerMaster.push(newEngineer);
-        saveState();
-    }
-
-    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
-    const visitObj = {
-        id: visitId,
-        masterId: engineerId,
-        name,
-        phone,
-        email: `${name.toLowerCase().replace(/ /g, "")}@service.com`,
-        company,
-        address: `Machine: ${machine} | Ticket: ${callNo}`,
-        purpose: "Service Engineer",
-        vehicle,
-        numVisitors: 1,
-        idType,
-        idNumber,
-        hostId: matchedHost.id,
-        hostName: matchedHost.name,
-        hostDept: matchedHost.dept,
-        visitDate,
-        checkIn: null,
-        checkOut: null,
-        expectedExit,
-        status: "Pending",
-        photo: state.tempVisitorPhoto || "",
-        photoIdDoc: ""
-    };
-
-    pendingRegistrationObj = visitObj;
-    openVisitorPreview(pendingRegistrationObj);
-};
-
-let currentViewCategory = "";
-
-window.viewCategoryRecords = function(category) {
-    currentViewCategory = category;
-    
-    // Hide dashboard and forms, show records table
-    document.getElementById("registration-dashboard-wrapper").classList.add("hidden");
-    document.getElementById("student-registration-wrapper").classList.add("hidden");
-    document.getElementById("customer-registration-wrapper").classList.add("hidden");
-    document.getElementById("vendor-registration-wrapper").classList.add("hidden");
-    document.getElementById("contractor-registration-wrapper").classList.add("hidden");
-    document.getElementById("delivery-registration-wrapper").classList.add("hidden");
-    document.getElementById("service-engineer-registration-wrapper").classList.add("hidden");
-    
-    const wrapper = document.getElementById("view-category-records-wrapper");
-    wrapper.classList.remove("hidden");
-    
-    document.getElementById("category-records-search").value = "";
-    
-    // Update title
-    const title = document.getElementById("category-records-title");
-    title.innerText = getCategoryTitle(category) + " Directory";
-
-    renderCategoryRecordsTable();
-};
-
-function getCategoryTitle(cat) {
-    switch (cat) {
-        case "student": return "?? Students";
-        case "customer": return "?? Customers";
-        case "vendor": return "?? Vendors";
-        case "contractor": return "?? Contractors";
-        case "delivery": return "?? Delivery Personnel";
-        case "service-engineer": return "?? Service Engineers";
-        default: return "Visitor";
-    }
-}
-
-function renderCategoryRecordsTable() {
-    const thead = document.getElementById("category-records-thead");
-    const tbody = document.getElementById("category-records-tbody");
-    if (!thead || !tbody) return;
-
-    thead.innerHTML = "";
-    tbody.innerHTML = "";
-
-    const searchKeyword = document.getElementById("category-records-search").value.trim().toLowerCase();
-    
-    let headers = [];
-    let records = [];
-
-    if (currentViewCategory === "student") {
-        headers = ["ID", "Name", "Phone", "College", "Roll No", "Course", "QR Code"];
-        records = state.studentMaster.filter(r => 
-            r.studentId.toLowerCase().includes(searchKeyword) ||
-            r.name.toLowerCase().includes(searchKeyword) ||
-            r.phone.toLowerCase().includes(searchKeyword) ||
-            r.college.toLowerCase().includes(searchKeyword) ||
-            r.rollNumber.toLowerCase().includes(searchKeyword)
-        ).map(r => ({
-            id: r.studentId,
-            col1: r.name,
-            col2: r.phone,
-            col3: r.college,
-            col4: r.rollNumber,
-            col5: r.department,
-            qr: r.qrCodeData
-        }));
-    } else if (currentViewCategory === "customer") {
-        headers = ["ID", "Name", "Phone", "Company", "Email", "QR Code"];
-        records = state.customerMaster.filter(r => 
-            r.customerId.toLowerCase().includes(searchKeyword) ||
-            r.name.toLowerCase().includes(searchKeyword) ||
-            r.phone.toLowerCase().includes(searchKeyword) ||
-            r.company.toLowerCase().includes(searchKeyword)
-        ).map(r => ({
-            id: r.customerId,
-            col1: r.name,
-            col2: r.phone,
-            col3: r.company,
-            col4: r.email,
-            col5: "",
-            qr: r.qrCodeData
-        }));
-    } else if (currentViewCategory === "vendor") {
-        headers = ["ID", "Name", "Phone", "Company", "Reg Date"];
-        records = state.vendorMaster.filter(r => 
-            r.vendorId.toLowerCase().includes(searchKeyword) ||
-            r.name.toLowerCase().includes(searchKeyword) ||
-            r.phone.toLowerCase().includes(searchKeyword) ||
-            r.company.toLowerCase().includes(searchKeyword)
-        ).map(r => ({
-            id: r.vendorId,
-            col1: r.name,
-            col2: r.phone,
-            col3: r.company,
-            col4: r.dateRegistered,
-            col5: "",
-            qr: ""
-        }));
-    } else if (currentViewCategory === "contractor") {
-        headers = ["ID", "Name", "Phone", "Agency", "Reg Date"];
-        records = state.contractorMaster.filter(r => 
-            r.contractorId.toLowerCase().includes(searchKeyword) ||
-            r.name.toLowerCase().includes(searchKeyword) ||
-            r.phone.toLowerCase().includes(searchKeyword) ||
-            r.company.toLowerCase().includes(searchKeyword)
-        ).map(r => ({
-            id: r.contractorId,
-            col1: r.name,
-            col2: r.phone,
-            col3: r.company,
-            col4: r.dateRegistered,
-            col5: "",
-            qr: ""
-        }));
-    } else if (currentViewCategory === "delivery") {
-        headers = ["ID", "Name", "Phone", "Agency", "Reg Date"];
-        records = state.deliveryMaster.filter(r => 
-            r.deliveryId.toLowerCase().includes(searchKeyword) ||
-            r.name.toLowerCase().includes(searchKeyword) ||
-            r.phone.toLowerCase().includes(searchKeyword) ||
-            r.agency.toLowerCase().includes(searchKeyword)
-        ).map(r => ({
-            id: r.deliveryId,
-            col1: r.name,
-            col2: r.phone,
-            col3: r.agency,
-            col4: r.dateRegistered,
-            col5: "",
-            qr: ""
-        }));
-    } else if (currentViewCategory === "service-engineer") {
-        headers = ["ID", "Name", "Phone", "Company", "Reg Date"];
-        records = state.serviceEngineerMaster.filter(r => 
-            r.engineerId.toLowerCase().includes(searchKeyword) ||
-            r.name.toLowerCase().includes(searchKeyword) ||
-            r.phone.toLowerCase().includes(searchKeyword) ||
-            r.company.toLowerCase().includes(searchKeyword)
-        ).map(r => ({
-            id: r.engineerId,
-            col1: r.name,
-            col2: r.phone,
-            col3: r.company,
-            col4: r.dateRegistered,
-            col5: "",
-            qr: ""
-        }));
-    }
-
-    // Header row
-    const trHead = document.createElement("tr");
-    headers.forEach(h => {
-        const th = document.createElement("th");
-        th.innerText = h;
-        trHead.appendChild(th);
-    });
-    thead.appendChild(trHead);
-
-    // Body rows
-    if (records.length === 0) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="${headers.length}" class="empty-state">No directory profile listings found.</td>`;
-        tbody.appendChild(tr);
-        return;
-    }
-
-    records.forEach(r => {
-        const tr = document.createElement("tr");
-        let qrCellHtml = "";
-        if (headers.includes("QR Code") && r.qr) {
-            qrCellHtml = `<td><button type="button" class="btn btn-secondary btn-sm" onclick="showPermanentQR('${r.id}', '${r.qr}')">Show QR</button></td>`;
+        const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
+        if (!matchedHost) {
+            showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
+            return;
         }
-        
-        tr.innerHTML = `
+
+        let contractorId = "";
+        const existing = state.contractorMaster.find(c => c.phone === phone);
+        if (existing) {
+            contractorId = existing.contractorId;
+        } else {
+            contractorId = "CNT" + (state.contractorMaster.length + 10001);
+            const newContractor = {
+                contractorId,
+                name,
+                phone,
+                company,
+                dateRegistered: getLocalDateStr()
+            };
+            state.contractorMaster.push(newContractor);
+            saveState();
+        }
+
+        const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+        const visitObj = {
+            id: visitId,
+            masterId: contractorId,
+            name,
+            phone,
+            email: `${name.toLowerCase().replace(/ /g, "")}@contractor.com`,
+            company,
+            address: `Linked PM: ${pmId} | WP: ${wpId}`,
+            purpose: "Contractor",
+            vehicle,
+            numVisitors: 1,
+            idType,
+            idNumber,
+            hostId: matchedHost.id,
+            hostName: matchedHost.name,
+            hostDept: matchedHost.dept,
+            visitDate,
+            checkIn: null,
+            checkOut: null,
+            expectedExit,
+            status: "Pending",
+            photo: state.tempVisitorPhoto || "",
+            photoIdDoc: ""
+        };
+
+        pendingRegistrationObj = visitObj;
+        openVisitorPreview(pendingRegistrationObj);
+    };
+
+    window.handleDeliveryRegistrationSubmit = function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("reg-delivery-name").value.trim();
+        const phone = document.getElementById("reg-delivery-phone").value.trim();
+        const agency = document.getElementById("reg-delivery-agency").value;
+        const invoice = document.getElementById("reg-delivery-invoice").value.trim();
+        const items = document.getElementById("reg-delivery-items").value.trim();
+        const vehicle = document.getElementById("reg-delivery-vehicle").value.trim();
+        const hostNameVal = document.getElementById("reg-delivery-host").value.trim();
+        const visitDate = document.getElementById("reg-delivery-visit-date").value;
+        const expectedExit = document.getElementById("reg-delivery-expected-exit").value;
+
+        const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
+        if (!matchedHost) {
+            showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
+            return;
+        }
+
+        let deliveryId = "";
+        const existing = state.deliveryMaster.find(d => d.phone === phone);
+        if (existing) {
+            deliveryId = existing.deliveryId;
+        } else {
+            deliveryId = "DLV" + (state.deliveryMaster.length + 10001);
+            const newDelivery = {
+                deliveryId,
+                name,
+                phone,
+                agency,
+                dateRegistered: getLocalDateStr()
+            };
+            state.deliveryMaster.push(newDelivery);
+            saveState();
+        }
+
+        const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+        const visitObj = {
+            id: visitId,
+            masterId: deliveryId,
+            name,
+            phone,
+            email: `${name.toLowerCase().replace(/ /g, "")}@delivery.com`,
+            company: agency,
+            address: `Challan: ${invoice} | Items: ${items}`,
+            purpose: "Delivery",
+            vehicle,
+            numVisitors: 1,
+            idType: "Delivery Challan",
+            idNumber: invoice,
+            hostId: matchedHost.id,
+            hostName: matchedHost.name,
+            hostDept: matchedHost.dept,
+            visitDate,
+            checkIn: null,
+            checkOut: null,
+            expectedExit,
+            status: "Pending",
+            photo: state.tempVisitorPhoto || "",
+            photoIdDoc: ""
+        };
+
+        pendingRegistrationObj = visitObj;
+        openVisitorPreview(pendingRegistrationObj);
+    };
+
+    window.handleServiceEngineerRegistrationSubmit = function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("reg-service-engineer-name").value.trim();
+        const phone = document.getElementById("reg-service-engineer-phone").value.trim();
+        const company = document.getElementById("reg-service-engineer-company").value.trim();
+        const machine = document.getElementById("reg-service-engineer-machine").value.trim();
+        const callNo = document.getElementById("reg-service-engineer-callno").value.trim();
+        const vehicle = document.getElementById("reg-service-engineer-vehicle").value.trim();
+        const idType = document.getElementById("reg-service-engineer-id-type").value;
+        const idNumber = document.getElementById("reg-service-engineer-id-number").value.trim();
+        const hostNameVal = document.getElementById("reg-service-engineer-host").value.trim();
+        const visitDate = document.getElementById("reg-service-engineer-visit-date").value;
+        const expectedExit = document.getElementById("reg-service-engineer-expected-exit").value;
+
+        const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
+        if (!matchedHost) {
+            showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
+            return;
+        }
+
+        let engineerId = "";
+        const existing = state.serviceEngineerMaster.find(s => s.phone === phone);
+        if (existing) {
+            engineerId = existing.engineerId;
+        } else {
+            engineerId = "ENG" + (state.serviceEngineerMaster.length + 10001);
+            const newEngineer = {
+                engineerId,
+                name,
+                phone,
+                company,
+                dateRegistered: getLocalDateStr()
+            };
+            state.serviceEngineerMaster.push(newEngineer);
+            saveState();
+        }
+
+        const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+        const visitObj = {
+            id: visitId,
+            masterId: engineerId,
+            name,
+            phone,
+            email: `${name.toLowerCase().replace(/ /g, "")}@service.com`,
+            company,
+            address: `Machine: ${machine} | Ticket: ${callNo}`,
+            purpose: "Service Engineer",
+            vehicle,
+            numVisitors: 1,
+            idType,
+            idNumber,
+            hostId: matchedHost.id,
+            hostName: matchedHost.name,
+            hostDept: matchedHost.dept,
+            visitDate,
+            checkIn: null,
+            checkOut: null,
+            expectedExit,
+            status: "Pending",
+            photo: state.tempVisitorPhoto || "",
+            photoIdDoc: ""
+        };
+
+        pendingRegistrationObj = visitObj;
+        openVisitorPreview(pendingRegistrationObj);
+    };
+
+    let currentViewCategory = "";
+
+    window.viewCategoryRecords = function (category) {
+        currentViewCategory = category;
+
+        // Hide dashboard and forms, show records table
+        document.getElementById("registration-dashboard-wrapper").classList.add("hidden");
+        document.getElementById("student-registration-wrapper").classList.add("hidden");
+        document.getElementById("customer-registration-wrapper").classList.add("hidden");
+        document.getElementById("vendor-registration-wrapper").classList.add("hidden");
+        document.getElementById("contractor-registration-wrapper").classList.add("hidden");
+        document.getElementById("delivery-registration-wrapper").classList.add("hidden");
+        document.getElementById("service-engineer-registration-wrapper").classList.add("hidden");
+
+        const wrapper = document.getElementById("view-category-records-wrapper");
+        wrapper.classList.remove("hidden");
+
+        document.getElementById("category-records-search").value = "";
+
+        // Update title
+        const title = document.getElementById("category-records-title");
+        title.innerText = getCategoryTitle(category) + " Directory";
+
+        renderCategoryRecordsTable();
+    };
+
+    function getCategoryTitle(cat) {
+        switch (cat) {
+            case "student": return "?? Students";
+            case "customer": return "?? Customers";
+            case "vendor": return "?? Vendors";
+            case "contractor": return "?? Contractors";
+            case "delivery": return "?? Delivery Personnel";
+            case "service-engineer": return "?? Service Engineers";
+            default: return "Visitor";
+        }
+    }
+
+    function renderCategoryRecordsTable() {
+        const thead = document.getElementById("category-records-thead");
+        const tbody = document.getElementById("category-records-tbody");
+        if (!thead || !tbody) return;
+
+        thead.innerHTML = "";
+        tbody.innerHTML = "";
+
+        const searchKeyword = document.getElementById("category-records-search").value.trim().toLowerCase();
+
+        let headers = [];
+        let records = [];
+
+        if (currentViewCategory === "student") {
+            headers = ["ID", "Name", "Phone", "College", "Roll No", "Course", "QR Code"];
+            records = state.studentMaster.filter(r =>
+                r.studentId.toLowerCase().includes(searchKeyword) ||
+                r.name.toLowerCase().includes(searchKeyword) ||
+                r.phone.toLowerCase().includes(searchKeyword) ||
+                r.college.toLowerCase().includes(searchKeyword) ||
+                r.rollNumber.toLowerCase().includes(searchKeyword)
+            ).map(r => ({
+                id: r.studentId,
+                col1: r.name,
+                col2: r.phone,
+                col3: r.college,
+                col4: r.rollNumber,
+                col5: r.department,
+                qr: r.qrCodeData
+            }));
+        } else if (currentViewCategory === "customer") {
+            headers = ["ID", "Name", "Phone", "Company", "Email", "QR Code"];
+            records = state.customerMaster.filter(r =>
+                r.customerId.toLowerCase().includes(searchKeyword) ||
+                r.name.toLowerCase().includes(searchKeyword) ||
+                r.phone.toLowerCase().includes(searchKeyword) ||
+                r.company.toLowerCase().includes(searchKeyword)
+            ).map(r => ({
+                id: r.customerId,
+                col1: r.name,
+                col2: r.phone,
+                col3: r.company,
+                col4: r.email,
+                col5: "",
+                qr: r.qrCodeData
+            }));
+        } else if (currentViewCategory === "vendor") {
+            headers = ["ID", "Name", "Phone", "Company", "Reg Date"];
+            records = state.vendorMaster.filter(r =>
+                r.vendorId.toLowerCase().includes(searchKeyword) ||
+                r.name.toLowerCase().includes(searchKeyword) ||
+                r.phone.toLowerCase().includes(searchKeyword) ||
+                r.company.toLowerCase().includes(searchKeyword)
+            ).map(r => ({
+                id: r.vendorId,
+                col1: r.name,
+                col2: r.phone,
+                col3: r.company,
+                col4: r.dateRegistered,
+                col5: "",
+                qr: ""
+            }));
+        } else if (currentViewCategory === "contractor") {
+            headers = ["ID", "Name", "Phone", "Agency", "Reg Date"];
+            records = state.contractorMaster.filter(r =>
+                r.contractorId.toLowerCase().includes(searchKeyword) ||
+                r.name.toLowerCase().includes(searchKeyword) ||
+                r.phone.toLowerCase().includes(searchKeyword) ||
+                r.company.toLowerCase().includes(searchKeyword)
+            ).map(r => ({
+                id: r.contractorId,
+                col1: r.name,
+                col2: r.phone,
+                col3: r.company,
+                col4: r.dateRegistered,
+                col5: "",
+                qr: ""
+            }));
+        } else if (currentViewCategory === "delivery") {
+            headers = ["ID", "Name", "Phone", "Agency", "Reg Date"];
+            records = state.deliveryMaster.filter(r =>
+                r.deliveryId.toLowerCase().includes(searchKeyword) ||
+                r.name.toLowerCase().includes(searchKeyword) ||
+                r.phone.toLowerCase().includes(searchKeyword) ||
+                r.agency.toLowerCase().includes(searchKeyword)
+            ).map(r => ({
+                id: r.deliveryId,
+                col1: r.name,
+                col2: r.phone,
+                col3: r.agency,
+                col4: r.dateRegistered,
+                col5: "",
+                qr: ""
+            }));
+        } else if (currentViewCategory === "service-engineer") {
+            headers = ["ID", "Name", "Phone", "Company", "Reg Date"];
+            records = state.serviceEngineerMaster.filter(r =>
+                r.engineerId.toLowerCase().includes(searchKeyword) ||
+                r.name.toLowerCase().includes(searchKeyword) ||
+                r.phone.toLowerCase().includes(searchKeyword) ||
+                r.company.toLowerCase().includes(searchKeyword)
+            ).map(r => ({
+                id: r.engineerId,
+                col1: r.name,
+                col2: r.phone,
+                col3: r.company,
+                col4: r.dateRegistered,
+                col5: "",
+                qr: ""
+            }));
+        }
+
+        // Header row
+        const trHead = document.createElement("tr");
+        headers.forEach(h => {
+            const th = document.createElement("th");
+            th.innerText = h;
+            trHead.appendChild(th);
+        });
+        thead.appendChild(trHead);
+
+        // Body rows
+        if (records.length === 0) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td colspan="${headers.length}" class="empty-state">No directory profile listings found.</td>`;
+            tbody.appendChild(tr);
+            return;
+        }
+
+        records.forEach(r => {
+            const tr = document.createElement("tr");
+            let qrCellHtml = "";
+            if (headers.includes("QR Code") && r.qr) {
+                qrCellHtml = `<td><button type="button" class="btn btn-secondary btn-sm" onclick="showPermanentQR('${r.id}', '${r.qr}')">Show QR</button></td>`;
+            }
+
+            tr.innerHTML = `
             <td><code>${r.id}</code></td>
             <td><strong>${r.col1}</strong></td>
             <td>${r.col2}</td>
@@ -8331,19 +8331,19 @@ function renderCategoryRecordsTable() {
             ${r.col5 && headers.includes("Course") ? `<td>${r.col5}</td>` : ""}
             ${qrCellHtml}
         `;
-        tbody.appendChild(tr);
-    });
-}
+            tbody.appendChild(tr);
+        });
+    }
 
-window.filterCategoryRecords = function() {
-    renderCategoryRecordsTable();
-};
+    window.filterCategoryRecords = function () {
+        renderCategoryRecordsTable();
+    };
 
-window.showPermanentQR = function(id, qrPayload) {
-    const modal = document.createElement("div");
-    modal.className = "modal active";
-    modal.style.zIndex = "2000";
-    modal.innerHTML = `
+    window.showPermanentQR = function (id, qrPayload) {
+        const modal = document.createElement("div");
+        modal.className = "modal active";
+        modal.style.zIndex = "2000";
+        modal.innerHTML = `
         <div class="modal-content" style="max-width: 320px; text-align: center; padding: 2rem;">
             <h3 style="margin-bottom: 0.5rem;">Permanent QR Code</h3>
             <p class="text-secondary text-sm mb-4">${id}</p>
@@ -8353,281 +8353,281 @@ window.showPermanentQR = function(id, qrPayload) {
             </div>
         </div>
     `;
-    document.body.appendChild(modal);
-    
-    setTimeout(() => {
-        try {
-            new QRCode(document.getElementById("popup-qr-container"), {
-                text: qrPayload,
-                width: 150,
-                height: 150,
-                colorDark: "#0f172a",
-                colorLight: "#ffffff"
+        document.body.appendChild(modal);
+
+        setTimeout(() => {
+            try {
+                new QRCode(document.getElementById("popup-qr-container"), {
+                    text: qrPayload,
+                    width: 150,
+                    height: 150,
+                    colorDark: "#0f172a",
+                    colorLight: "#ffffff"
+                });
+            } catch (err) {
+                console.error(err);
+                document.getElementById("popup-qr-container").innerText = qrPayload;
+            }
+        }, 100);
+    };
+
+    /* ==========================================================================
+       INTERACTIVE DASHBOARD DETAILS DRAWER & SENSORS (AI VMS UPGRADE)
+       ========================================================================== */
+    let drawerActiveKpi = null;
+    let drawerCurrentPage = 0;
+    const drawerPageSize = 5;
+    let drawerFilteredData = [];
+    let drawerChartInstance = null;
+
+    function setupInteractiveDashboard() {
+        console.log("[Dashboard] Initializing interactive KPI card sensors...");
+        const kpis = [
+            { id: "stat-waiting", label: "Waiting Visitors", icon: "?", segment: "waiting" },
+            { id: "stat-pending", label: "Pending Approval Queue", icon: "??", segment: "pending" },
+            { id: "stat-active-in", label: "Inside Campus", icon: "??", segment: "inside" },
+            { id: "stat-checked-out", label: "Visitors Exited", icon: "??", segment: "exited" },
+            { id: "stat-rejected", label: "Rejected Registrations", icon: "?", segment: "rejected" },
+            { id: "stat-blacklisted", label: "Blacklisted Records", icon: "?", segment: "blacklisted" },
+            { id: "stat-frequent", label: "Frequent Visitors", icon: "??", segment: "frequent" },
+            { id: "stat-total-today", label: "Today's Total Logs", icon: "??", segment: "today" },
+            { id: "stat-pm-draft", label: "Purchase Manual Drafts", icon: "??", segment: "pm-draft" },
+            { id: "stat-pm-pending", label: "Purchase Manual Pending", icon: "?", segment: "pm-pending" },
+            { id: "stat-pm-approved", label: "Purchase Manual Approved", icon: "?", segment: "pm-approved" },
+            { id: "stat-pm-rejected", label: "Purchase Manual Rejected", icon: "?", segment: "pm-rejected" },
+            { id: "stat-active-permits", label: "Active Work Permits", icon: "??", segment: "permits" }
+        ];
+
+        kpis.forEach(kpi => {
+            const el = document.getElementById(kpi.id);
+            if (el) {
+                const card = el.closest(".stat-card");
+                if (card) {
+                    card.style.cursor = "pointer";
+                    card.classList.add("interactive-stat-card");
+                    card.addEventListener("click", () => openCardDetailDrawer(kpi));
+                }
+            }
+        });
+
+        // Close button
+        const btnClose = document.getElementById("btn-close-drawer");
+        if (btnClose) {
+            btnClose.addEventListener("click", () => {
+                document.getElementById("dashboard-detail-drawer").classList.add("hidden");
+                drawerActiveKpi = null;
             });
-        } catch(err) {
-            console.error(err);
-            document.getElementById("popup-qr-container").innerText = qrPayload;
         }
-    }, 100);
-};
 
-/* ==========================================================================
-   INTERACTIVE DASHBOARD DETAILS DRAWER & SENSORS (AI VMS UPGRADE)
-   ========================================================================== */
-let drawerActiveKpi = null;
-let drawerCurrentPage = 0;
-const drawerPageSize = 5;
-let drawerFilteredData = [];
-let drawerChartInstance = null;
-
-function setupInteractiveDashboard() {
-    console.log("[Dashboard] Initializing interactive KPI card sensors...");
-    const kpis = [
-        { id: "stat-waiting", label: "Waiting Visitors", icon: "?", segment: "waiting" },
-        { id: "stat-pending", label: "Pending Approval Queue", icon: "??", segment: "pending" },
-        { id: "stat-active-in", label: "Inside Campus", icon: "??", segment: "inside" },
-        { id: "stat-checked-out", label: "Visitors Exited", icon: "??", segment: "exited" },
-        { id: "stat-rejected", label: "Rejected Registrations", icon: "?", segment: "rejected" },
-        { id: "stat-blacklisted", label: "Blacklisted Records", icon: "?", segment: "blacklisted" },
-        { id: "stat-frequent", label: "Frequent Visitors", icon: "??", segment: "frequent" },
-        { id: "stat-total-today", label: "Today's Total Logs", icon: "??", segment: "today" },
-        { id: "stat-pm-draft", label: "Purchase Manual Drafts", icon: "??", segment: "pm-draft" },
-        { id: "stat-pm-pending", label: "Purchase Manual Pending", icon: "?", segment: "pm-pending" },
-        { id: "stat-pm-approved", label: "Purchase Manual Approved", icon: "?", segment: "pm-approved" },
-        { id: "stat-pm-rejected", label: "Purchase Manual Rejected", icon: "?", segment: "pm-rejected" },
-        { id: "stat-active-permits", label: "Active Work Permits", icon: "??", segment: "permits" }
-    ];
-
-    kpis.forEach(kpi => {
-        const el = document.getElementById(kpi.id);
-        if (el) {
-            const card = el.closest(".stat-card");
-            if (card) {
-                card.style.cursor = "pointer";
-                card.classList.add("interactive-stat-card");
-                card.addEventListener("click", () => openCardDetailDrawer(kpi));
-            }
+        // Filters and search
+        const searchInput = document.getElementById("drawer-search");
+        if (searchInput) {
+            searchInput.oninput = () => {
+                drawerCurrentPage = 0;
+                renderDrawerContent();
+            };
         }
-    });
 
-    // Close button
-    const btnClose = document.getElementById("btn-close-drawer");
-    if (btnClose) {
-        btnClose.addEventListener("click", () => {
-            document.getElementById("dashboard-detail-drawer").classList.add("hidden");
-            drawerActiveKpi = null;
-        });
+        const purposeFilter = document.getElementById("drawer-filter-purpose");
+        if (purposeFilter) {
+            purposeFilter.onchange = () => {
+                drawerCurrentPage = 0;
+                renderDrawerContent();
+            };
+        }
+
+        const deptFilter = document.getElementById("drawer-filter-dept");
+        if (deptFilter) {
+            deptFilter.onchange = () => {
+                drawerCurrentPage = 0;
+                renderDrawerContent();
+            };
+        }
+
+        // Pagination buttons
+        const btnPrev = document.getElementById("btn-drawer-prev");
+        if (btnPrev) {
+            btnPrev.onclick = () => {
+                if (drawerCurrentPage > 0) {
+                    drawerCurrentPage--;
+                    renderDrawerTable();
+                }
+            };
+        }
+
+        const btnNext = document.getElementById("btn-drawer-next");
+        if (btnNext) {
+            btnNext.onclick = () => {
+                const maxPage = Math.ceil(drawerFilteredData.length / drawerPageSize) - 1;
+                if (drawerCurrentPage < maxPage) {
+                    drawerCurrentPage++;
+                    renderDrawerTable();
+                }
+            };
+        }
+
+        // Export buttons inside drawer
+        const btnExportCsv = document.getElementById("btn-drawer-export-csv");
+        if (btnExportCsv) {
+            btnExportCsv.onclick = () => exportDrawerDataCSV();
+        }
+        const btnExportPdf = document.getElementById("btn-drawer-export-pdf");
+        if (btnExportPdf) {
+            btnExportPdf.onclick = () => exportDrawerDataPDF();
+        }
+
+        // Animate stats values counting up on dashboard load
+        animateDashboardStats();
     }
 
-    // Filters and search
-    const searchInput = document.getElementById("drawer-search");
-    if (searchInput) {
-        searchInput.oninput = () => {
-            drawerCurrentPage = 0;
-            renderDrawerContent();
-        };
+    function openCardDetailDrawer(kpi) {
+        drawerActiveKpi = kpi;
+        drawerCurrentPage = 0;
+
+        const drawer = document.getElementById("dashboard-detail-drawer");
+        if (!drawer) return;
+
+        drawer.classList.remove("hidden");
+        document.getElementById("drawer-icon").innerText = kpi.icon;
+        document.getElementById("drawer-title").innerText = kpi.label;
+
+        // Show/Hide filter inputs based on segment type
+        const isVisitorSeg = ["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(kpi.segment);
+        const purposeFilter = document.getElementById("drawer-filter-purpose");
+        const deptFilter = document.getElementById("drawer-filter-dept");
+
+        if (purposeFilter) purposeFilter.style.display = isVisitorSeg ? "inline-block" : "none";
+        if (deptFilter) {
+            deptFilter.style.display = (isVisitorSeg || kpi.segment.startsWith("pm-")) ? "inline-block" : "none";
+
+            // Populate Departments select list
+            deptFilter.innerHTML = '<option value="all">All Departments</option>';
+            state.departments.forEach(d => {
+                const opt = document.createElement("option");
+                opt.value = d.name;
+                opt.innerText = d.name;
+                deptFilter.appendChild(opt);
+            });
+        }
+
+        // Scroll to the drawer smoothly
+        drawer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        renderDrawerContent();
     }
 
-    const purposeFilter = document.getElementById("drawer-filter-purpose");
-    if (purposeFilter) {
-        purposeFilter.onchange = () => {
-            drawerCurrentPage = 0;
-            renderDrawerContent();
-        };
-    }
+    function renderDrawerContent() {
+        if (!drawerActiveKpi) return;
 
-    const deptFilter = document.getElementById("drawer-filter-dept");
-    if (deptFilter) {
-        deptFilter.onchange = () => {
-            drawerCurrentPage = 0;
-            renderDrawerContent();
-        };
-    }
+        const segment = drawerActiveKpi.segment;
+        let rawData = [];
 
-    // Pagination buttons
-    const btnPrev = document.getElementById("btn-drawer-prev");
-    if (btnPrev) {
-        btnPrev.onclick = () => {
-            if (drawerCurrentPage > 0) {
-                drawerCurrentPage--;
-                renderDrawerTable();
+        // 1. Gather raw data by segment
+        if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
+            const todayStr = getLocalDateStr();
+            if (segment === "waiting") {
+                rawData = state.visitors.filter(v => v.status === "Pending" || v.status === "Approved");
+            } else if (segment === "pending") {
+                rawData = state.visitors.filter(v => v.status === "Pending");
+            } else if (segment === "inside") {
+                rawData = state.visitors.filter(v => v.status === "Checked In");
+            } else if (segment === "exited") {
+                rawData = state.visitors.filter(v => v.status === "Checked Out");
+            } else if (segment === "rejected") {
+                rawData = state.visitors.filter(v => v.status === "Rejected" || v.status === "Denied");
+            } else if (segment === "today") {
+                rawData = state.visitors.filter(v => v.visitDate === todayStr);
+            } else if (segment === "frequent") {
+                const counts = {};
+                state.visitors.forEach(v => { if (v.phone) counts[v.phone] = (counts[v.phone] || 0) + 1; });
+                const freqPhones = Object.keys(counts).filter(p => counts[p] >= 2);
+                const freqList = [];
+                freqPhones.forEach(phone => {
+                    const logs = state.visitors.filter(v => v.phone === phone);
+                    if (logs.length > 0) freqList.push(logs[logs.length - 1]);
+                });
+                rawData = freqList;
             }
-        };
-    }
+        } else if (segment === "blacklisted") {
+            rawData = state.blacklist;
+        } else if (segment.startsWith("pm-")) {
+            const pmStatus = segment.split("-")[1]; // draft, pending, approved, rejected
+            const statusMap = {
+                draft: ["Draft"],
+                pending: ["Submitted", "Pending"],
+                approved: ["Approved"],
+                rejected: ["Rejected"]
+            };
+            const targetStatuses = statusMap[pmStatus] || [];
+            rawData = state.purchaseManuals.filter(pm => targetStatuses.includes(pm.status));
+        } else if (segment === "permits") {
+            rawData = state.workPermits;
+        }
 
-    const btnNext = document.getElementById("btn-drawer-next");
-    if (btnNext) {
-        btnNext.onclick = () => {
-            const maxPage = Math.ceil(drawerFilteredData.length / drawerPageSize) - 1;
-            if (drawerCurrentPage < maxPage) {
-                drawerCurrentPage++;
-                renderDrawerTable();
+        // 2. Apply search and select filters
+        const searchVal = document.getElementById("drawer-search").value.trim().toLowerCase();
+        const purposeVal = document.getElementById("drawer-filter-purpose").value;
+        const deptVal = document.getElementById("drawer-filter-dept").value;
+
+        drawerFilteredData = rawData.filter(item => {
+            // Text search match
+            let textMatch = true;
+            if (searchVal !== "") {
+                if (item.name) textMatch = textMatch && item.name.toLowerCase().includes(searchVal);
+                if (item.id) textMatch = textMatch || item.id.toLowerCase().includes(searchVal);
+                if (item.phone) textMatch = textMatch || item.phone.toLowerCase().includes(searchVal);
+                if (item.company) textMatch = textMatch || item.company.toLowerCase().includes(searchVal);
+                if (item.hostName) textMatch = textMatch || item.hostName.toLowerCase().includes(searchVal);
+                if (item.reason) textMatch = textMatch || item.reason.toLowerCase().includes(searchVal);
             }
-        };
-    }
 
-    // Export buttons inside drawer
-    const btnExportCsv = document.getElementById("btn-drawer-export-csv");
-    if (btnExportCsv) {
-        btnExportCsv.onclick = () => exportDrawerDataCSV();
-    }
-    const btnExportPdf = document.getElementById("btn-drawer-export-pdf");
-    if (btnExportPdf) {
-        btnExportPdf.onclick = () => exportDrawerDataPDF();
-    }
+            // Filters select match
+            let purposeMatch = true;
+            if (purposeVal !== "all" && item.purpose) {
+                purposeMatch = item.purpose === purposeVal;
+            }
 
-    // Animate stats values counting up on dashboard load
-    animateDashboardStats();
-}
+            let deptMatch = true;
+            if (deptVal !== "all") {
+                if (item.hostDept) deptMatch = item.hostDept === deptVal;
+                else if (item.department) deptMatch = item.department === deptVal;
+            }
 
-function openCardDetailDrawer(kpi) {
-    drawerActiveKpi = kpi;
-    drawerCurrentPage = 0;
-
-    const drawer = document.getElementById("dashboard-detail-drawer");
-    if (!drawer) return;
-
-    drawer.classList.remove("hidden");
-    document.getElementById("drawer-icon").innerText = kpi.icon;
-    document.getElementById("drawer-title").innerText = kpi.label;
-
-    // Show/Hide filter inputs based on segment type
-    const isVisitorSeg = ["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(kpi.segment);
-    const purposeFilter = document.getElementById("drawer-filter-purpose");
-    const deptFilter = document.getElementById("drawer-filter-dept");
-
-    if (purposeFilter) purposeFilter.style.display = isVisitorSeg ? "inline-block" : "none";
-    if (deptFilter) {
-        deptFilter.style.display = (isVisitorSeg || kpi.segment.startsWith("pm-")) ? "inline-block" : "none";
-        
-        // Populate Departments select list
-        deptFilter.innerHTML = '<option value="all">All Departments</option>';
-        state.departments.forEach(d => {
-            const opt = document.createElement("option");
-            opt.value = d.name;
-            opt.innerText = d.name;
-            deptFilter.appendChild(opt);
+            return textMatch && purposeMatch && deptMatch;
         });
-    }
 
-    // Scroll to the drawer smoothly
-    drawer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // 3. Render analytical headers
+        const totalCount = rawData.length;
+        const filteredCount = drawerFilteredData.length;
+        const percentage = totalCount > 0 ? Math.round((filteredCount / totalCount) * 100) : 0;
 
-    renderDrawerContent();
-}
-
-function renderDrawerContent() {
-    if (!drawerActiveKpi) return;
-
-    const segment = drawerActiveKpi.segment;
-    let rawData = [];
-
-    // 1. Gather raw data by segment
-    if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
+        // Count today's items
         const todayStr = getLocalDateStr();
-        if (segment === "waiting") {
-            rawData = state.visitors.filter(v => v.status === "Pending" || v.status === "Approved");
-        } else if (segment === "pending") {
-            rawData = state.visitors.filter(v => v.status === "Pending");
-        } else if (segment === "inside") {
-            rawData = state.visitors.filter(v => v.status === "Checked In");
-        } else if (segment === "exited") {
-            rawData = state.visitors.filter(v => v.status === "Checked Out");
-        } else if (segment === "rejected") {
-            rawData = state.visitors.filter(v => v.status === "Rejected" || v.status === "Denied");
-        } else if (segment === "today") {
-            rawData = state.visitors.filter(v => v.visitDate === todayStr);
-        } else if (segment === "frequent") {
-            const counts = {};
-            state.visitors.forEach(v => { if (v.phone) counts[v.phone] = (counts[v.phone] || 0) + 1; });
-            const freqPhones = Object.keys(counts).filter(p => counts[p] >= 2);
-            const freqList = [];
-            freqPhones.forEach(phone => {
-                const logs = state.visitors.filter(v => v.phone === phone);
-                if (logs.length > 0) freqList.push(logs[logs.length - 1]);
-            });
-            rawData = freqList;
-        }
-    } else if (segment === "blacklisted") {
-        rawData = state.blacklist;
-    } else if (segment.startsWith("pm-")) {
-        const pmStatus = segment.split("-")[1]; // draft, pending, approved, rejected
-        const statusMap = {
-            draft: ["Draft"],
-            pending: ["Submitted", "Pending"],
-            approved: ["Approved"],
-            rejected: ["Rejected"]
-        };
-        const targetStatuses = statusMap[pmStatus] || [];
-        rawData = state.purchaseManuals.filter(pm => targetStatuses.includes(pm.status));
-    } else if (segment === "permits") {
-        rawData = state.workPermits;
+        let todayCount = 0;
+        drawerFilteredData.forEach(item => {
+            const itemDate = item.visitDate || item.dateAdded || (item.createdDate ? item.createdDate.split("T")[0] : null);
+            if (itemDate === todayStr) todayCount++;
+        });
+
+        document.getElementById("drawer-stat-total").innerText = filteredCount;
+        document.getElementById("drawer-stat-percentage").innerText = `${percentage}%`;
+        document.getElementById("drawer-stat-today").innerText = todayCount;
+
+        // 4. Render headers & pagination parameters
+        renderDrawerTableHeaders(segment);
+        renderDrawerTable();
+
+        // 5. Render Chart analytics inside drawer
+        renderDrawerSubChart(segment, drawerFilteredData);
     }
 
-    // 2. Apply search and select filters
-    const searchVal = document.getElementById("drawer-search").value.trim().toLowerCase();
-    const purposeVal = document.getElementById("drawer-filter-purpose").value;
-    const deptVal = document.getElementById("drawer-filter-dept").value;
+    function renderDrawerTableHeaders(segment) {
+        const thead = document.getElementById("drawer-table-head");
+        thead.innerHTML = "";
 
-    drawerFilteredData = rawData.filter(item => {
-        // Text search match
-        let textMatch = true;
-        if (searchVal !== "") {
-            if (item.name) textMatch = textMatch && item.name.toLowerCase().includes(searchVal);
-            if (item.id) textMatch = textMatch || item.id.toLowerCase().includes(searchVal);
-            if (item.phone) textMatch = textMatch || item.phone.toLowerCase().includes(searchVal);
-            if (item.company) textMatch = textMatch || item.company.toLowerCase().includes(searchVal);
-            if (item.hostName) textMatch = textMatch || item.hostName.toLowerCase().includes(searchVal);
-            if (item.reason) textMatch = textMatch || item.reason.toLowerCase().includes(searchVal);
-        }
-
-        // Filters select match
-        let purposeMatch = true;
-        if (purposeVal !== "all" && item.purpose) {
-            purposeMatch = item.purpose === purposeVal;
-        }
-
-        let deptMatch = true;
-        if (deptVal !== "all") {
-            if (item.hostDept) deptMatch = item.hostDept === deptVal;
-            else if (item.department) deptMatch = item.department === deptVal;
-        }
-
-        return textMatch && purposeMatch && deptMatch;
-    });
-
-    // 3. Render analytical headers
-    const totalCount = rawData.length;
-    const filteredCount = drawerFilteredData.length;
-    const percentage = totalCount > 0 ? Math.round((filteredCount / totalCount) * 100) : 0;
-    
-    // Count today's items
-    const todayStr = getLocalDateStr();
-    let todayCount = 0;
-    drawerFilteredData.forEach(item => {
-        const itemDate = item.visitDate || item.dateAdded || (item.createdDate ? item.createdDate.split("T")[0] : null);
-        if (itemDate === todayStr) todayCount++;
-    });
-
-    document.getElementById("drawer-stat-total").innerText = filteredCount;
-    document.getElementById("drawer-stat-percentage").innerText = `${percentage}%`;
-    document.getElementById("drawer-stat-today").innerText = todayCount;
-
-    // 4. Render headers & pagination parameters
-    renderDrawerTableHeaders(segment);
-    renderDrawerTable();
-
-    // 5. Render Chart analytics inside drawer
-    renderDrawerSubChart(segment, drawerFilteredData);
-}
-
-function renderDrawerTableHeaders(segment) {
-    const thead = document.getElementById("drawer-table-head");
-    thead.innerHTML = "";
-
-    const tr = document.createElement("tr");
-    if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
-        tr.innerHTML = `
+        const tr = document.createElement("tr");
+        if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
+            tr.innerHTML = `
             <th>Visitor ID</th>
             <th>Name & Company</th>
             <th>Host Details</th>
@@ -8635,8 +8635,8 @@ function renderDrawerTableHeaders(segment) {
             <th>Status</th>
             <th>Actions</th>
         `;
-    } else if (segment === "blacklisted") {
-        tr.innerHTML = `
+        } else if (segment === "blacklisted") {
+            tr.innerHTML = `
             <th>ID</th>
             <th>Blacklisted Person</th>
             <th>Phone</th>
@@ -8644,8 +8644,8 @@ function renderDrawerTableHeaders(segment) {
             <th>Reason</th>
             <th>Date Added</th>
         `;
-    } else if (segment.startsWith("pm-")) {
-        tr.innerHTML = `
+        } else if (segment.startsWith("pm-")) {
+            tr.innerHTML = `
             <th>PM ID</th>
             <th>Department</th>
             <th>Agent Name</th>
@@ -8653,8 +8653,8 @@ function renderDrawerTableHeaders(segment) {
             <th>Contract Type</th>
             <th>Status</th>
         `;
-    } else if (segment === "permits") {
-        tr.innerHTML = `
+        } else if (segment === "permits") {
+            tr.innerHTML = `
             <th>Permit ID</th>
             <th>PM Ref ID</th>
             <th>Contractor Details</th>
@@ -8662,39 +8662,39 @@ function renderDrawerTableHeaders(segment) {
             <th>Validity Dates</th>
             <th>Status</th>
         `;
-    }
-    thead.appendChild(tr);
-}
-
-function renderDrawerTable() {
-    const tbody = document.getElementById("drawer-table-body");
-    tbody.innerHTML = "";
-
-    const totalRecords = drawerFilteredData.length;
-    const totalPages = Math.ceil(totalRecords / drawerPageSize);
-    
-    // Adjust current page if out of bounds
-    if (drawerCurrentPage >= totalPages && totalPages > 0) {
-        drawerCurrentPage = totalPages - 1;
-    }
-
-    const startIdx = drawerCurrentPage * drawerPageSize;
-    const endIdx = Math.min(startIdx + drawerPageSize, totalRecords);
-    const visiblePageData = drawerFilteredData.slice(startIdx, endIdx);
-
-    // Update pagination labels
-    const paginationText = document.querySelector("#drawer-pagination-info span");
-    if (paginationText) {
-        if (totalRecords === 0) {
-            paginationText.innerText = "Showing 0 to 0 of 0 entries";
-        } else {
-            paginationText.innerText = `Showing ${startIdx + 1} to ${endIdx} of ${totalRecords} entries`;
         }
+        thead.appendChild(tr);
     }
 
-    if (visiblePageData.length === 0) {
-        const colSpan = document.getElementById("drawer-table-head").querySelectorAll("th").length || 6;
-        tbody.innerHTML = `
+    function renderDrawerTable() {
+        const tbody = document.getElementById("drawer-table-body");
+        tbody.innerHTML = "";
+
+        const totalRecords = drawerFilteredData.length;
+        const totalPages = Math.ceil(totalRecords / drawerPageSize);
+
+        // Adjust current page if out of bounds
+        if (drawerCurrentPage >= totalPages && totalPages > 0) {
+            drawerCurrentPage = totalPages - 1;
+        }
+
+        const startIdx = drawerCurrentPage * drawerPageSize;
+        const endIdx = Math.min(startIdx + drawerPageSize, totalRecords);
+        const visiblePageData = drawerFilteredData.slice(startIdx, endIdx);
+
+        // Update pagination labels
+        const paginationText = document.querySelector("#drawer-pagination-info span");
+        if (paginationText) {
+            if (totalRecords === 0) {
+                paginationText.innerText = "Showing 0 to 0 of 0 entries";
+            } else {
+                paginationText.innerText = `Showing ${startIdx + 1} to ${endIdx} of ${totalRecords} entries`;
+            }
+        }
+
+        if (visiblePageData.length === 0) {
+            const colSpan = document.getElementById("drawer-table-head").querySelectorAll("th").length || 6;
+            tbody.innerHTML = `
             <tr>
                 <td colspan="${colSpan}" class="empty-state" style="text-align: center; padding: 2rem;">
                     <div style="font-size: 2rem; margin-bottom: 0.5rem;">📁</div>
@@ -8702,16 +8702,16 @@ function renderDrawerTable() {
                 </td>
             </tr>
         `;
-        return;
-    }
+            return;
+        }
 
-    const segment = drawerActiveKpi.segment;
-    visiblePageData.forEach(item => {
-        const tr = document.createElement("tr");
-        
-        if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
-            const timeVal = item.checkIn ? new Date(item.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (item.visitDate || "Pending approval");
-            tr.innerHTML = `
+        const segment = drawerActiveKpi.segment;
+        visiblePageData.forEach(item => {
+            const tr = document.createElement("tr");
+
+            if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
+                const timeVal = item.checkIn ? new Date(item.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (item.visitDate || "Pending approval");
+                tr.innerHTML = `
                 <td><code>${item.id}</code></td>
                 <td>
                     <div style="font-weight:600;">${item.name}</div>
@@ -8738,8 +8738,8 @@ function renderDrawerTable() {
                     </div>
                 </td>
             `;
-        } else if (segment === "blacklisted") {
-            tr.innerHTML = `
+            } else if (segment === "blacklisted") {
+                tr.innerHTML = `
                 <td><code>${item.id}</code></td>
                 <td><strong>${item.name}</strong></td>
                 <td>${item.phone}</td>
@@ -8747,8 +8747,8 @@ function renderDrawerTable() {
                 <td><span class="text-xs text-danger" style="color:var(--accent-danger); font-weight:500;">${item.reason}</span></td>
                 <td>${item.dateAdded}</td>
             `;
-        } else if (segment.startsWith("pm-")) {
-            tr.innerHTML = `
+            } else if (segment.startsWith("pm-")) {
+                tr.innerHTML = `
                 <td><code>${item.id}</code></td>
                 <td><strong>${item.department}</strong></td>
                 <td>${item.agentName}</td>
@@ -8756,8 +8756,8 @@ function renderDrawerTable() {
                 <td><span class="text-xs">${item.contractType}</span></td>
                 <td><span class="badge-status ${item.status.toLowerCase()}">${item.status}</span></td>
             `;
-        } else if (segment === "permits") {
-            tr.innerHTML = `
+            } else if (segment === "permits") {
+                tr.innerHTML = `
                 <td><code>${item.id}</code></td>
                 <td><code>${item.pmId}</code></td>
                 <td>
@@ -8768,165 +8768,165 @@ function renderDrawerTable() {
                 <td><span class="text-xs">${item.startDate} to ${item.endDate}</span></td>
                 <td><span class="badge-status ${item.status.toLowerCase()}">${item.status}</span></td>
             `;
-        }
-        tbody.appendChild(tr);
-    });
-}
-
-function renderDrawerSubChart(segment, dataList) {
-    const chartContainer = document.getElementById("drawer-chart-container");
-    if (!chartContainer || typeof Chart === 'undefined') return;
-
-    if (dataList.length === 0) {
-        chartContainer.style.display = "none";
-        return;
-    }
-
-    chartContainer.style.display = "block";
-    const ctx = document.getElementById("chart-drawer-sub");
-    if (!ctx) return;
-
-    if (drawerChartInstance) {
-        drawerChartInstance.destroy();
-    }
-
-    // Determine aggregations based on category
-    let labels = [];
-    let data = [];
-    let labelText = "Frequency Count";
-
-    if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
-        // Group by Purpose
-        const purposeCounts = {};
-        dataList.forEach(v => {
-            const p = v.purpose || "Other";
-            purposeCounts[p] = (purposeCounts[p] || 0) + 1;
-        });
-        labels = Object.keys(purposeCounts);
-        data = Object.values(purposeCounts);
-        labelText = "Purpose of Visit";
-    } else if (segment === "blacklisted") {
-        // Group by reason keywords
-        const reasonCounts = { "Unauthorized Entry": 0, "Behavior Issues": 0, "ID Mismatch": 0, "Others": 0 };
-        dataList.forEach(b => {
-            const r = b.reason.toLowerCase();
-            if (r.includes("photograph") || r.includes("unauthorized") || r.includes("trespass")) reasonCounts["Unauthorized Entry"]++;
-            else if (r.includes("behavior") || r.includes("hostile") || r.includes("fight")) reasonCounts["Behavior Issues"]++;
-            else if (r.includes("identity") || r.includes("refused") || r.includes("fake")) reasonCounts["ID Mismatch"]++;
-            else reasonCounts["Others"]++;
-        });
-        labels = Object.keys(reasonCounts);
-        data = Object.values(reasonCounts);
-        labelText = "Security Block Category";
-    } else {
-        // Group by Department
-        const deptCounts = {};
-        dataList.forEach(item => {
-            const d = item.hostDept || item.department || item.workDepartment || "Other";
-            deptCounts[d] = (deptCounts[d] || 0) + 1;
-        });
-        labels = Object.keys(deptCounts);
-        data = Object.values(deptCounts);
-        labelText = "Operational Department";
-    }
-
-    drawerChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: labelText,
-                data: data,
-                backgroundColor: ['#3b82f6', '#10b981', '#fbbf24', '#ef4444', '#a855f7', '#64748b'],
-                borderRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-        }
-    });
-}
-
-function animateDashboardStats() {
-    const elements = [
-        "stat-waiting", "stat-pending", "stat-active-in", "stat-checked-out",
-        "stat-rejected", "stat-blacklisted", "stat-frequent", "stat-total-today",
-        "stat-pm-draft", "stat-pm-pending", "stat-pm-approved", "stat-pm-rejected",
-        "stat-active-permits"
-    ];
-
-    elements.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-
-        const target = parseInt(el.innerText) || 0;
-        if (target === 0) return;
-
-        let current = 0;
-        const duration = 800; // ms
-        const stepTime = Math.max(10, Math.floor(duration / target));
-        
-        el.innerText = "0";
-        const timer = setInterval(() => {
-            current += Math.ceil(target / 40) || 1;
-            if (current >= target) {
-                el.innerText = target;
-                clearInterval(timer);
-            } else {
-                el.innerText = current;
             }
-        }, stepTime);
-    });
-}
-
-function exportDrawerDataCSV() {
-    if (drawerFilteredData.length === 0) {
-        showToast("Export Failed", "No records found in current filters to export.", "warning");
-        return;
-    }
-
-    let csvContent = "data:text/csv;charset=utf-8,";
-    const headers = Object.keys(drawerFilteredData[0]).filter(k => k !== 'photo');
-    csvContent += headers.join(",") + "\n";
-
-    drawerFilteredData.forEach(row => {
-        const values = headers.map(header => {
-            const val = row[header] === null || row[header] === undefined ? "" : String(row[header]).replace(/"/g, '""');
-            return `"${val}"`;
+            tbody.appendChild(tr);
         });
-        csvContent += values.join(",") + "\n";
-    });
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `VMS_Card_Report_${drawerActiveKpi.segment}_${getLocalDateStr()}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showToast("CSV Exported", "Detailed records downloaded successfully.", "success");
-}
-
-function exportDrawerDataPDF() {
-    if (drawerFilteredData.length === 0) {
-        showToast("PDF Export Failed", "No records inside card query to print.", "warning");
-        return;
     }
 
-    const win = window.open("", "_blank");
-    if (!win) {
-        showToast("Popup Blocked", "Please permit popups to view and download reports.", "warning");
-        return;
+    function renderDrawerSubChart(segment, dataList) {
+        const chartContainer = document.getElementById("drawer-chart-container");
+        if (!chartContainer || typeof Chart === 'undefined') return;
+
+        if (dataList.length === 0) {
+            chartContainer.style.display = "none";
+            return;
+        }
+
+        chartContainer.style.display = "block";
+        const ctx = document.getElementById("chart-drawer-sub");
+        if (!ctx) return;
+
+        if (drawerChartInstance) {
+            drawerChartInstance.destroy();
+        }
+
+        // Determine aggregations based on category
+        let labels = [];
+        let data = [];
+        let labelText = "Frequency Count";
+
+        if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
+            // Group by Purpose
+            const purposeCounts = {};
+            dataList.forEach(v => {
+                const p = v.purpose || "Other";
+                purposeCounts[p] = (purposeCounts[p] || 0) + 1;
+            });
+            labels = Object.keys(purposeCounts);
+            data = Object.values(purposeCounts);
+            labelText = "Purpose of Visit";
+        } else if (segment === "blacklisted") {
+            // Group by reason keywords
+            const reasonCounts = { "Unauthorized Entry": 0, "Behavior Issues": 0, "ID Mismatch": 0, "Others": 0 };
+            dataList.forEach(b => {
+                const r = b.reason.toLowerCase();
+                if (r.includes("photograph") || r.includes("unauthorized") || r.includes("trespass")) reasonCounts["Unauthorized Entry"]++;
+                else if (r.includes("behavior") || r.includes("hostile") || r.includes("fight")) reasonCounts["Behavior Issues"]++;
+                else if (r.includes("identity") || r.includes("refused") || r.includes("fake")) reasonCounts["ID Mismatch"]++;
+                else reasonCounts["Others"]++;
+            });
+            labels = Object.keys(reasonCounts);
+            data = Object.values(reasonCounts);
+            labelText = "Security Block Category";
+        } else {
+            // Group by Department
+            const deptCounts = {};
+            dataList.forEach(item => {
+                const d = item.hostDept || item.department || item.workDepartment || "Other";
+                deptCounts[d] = (deptCounts[d] || 0) + 1;
+            });
+            labels = Object.keys(deptCounts);
+            data = Object.values(deptCounts);
+            labelText = "Operational Department";
+        }
+
+        drawerChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: labelText,
+                    data: data,
+                    backgroundColor: ['#3b82f6', '#10b981', '#fbbf24', '#ef4444', '#a855f7', '#64748b'],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
     }
 
-    let rowsHtml = "";
-    const segment = drawerActiveKpi.segment;
+    function animateDashboardStats() {
+        const elements = [
+            "stat-waiting", "stat-pending", "stat-active-in", "stat-checked-out",
+            "stat-rejected", "stat-blacklisted", "stat-frequent", "stat-total-today",
+            "stat-pm-draft", "stat-pm-pending", "stat-pm-approved", "stat-pm-rejected",
+            "stat-active-permits"
+        ];
 
-    drawerFilteredData.forEach((r, idx) => {
-        rowsHtml += `
+        elements.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            const target = parseInt(el.innerText) || 0;
+            if (target === 0) return;
+
+            let current = 0;
+            const duration = 800; // ms
+            const stepTime = Math.max(10, Math.floor(duration / target));
+
+            el.innerText = "0";
+            const timer = setInterval(() => {
+                current += Math.ceil(target / 40) || 1;
+                if (current >= target) {
+                    el.innerText = target;
+                    clearInterval(timer);
+                } else {
+                    el.innerText = current;
+                }
+            }, stepTime);
+        });
+    }
+
+    function exportDrawerDataCSV() {
+        if (drawerFilteredData.length === 0) {
+            showToast("Export Failed", "No records found in current filters to export.", "warning");
+            return;
+        }
+
+        let csvContent = "data:text/csv;charset=utf-8,";
+        const headers = Object.keys(drawerFilteredData[0]).filter(k => k !== 'photo');
+        csvContent += headers.join(",") + "\n";
+
+        drawerFilteredData.forEach(row => {
+            const values = headers.map(header => {
+                const val = row[header] === null || row[header] === undefined ? "" : String(row[header]).replace(/"/g, '""');
+                return `"${val}"`;
+            });
+            csvContent += values.join(",") + "\n";
+        });
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `VMS_Card_Report_${drawerActiveKpi.segment}_${getLocalDateStr()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast("CSV Exported", "Detailed records downloaded successfully.", "success");
+    }
+
+    function exportDrawerDataPDF() {
+        if (drawerFilteredData.length === 0) {
+            showToast("PDF Export Failed", "No records inside card query to print.", "warning");
+            return;
+        }
+
+        const win = window.open("", "_blank");
+        if (!win) {
+            showToast("Popup Blocked", "Please permit popups to view and download reports.", "warning");
+            return;
+        }
+
+        let rowsHtml = "";
+        const segment = drawerActiveKpi.segment;
+
+        drawerFilteredData.forEach((r, idx) => {
+            rowsHtml += `
             <tr style="border-bottom:1px solid #e2e8f0; font-size:11px;">
                 <td style="padding:10px;"><code>${r.id || r.name}</code></td>
                 <td style="padding:10px;"><strong>${r.name || r.department || r.id}</strong></td>
@@ -8936,9 +8936,9 @@ function exportDrawerDataPDF() {
                 <td style="padding:10px;"><span style="background:#f1f5f9; padding:2px 6px; border-radius:50px; font-weight:bold; font-size:9px;">${r.status || 'Active'}</span></td>
             </tr>
         `;
-    });
+        });
 
-    win.document.write(`
+        win.document.write(`
         <html>
         <head>
             <title>Barani VMS - ${drawerActiveKpi.label} Details</title>
@@ -8980,82 +8980,82 @@ function exportDrawerDataPDF() {
         </body>
         </html>
     `);
-    win.document.close();
-}
-
-// ==========================================================================
-// 27. SECURITY FEATURE: Sliding Session Timeout and Warning Dialog
-// ==========================================================================
-let sessionLastActivity = Date.now();
-const sessionTimeoutDuration = 15 * 60 * 1000; // 15 minutes
-const sessionWarningThreshold = 14 * 60 * 1000; // Warning at 14 minutes (60s before expiry)
-let sessionWarningActive = false;
-let sessionCountdownInterval = null;
-let sessionWarningTimeRemaining = 60;
-
-function initSessionTimeoutTracker() {
-    console.log("[VMS Security] Active session sliding timeout tracker initialized.");
-    
-    // Activity indicators
-    const resetSessionActivity = () => {
-        if (!state.currentUser) return; // only track while logged in
-        sessionLastActivity = Date.now();
-        if (sessionWarningActive) {
-            sessionWarningActive = false;
-            document.getElementById("modal-session-timeout")?.classList.remove("active");
-            clearInterval(sessionCountdownInterval);
-        }
-    };
-    
-    window.addEventListener("mousemove", resetSessionActivity);
-    window.addEventListener("keydown", resetSessionActivity);
-    window.addEventListener("click", resetSessionActivity);
-    window.addEventListener("scroll", resetSessionActivity);
-    
-    // Main sliding monitor interval (runs every 5 seconds)
-    setInterval(() => {
-        if (!state.currentUser) return; // not logged in
-        
-        const inactiveTime = Date.now() - sessionLastActivity;
-        
-        if (inactiveTime >= sessionTimeoutDuration) {
-            // Force Log out
-            clearInterval(sessionCountdownInterval);
-            document.getElementById("modal-session-timeout")?.classList.remove("active");
-            handleLogoutClick();
-            showToast("Session Expired", "You have been logged out due to inactivity.", "danger");
-            addAuditLog("Session Expired", "System", `Automatic logout due to 15 minutes of inactivity.`);
-        } 
-        else if (inactiveTime >= sessionWarningThreshold && !sessionWarningActive) {
-            // Trigger 60s warning modal
-            sessionWarningActive = true;
-            sessionWarningTimeRemaining = Math.ceil((sessionTimeoutDuration - inactiveTime) / 1000);
-            
-            const modal = document.getElementById("modal-session-timeout");
-            const counter = document.getElementById("timeout-seconds-counter");
-            if (modal && counter) {
-                counter.innerText = sessionWarningTimeRemaining;
-                modal.classList.add("active");
-                
-                // Secondary countdown ticker
-                sessionCountdownInterval = setInterval(() => {
-                    sessionWarningTimeRemaining--;
-                    if (sessionWarningTimeRemaining <= 0) {
-                        clearInterval(sessionCountdownInterval);
-                    } else {
-                        counter.innerText = sessionWarningTimeRemaining;
-                    }
-                }, 1000);
-            }
-        }
-    }, 5000);
-    
-    // Connect keep alive button
-    const btnKeepAlive = document.getElementById("btn-session-keep-alive");
-    if (btnKeepAlive) {
-        btnKeepAlive.onclick = () => {
-            resetSessionActivity();
-            showToast("Session Renewed", "Your security session has been extended for another 15 minutes.", "success");
-        };
+        win.document.close();
     }
-}
+
+    // ==========================================================================
+    // 27. SECURITY FEATURE: Sliding Session Timeout and Warning Dialog
+    // ==========================================================================
+    let sessionLastActivity = Date.now();
+    const sessionTimeoutDuration = 15 * 60 * 1000; // 15 minutes
+    const sessionWarningThreshold = 14 * 60 * 1000; // Warning at 14 minutes (60s before expiry)
+    let sessionWarningActive = false;
+    let sessionCountdownInterval = null;
+    let sessionWarningTimeRemaining = 60;
+
+    function initSessionTimeoutTracker() {
+        console.log("[VMS Security] Active session sliding timeout tracker initialized.");
+
+        // Activity indicators
+        const resetSessionActivity = () => {
+            if (!state.currentUser) return; // only track while logged in
+            sessionLastActivity = Date.now();
+            if (sessionWarningActive) {
+                sessionWarningActive = false;
+                document.getElementById("modal-session-timeout")?.classList.remove("active");
+                clearInterval(sessionCountdownInterval);
+            }
+        };
+
+        window.addEventListener("mousemove", resetSessionActivity);
+        window.addEventListener("keydown", resetSessionActivity);
+        window.addEventListener("click", resetSessionActivity);
+        window.addEventListener("scroll", resetSessionActivity);
+
+        // Main sliding monitor interval (runs every 5 seconds)
+        setInterval(() => {
+            if (!state.currentUser) return; // not logged in
+
+            const inactiveTime = Date.now() - sessionLastActivity;
+
+            if (inactiveTime >= sessionTimeoutDuration) {
+                // Force Log out
+                clearInterval(sessionCountdownInterval);
+                document.getElementById("modal-session-timeout")?.classList.remove("active");
+                handleLogoutClick();
+                showToast("Session Expired", "You have been logged out due to inactivity.", "danger");
+                addAuditLog("Session Expired", "System", `Automatic logout due to 15 minutes of inactivity.`);
+            }
+            else if (inactiveTime >= sessionWarningThreshold && !sessionWarningActive) {
+                // Trigger 60s warning modal
+                sessionWarningActive = true;
+                sessionWarningTimeRemaining = Math.ceil((sessionTimeoutDuration - inactiveTime) / 1000);
+
+                const modal = document.getElementById("modal-session-timeout");
+                const counter = document.getElementById("timeout-seconds-counter");
+                if (modal && counter) {
+                    counter.innerText = sessionWarningTimeRemaining;
+                    modal.classList.add("active");
+
+                    // Secondary countdown ticker
+                    sessionCountdownInterval = setInterval(() => {
+                        sessionWarningTimeRemaining--;
+                        if (sessionWarningTimeRemaining <= 0) {
+                            clearInterval(sessionCountdownInterval);
+                        } else {
+                            counter.innerText = sessionWarningTimeRemaining;
+                        }
+                    }, 1000);
+                }
+            }
+        }, 5000);
+
+        // Connect keep alive button
+        const btnKeepAlive = document.getElementById("btn-session-keep-alive");
+        if (btnKeepAlive) {
+            btnKeepAlive.onclick = () => {
+                resetSessionActivity();
+                showToast("Session Renewed", "Your security session has been extended for another 15 minutes.", "success");
+            };
+        }
+    }
