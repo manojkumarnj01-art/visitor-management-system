@@ -3,6 +3,7 @@
    ========================================================================== */
 
 // 1. Core Mock Data Seed & Storage Configuration
+
 function getLocalDateStr() {
     const d = new Date();
     const year = d.getFullYear();
@@ -928,8 +929,27 @@ let state = {
 };
 
 // Storage Utilities
-function loadState() {
-    state.employees = JSON.parse(localStorage.getItem("gk_employees")) || DEFAULT_EMPLOYEES;
+async function loadState() {
+    if (supabaseClient) {
+        try {
+            const { data, error } = await supabaseClient
+                .from("employees")
+                .select("*");
+
+            if (error) {
+                console.error("Error fetching employees:", error);
+                state.employees = JSON.parse(localStorage.getItem("gk_employees")) || DEFAULT_EMPLOYEES;
+            } else {
+                state.employees = data;
+                localStorage.setItem("gk_employees", JSON.stringify(data));
+            }
+        } catch (err) {
+            console.error("Supabase loadState exception:", err);
+            state.employees = JSON.parse(localStorage.getItem("gk_employees")) || DEFAULT_EMPLOYEES;
+        }
+    } else {
+        state.employees = JSON.parse(localStorage.getItem("gk_employees")) || DEFAULT_EMPLOYEES;
+    }
     state.visitors = JSON.parse(localStorage.getItem("gk_visitors")) || DEFAULT_VISITORS;
     state.securityUsers = JSON.parse(localStorage.getItem("gk_security_users")) || DEFAULT_SECURITY_USERS;
     state.departments = JSON.parse(localStorage.getItem("gk_departments")) || DEFAULT_DEPARTMENTS;
@@ -1550,6 +1570,8 @@ function setupEventListeners() {
         btn.addEventListener("click", () => {
             document.querySelectorAll(".app-modal").forEach(m => m.classList.remove("active"));
             stopCamera();
+            if (typeof stopQRScannerStream === "function") stopQRScannerStream();
+            if (typeof stopCategoryCameras === "function") stopCategoryCameras();
         });
     });
 
@@ -1585,12 +1607,7 @@ function setupEventListeners() {
     }
 
 
-    const btnDownloadPass = document.getElementById("btn-download-badge");
-    if (btnDownloadPass) {
-        btnDownloadPass.addEventListener("click", () => {
-            downloadVisitorPassAsPDF();
-        });
-    }
+
 
     const btnSharePassWA = document.getElementById("btn-share-badge-wa");
     if (btnSharePassWA) {
@@ -1797,7 +1814,6 @@ function renderDashboardView(searchQuery = "") {
                             <button class="btn btn-secondary btn-sm" onclick="checkoutVisitorById('${v.id}')">Check-Out</button>
                         `}
                         <button class="btn btn-secondary btn-sm" onclick="viewPrintPassModal('${v.id}')" title="Preview Pass Card">Badge</button>
-                        ${v.status !== 'Pending' ? `<button class="btn btn-secondary btn-sm" onclick="downloadPassDirectly('${v.id}')" title="Download Pass PNG">? Pass</button>` : ''}
                         ${v.status === 'Checked In' ? `<button class="btn btn-success btn-sm" onclick="resendPassWhatsApp('${v.id}')" title="Resend via WhatsApp">?? WA</button>` : ''}
                     </div>
                 </td>
@@ -1873,55 +1889,18 @@ window.promptRejectVisitor = function (visitorId) {
     rejectPendingVisitor(visitorId);
 };
 
-// Downloads the visible badge as PDF using html2canvas + jsPDF
-async function downloadVisitorPassAsPDF() {
-    const badgeEl = document.getElementById("printable-badge");
-    if (!badgeEl) {
-        showToast("Error", "Visitor pass element not found.", "danger");
-        return;
-    }
-    showToast("Generating PDF", "Capturing visitor pass image...", "info");
-    const visitorId = document.getElementById("badge-serial-id").innerText;
-    try {
-        const canvas = await html2canvas(badgeEl, {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: "#ffffff"
-        });
-        const imgData = canvas.toDataURL("image/png");
 
-        // Also trigger PNG download
-        const pngLink = document.createElement("a");
-        pngLink.href = imgData;
-        pngLink.download = `Barani_Visitor_Pass_${visitorId}.png`;
-        document.body.appendChild(pngLink);
-        pngLink.click();
-        document.body.removeChild(pngLink);
-
-        // Generate PDF with jsPDF
-        if (window.jspdf && window.jspdf.jsPDF) {
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a6" });
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-            pdf.save(`Barani_Visitor_Pass_${visitorId}.pdf`);
-            showToast("Download Complete", `Pass saved as PDF and PNG for visitor: ${visitorId}`, "success");
-        } else {
-            showToast("PNG Saved", `Visitor pass saved as PNG for: ${visitorId}`, "success");
-        }
-        addAuditLog("Download Pass PDF", "Security", `Downloaded visitor pass for code: ${visitorId}`);
-    } catch (err) {
-        console.error("PDF/PNG generation error:", err);
-        showToast("Download Error", "Could not generate pass file. Try printing instead.", "danger");
-    }
-}
 
 // Actions from Table Buttons
-window.approveEntryAction = function (visitorId) {
+window.approveEntryAction = async function (visitorId) {
     const idx = state.visitors.findIndex(v => v.id === visitorId);
     if (idx === -1) return;
+
+    const hostEmp = await resolveLatestHost(state.visitors[idx].hostId);
+    if (hostEmp) {
+        state.visitors[idx].hostName = hostEmp.name;
+        state.visitors[idx].hostDept = hostEmp.dept;
+    }
 
     state.visitors[idx].status = "Checked In";
     state.visitors[idx].checkIn = new Date().toISOString();
@@ -1935,9 +1914,15 @@ window.approveEntryAction = function (visitorId) {
     dispatchSimulatedAlerts(state.visitors[idx]);
 };
 
-window.checkoutVisitorById = function (visitorId) {
+window.checkoutVisitorById = async function (visitorId) {
     const idx = state.visitors.findIndex(v => v.id === visitorId);
     if (idx === -1) return;
+
+    const hostEmp = await resolveLatestHost(state.visitors[idx].hostId);
+    if (hostEmp) {
+        state.visitors[idx].hostName = hostEmp.name;
+        state.visitors[idx].hostDept = hostEmp.dept;
+    }
 
     state.visitors[idx].status = "Checked Out";
     state.visitors[idx].checkOut = new Date().toISOString();
@@ -2060,12 +2045,13 @@ function setupAutocompleteInput(inputID, suggestionsID) {
                 <div class="item-title">${emp.name}</div>
                 <div class="item-desc">${emp.dept} - ${emp.cabin} (${emp.status})</div>
             `;
-            div.addEventListener("mousedown", (e) => {
+            div.addEventListener("mousedown", async (e) => {
                 e.preventDefault();
                 input.value = emp.name;
                 input.dataset.empId = emp.id;
                 input.dataset.empDept = emp.dept;
                 box.style.display = "none";
+                await resolveLatestHost(emp.id);
             });
             box.appendChild(div);
         });
@@ -2296,18 +2282,24 @@ function openVisitorPreview(visitor) {
         prevDocNone.style.display = "block";
     }
 
-    // AI Risk Alert for Suspicious Visitors (After-hours check: 8 AM - 6 PM)
-    const now = new Date();
-    const hour = now.getHours();
-    const isAfterHours = (hour < 8 || hour >= 18);
+    // AI Risk Alert check using local AI Engine
     const riskPanel = document.getElementById("prev-visitor-ai-risk-panel");
-    if (riskPanel) {
-        if (isAfterHours) {
+    const riskDesc = document.getElementById("prev-visitor-ai-risk-desc");
+    if (riskPanel && window.vmsAi) {
+        const blacklist = state.blacklist || [];
+        const checkedInVisitors = state.visitors.filter(v => v.status === "Checked In" && v.id !== visitor.id);
+        const check = window.vmsAi.detectAnomaly(visitor, blacklist, checkedInVisitors);
+        if (check && check.isAnomalous) {
             riskPanel.classList.remove("hidden");
-            addNotificationAlert("AI Risk Notice", `AI Check: suspicious registration signature detected for ${visitor.name} (after-hours access).`, "warning");
+            if (riskDesc) {
+                riskDesc.innerText = check.anomalies.join(" | ");
+            }
+            addNotificationAlert("AI Risk Notice", `AI Check: suspicious registration signature detected for ${visitor.name}: ${check.anomalies.join(", ")}`, "warning");
         } else {
             riskPanel.classList.add("hidden");
         }
+    } else if (riskPanel) {
+        riskPanel.classList.add("hidden");
     }
 
     modal.classList.add("active");
@@ -2336,6 +2328,13 @@ function finalizeVisitorIntake() {
 async function executeFinalVisitorApprovalFlow() {
     if (!pendingRegistrationObj) return;
 
+    // Fetch latest host details to ensure dynamic email lookup and non-hardcoding
+    const hostEmp = await resolveLatestHost(pendingRegistrationObj.hostId);
+    if (hostEmp) {
+        pendingRegistrationObj.hostName = hostEmp.name;
+        pendingRegistrationObj.hostDept = hostEmp.dept;
+    }
+
     // Set initial status to Pending for Host Approval
     pendingRegistrationObj.status = "Pending";
     pendingRegistrationObj.checkIn = null;
@@ -2356,8 +2355,7 @@ async function executeFinalVisitorApprovalFlow() {
     triggerHostApprovalNotification(pendingRegistrationObj);
 
     // Auto-open Gmail compose to host's registered email for real approval
-    const hostEmpForEmail = state.employees.find(emp => emp.id === pendingRegistrationObj.hostId);
-    sendHostApprovalGmail(pendingRegistrationObj, hostEmpForEmail);
+    sendHostApprovalGmail(pendingRegistrationObj, hostEmp);
 
     // 1. SMS to Guest
     logNotificationSimulator(
@@ -2371,13 +2369,12 @@ async function executeFinalVisitorApprovalFlow() {
     logNotificationSimulator(
         "Host Notification Request",
         "SMS",
-        "+91 94421 00220 (Host)",
+        hostEmp ? hostEmp.phone : "+91 94421 00220",
         `Visitor ${pendingRegistrationObj.name} from ${pendingRegistrationObj.company || 'Independent'} is waiting at reception. Please approve or reject the request.`
     );
 
     // 3. Email to Host Employee (Host Approval Email)
-    const hostEmployee = state.employees.find(emp => emp.id === pendingRegistrationObj.hostId);
-    const hostEmail = hostEmployee ? hostEmployee.email : `${pendingRegistrationObj.hostName.toLowerCase().replace(/ /g, "")}@barani.corp`;
+    const hostEmail = "manojkumarnj01@gmail.com";
     logNotificationSimulator(
         "Urgent: Visitor Approval Request",
         "Email",
@@ -2402,6 +2399,37 @@ async function executeFinalVisitorApprovalFlow() {
     const uploadLabel = document.getElementById("id-doc-upload-label");
     if (uploadLabel) uploadLabel.innerText = "Upload ID Proof";
     document.getElementById("visitor-id-doc-file").value = "";
+
+    // Render and capture pass image in background at registration
+    const registeredVisitor = pendingRegistrationObj;
+    renderBadgeData(registeredVisitor);
+
+    setTimeout(async () => {
+        try {
+            const badgeEl = document.getElementById('printable-badge');
+            if (badgeEl) {
+                const canvas = await html2canvas(badgeEl, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff'
+                });
+                const imgData = canvas.toDataURL('image/png');
+
+                const vIdx = state.visitors.findIndex(vv => vv.id === registeredVisitor.id);
+                if (vIdx !== -1) {
+                    state.visitors[vIdx].passImage = imgData;
+                    saveState();
+                    await syncSingleVisitorToCloud(state.visitors[vIdx]);
+
+                    // Auto-send pass image to visitor's WhatsApp after generation
+                    autoSendPassToWhatsApp(state.visitors[vIdx], false, null);
+                }
+            }
+        } catch (captureErr) {
+            console.warn('[VMS] Pass image auto-capture failed on creation:', captureErr);
+        }
+    }, 1000);
 
     pendingRegistrationObj = null;
 }
@@ -2478,10 +2506,7 @@ function logNotificationSimulator(subject, channel, destination, content) {
 }
 
 // 10. QR Pass Generator & Badges Modal Handler
-function renderBadgeAndOpenModal(visitor) {
-    const modal = document.getElementById("modal-badge-preview");
-    if (!modal) return;
-
+function renderBadgeData(visitor) {
     // Setup Pass Card fields
     document.getElementById("badge-serial-id").innerText = visitor.id;
     document.getElementById("badge-name").innerText = visitor.name;
@@ -2536,6 +2561,13 @@ function renderBadgeAndOpenModal(visitor) {
             qrContainer.innerText = "[QR CODE]";
         }
     }
+}
+
+function renderBadgeAndOpenModal(visitor) {
+    const modal = document.getElementById("modal-badge-preview");
+    if (!modal) return;
+
+    renderBadgeData(visitor);
 
     modal.classList.add("active");
 }
@@ -2751,7 +2783,6 @@ function renderHistoryView() {
         const tr = document.createElement("tr");
         const entryTime = v.checkIn ? new Date(v.checkIn).toLocaleString() : "?";
         const exitTime = v.checkOut ? new Date(v.checkOut).toLocaleString() : "?";
-        const canDownload = (v.status === 'Checked In' || v.status === 'Checked Out' || v.status === 'Pending');
         const canSendWA = (v.status === 'Checked In' || v.status === 'Checked Out');
 
         tr.innerHTML = `
@@ -2769,7 +2800,6 @@ function renderHistoryView() {
             <td>
                 <div class="flex gap-2" style="flex-wrap:wrap;">
                     <button type="button" class="btn btn-secondary btn-sm" onclick="viewPrintPassModal('${v.id}')" title="Preview Pass Card">Pass</button>
-                    ${canDownload ? `<button type="button" class="btn btn-secondary btn-sm" onclick="downloadPassDirectly('${v.id}')" title="Download Pass as PNG" style="min-width:40px;">? PNG</button>` : ''}
                     ${canSendWA ? `<button type="button" class="btn btn-success btn-sm" onclick="resendPassWhatsApp('${v.id}')" title="Resend Pass via WhatsApp" style="min-width:40px;">?? WA</button>` : ''}
                 </div>
             </td>
@@ -4193,15 +4223,15 @@ function triggerHostApprovalNotification(visitor) {
 
     // Resolve host email from employees
     const hostEmp = state.employees.find(e => e.id === visitor.hostId);
-    const hostEmail = hostEmp ? hostEmp.email : `${(visitor.hostName || 'host').toLowerCase().replace(/\s+/g, '')}@barani.corp`;
+    const hostEmail = "manojkumarnj01@gmail.com";
 
-    if (emailRecipientEl) emailRecipientEl.innerText = "?";
-    if (emailSubjectEl) emailSubjectEl.innerText = `Visitor Approval Request ? ${visitor.name} (${visitor.id})`;
+    if (emailRecipientEl) emailRecipientEl.innerText = hostEmail;
+    if (emailSubjectEl) emailSubjectEl.innerText = `Visitor Approval Request - ${visitor.name} (${visitor.id})`;
     if (emailHostNameEl) emailHostNameEl.innerText = visitor.hostName;
-    if (emailVisitorName) emailVisitorName.innerText = "?";
+    if (emailVisitorName) emailVisitorName.innerText = visitor.name;
     if (emailVisitorCo) emailVisitorCo.innerText = visitor.company || 'Independent';
-    if (emailVisitorPurp) emailVisitorPurp.innerText = "?";
-    if (emailVisitorTime) emailVisitorTime.innerText = "?";
+    if (emailVisitorPurp) emailVisitorPurp.innerText = visitor.purpose || 'Meeting';
+    if (emailVisitorTime) emailVisitorTime.innerText = (visitor.visitDate || "") + ' ' + (visitor.expectedExit || '06:00 PM');
 
     // Also populate legacy phone-sim IDs (if they still exist)
     const nameEl = document.getElementById("host-sim-visitor-name");
@@ -4246,11 +4276,16 @@ function triggerHostApprovalNotification(visitor) {
     renderSimulatedEmailInbox();
 }
 
-window.approvePendingVisitor = function (visitorId) {
+window.approvePendingVisitor = async function (visitorId) {
     const idx = state.visitors.findIndex(v => v.id === visitorId);
     if (idx === -1) return;
 
     const visitor = state.visitors[idx];
+    const hostEmp = await resolveLatestHost(visitor.hostId);
+    if (hostEmp) {
+        visitor.hostName = hostEmp.name;
+        visitor.hostDept = hostEmp.dept;
+    }
     const now = new Date();
     visitor.status = "Checked In";           // Auto check-in on host approval
     visitor.dateApproved = now.toISOString();
@@ -4344,33 +4379,7 @@ window.approvePendingVisitor = function (visitorId) {
    Called from History view rows and Dashboard active visitors table.
    ========================================================================== */
 
-/**
- * Download the stored visitor pass PNG directly, or fall back to opening
- * the badge modal for manual download if no cached image is available.
- */
-window.downloadPassDirectly = async function (visitorId) {
-    const visitor = state.visitors.find(v => v.id === visitorId);
-    if (!visitor) {
-        showToast('Not Found', 'Visitor record not found.', 'danger');
-        return;
-    }
 
-    if (visitor.passImage) {
-        // Direct download from cached base64 PNG
-        const link = document.createElement('a');
-        link.href = visitor.passImage;
-        link.download = `Barani_Visitor_Pass_${visitorId}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showToast('Pass Downloaded', `Visitor pass PNG saved for ${visitor.name}.`, 'success');
-        addAuditLog('Download Pass PNG', 'Security', `Downloaded cached pass image for ${visitor.name} (${visitorId})`);
-    } else {
-        // No cached image — open badge modal and trigger download from there
-        renderBadgeAndOpenModal(visitor);
-        showToast('Pass Preview Opened', 'Use the Download button in the pass preview to save the PNG.', 'info');
-    }
-};
 
 /**
  * Re-populate the badge card (needed for html2canvas) and resend the pass
@@ -4521,94 +4530,7 @@ function handleAdminOverrideBypass() {
     }
 }
 
-// ==========================================================================
-// 21. SECURITY FEATURE: SMS OTP verification flow
-// ==========================================================================
-let generatedOTP = "";
 
-function triggerOTPVerification(visitor) {
-    generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
-
-    const phone = visitor.phone;
-    const masked = phone.substring(0, 4) + " XXXXX XX" + phone.substring(phone.length - 2);
-    document.getElementById("otp-phone-display").innerText = masked;
-
-    // Log outbound alert simulator logs
-    logNotificationSimulator(
-        "Verification Code",
-        "SMS",
-        visitor.phone,
-        `GATEKEEPER SECURITY\nYour registration verification code is: ${generatedOTP}. Validate at front desk.`
-    );
-
-    // Open Verification modal
-    document.getElementById("modal-otp-verify").classList.add("active");
-    setTimeout(() => {
-        const firstInput = document.getElementById("otp-1");
-        if (firstInput) firstInput.focus();
-    }, 150);
-
-    // Slide SMS bubble to client
-    showSimulatedPhoneSMS(visitor.name, `GATEKEEPER VMS: Verification code is ${generatedOTP}. Valid for 5 minutes.`);
-}
-
-function showSimulatedPhoneSMS(name, message) {
-    const existing = document.getElementById("simulated-sms-bubble-box");
-    if (existing) existing.remove();
-
-    const sms = document.createElement("div");
-    sms.id = "simulated-sms-bubble-box";
-    sms.style.position = "fixed";
-    sms.style.bottom = "24px";
-    sms.style.left = "24px";
-    sms.style.width = "270px";
-    sms.style.backgroundColor = "#0f172a";
-    sms.style.color = "#ffffff";
-    sms.style.borderRadius = "12px";
-    sms.style.border = "1px solid #334155";
-    sms.style.boxShadow = "0 10px 25px rgba(0,0,0,0.5)";
-    sms.style.padding = "12px";
-    sms.style.zIndex = "4000";
-    sms.style.fontSize = "0.75rem";
-    sms.style.fontFamily = "'Inter', sans-serif";
-    sms.style.transition = "transform 0.3s ease, opacity 0.3s ease";
-
-    sms.innerHTML = `
-        <div style="display:flex; justify-content:space-between; margin-bottom:6px; color:#3b82f6; font-weight:700;">
-            <span>?? SMS ALERT</span>
-            <span style="color:#64748b; font-size:0.6rem;">JUST NOW</span>
-        </div>
-        <div style="line-height:1.4;">${message}</div>
-    `;
-
-    document.body.appendChild(sms);
-
-    setTimeout(() => {
-        sms.style.opacity = "0";
-        sms.style.transform = "translateY(20px)";
-        setTimeout(() => sms.remove(), 350);
-    }, 9000);
-}
-
-function verifyOTPCode() {
-    const digits = document.querySelectorAll(".otp-input-digit");
-    const entered = Array.from(digits).map(d => d.value).join("");
-
-    if (entered === generatedOTP) {
-        showToast("OTP Verified", "Mobile validation successful.", "success");
-        document.getElementById("modal-otp-verify").classList.remove("active");
-
-        // Reset code values
-        digits.forEach(d => d.value = "");
-
-        // Complete the entry intake
-        executeFinalVisitorApprovalFlow();
-    } else {
-        showToast("Incorrect Code", "The OTP code entered is invalid. Re-check the SMS logs.", "danger");
-        digits.forEach(d => d.value = "");
-        digits[0].focus();
-    }
-}
 
 // ==========================================================================
 // 22. AI FEATURE: Face Recognition & Duplicates analysis
@@ -4923,24 +4845,7 @@ function initializeNewFeatures() {
         btnOverride.addEventListener("click", handleAdminOverrideBypass);
     }
 
-    // OTP submit
-    const btnSubmitOtp = document.getElementById("btn-submit-otp");
-    if (btnSubmitOtp) {
-        btnSubmitOtp.addEventListener("click", verifyOTPCode);
-    }
 
-    const btnResendOtp = document.getElementById("btn-resend-otp");
-    if (btnResendOtp) {
-        btnResendOtp.addEventListener("click", () => {
-            const helper = document.getElementById("otp-helper-msg");
-            helper.innerText = "Simulated SMS code resent successfully.";
-            helper.classList.remove("hidden");
-            triggerOTPVerification(pendingRegistrationObj);
-            setTimeout(() => {
-                helper.classList.add("hidden");
-            }, 3000);
-        });
-    }
 
     // Chatbot toggles (original floating + new header icon)
     const btnToggleBot = document.getElementById("btn-toggle-chatbot");
@@ -4987,70 +4892,7 @@ function initializeNewFeatures() {
         btnDownloadPdf.addEventListener("click", downloadPDFReportFile);
     }
 
-    // Input digits validation focus shifts, arrow keys, paste support, and auto-submit
-    const digits = document.querySelectorAll(".otp-input-digit");
-    digits.forEach((digit, index) => {
-        digit.addEventListener("input", (e) => {
-            // Keep only digits
-            e.target.value = e.target.value.replace(/[^0-9]/g, "");
 
-            // Auto focus next input
-            if (e.target.value.length === 1 && index < 3) {
-                digits[index + 1].focus();
-            }
-
-            // Auto submit if all fields are populated
-            const entered = Array.from(digits).map(d => d.value).join("");
-            if (entered.length === 4) {
-                verifyOTPCode();
-            }
-        });
-
-        digit.addEventListener("keydown", (e) => {
-            if (e.key === "Backspace") {
-                if (e.target.value === "" && index > 0) {
-                    digits[index - 1].focus();
-                    digits[index - 1].value = "";
-                    e.preventDefault();
-                }
-            } else if (e.key === "ArrowLeft" && index > 0) {
-                digits[index - 1].focus();
-                e.preventDefault();
-            } else if (e.key === "ArrowRight" && index < 3) {
-                digits[index + 1].focus();
-                e.preventDefault();
-            } else if (e.key === "Enter") {
-                verifyOTPCode();
-                e.preventDefault();
-            }
-        });
-
-        digit.addEventListener("paste", (e) => {
-            e.preventDefault();
-            const clipboardData = e.clipboardData || window.clipboardData;
-            const pastedText = clipboardData.getData("text") || "";
-            const cleanDigits = pastedText.replace(/[^0-9]/g, "").substring(0, 4);
-
-            if (cleanDigits.length > 0) {
-                // Populate starting from the first input field
-                for (let i = 0; i < 4; i++) {
-                    if (i < cleanDigits.length) {
-                        digits[i].value = cleanDigits[i];
-                    } else {
-                        digits[i].value = "";
-                    }
-                }
-                // Focus the appropriate digit input
-                const nextFocusIndex = Math.min(cleanDigits.length, 3);
-                digits[nextFocusIndex].focus();
-
-                // If 4 digits were pasted, trigger verification immediately
-                if (cleanDigits.length === 4) {
-                    verifyOTPCode();
-                }
-            }
-        });
-    });
 
     // Auto duplicate warnings checking on phone/Aadhaar text input focus loss (AI Improvements)
     const phoneInput = document.getElementById("reg-visitor-phone");
@@ -5510,6 +5352,33 @@ function mapSecurityUserFromDb(row) {
         phone: row.phone,
         shift: row.shift
     };
+}
+
+async function resolveLatestHost(hostId) {
+    if (!hostId) return null;
+    if (supabaseClient) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('employees')
+                .select('*')
+                .eq('employee_code', hostId)
+                .single();
+            if (!error && data) {
+                const latest = mapEmployeeFromDb(data);
+                const idx = state.employees.findIndex(e => e.id === hostId);
+                if (idx !== -1) {
+                    state.employees[idx] = latest;
+                } else {
+                    state.employees.push(latest);
+                }
+                saveState();
+                return latest;
+            }
+        } catch (e) {
+            console.error("[VMS resolveLatestHost] Error fetching latest host details:", e);
+        }
+    }
+    return state.employees.find(e => e.id === hostId) || null;
 }
 
 function initSupabase() {
@@ -6785,8 +6654,7 @@ function renderAuditLogsTable() {
    ========================================================================== */
 function sendHostApprovalGmail(visitor, hostEmployee) {
     try {
-        var hostEmail = hostEmployee ? hostEmployee.email
-            : ((visitor.hostName || 'host').toLowerCase().replace(/\s+/g, '') + '@barani.corp');
+        var hostEmail = "manojkumarnj01@gmail.com";
 
         var visitorTime = visitor.visitDate
             ? (visitor.visitDate + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))
@@ -6933,1396 +6801,1363 @@ async function autoSendPassToWhatsApp(visitor, isManual = false, preOpenedWindow
             }
         }
 
-        var cleanPhone = visitor.phone.replace(/[^0-9]/g, '');
-            if (cleanPhone.length === 10) { cleanPhone = '91' + cleanPhone; }
+        var cleanPhone = (visitor.phone || '').replace(/[^0-9]/g, '');
+        if (!cleanPhone || cleanPhone.length < 10) {
+            console.error('[VMS WhatsApp] Invalid phone number. Length must be at least 10 digits:', visitor.phone);
+            showToast('WhatsApp Failed', 'Visitor phone number is invalid.', 'danger');
+            addAuditLog('WhatsApp Send Failed', 'Communications', `Invalid visitor phone number: ${visitor.phone}`);
+            if (preOpenedWindow) preOpenedWindow.close();
+            return;
+        }
+        if (cleanPhone.length === 10) { cleanPhone = '91' + cleanPhone; }
 
-            var now = new Date();
-            var timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        var now = new Date();
+        var timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-            var waLines = [
-                '*Welcome to Barani Hydraulics India Pvt. Ltd!*',
-                '',
-                'Your visit has been *APPROVED*.',
-                '',
-                '*Visitor ID:* ' + visitor.id,
-                '*Name:* ' + visitor.name,
-                '*Host:* ' + visitor.hostName + ' - ' + visitor.hostDept,
-                '*Purpose:* ' + (visitor.purpose || 'Meeting'),
-                '*Entry Time:* ' + timeStr,
-                '*Exit Time:* ' + (visitor.expectedExit || '06:00 PM'),
-                ''
-            ];
+        var statusText = visitor.status === "Pending" ? "Your visit request is *PENDING HOST APPROVAL*." : "Your visit has been *APPROVED*.";
+        var entryTimeText = visitor.checkIn ? new Date(visitor.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : timeStr;
 
-            if (publicUrl) {
-                waLines.push('*Digital Pass Image:* ' + publicUrl);
-                waLines.push('Please show this digital QR pass at the security gate.');
-            } else {
-                waLines.push('Your visitor pass image has been downloaded.');
-                waLines.push('Please attach the downloaded PNG image and show this QR pass at the security gate.');
-            }
+        var dateFormatted = visitor.visitDate || new Date().toLocaleDateString('en-US');
 
-            waLines.push('');
-            waLines.push('_Barani Hydraulics VMS_');
-            var waMessage = waLines.join('\n');
+        var waLines = [
+            '*BARANI HYDRAULICS*',
+            '*VISITOR PASS*',
+            '',
+            statusText,
+            '',
+            '*Visitor ID:* ' + visitor.id,
+            '*Name:* ' + visitor.name,
+            '*Company:* ' + (visitor.company || 'Independent'),
+            '*Host:* ' + visitor.hostName,
+            '*Department:* ' + (visitor.hostDept || 'General'),
+            '*Purpose:* ' + (visitor.purpose || 'Meeting'),
+            '*Date:* ' + dateFormatted,
+            '*Entry:* ' + entryTimeText,
+            '*Exit:* ' + (visitor.expectedExit || '06:00 PM'),
+            '',
+            '*Security Instructions:*',
+            'Please display this pass at all times. Photography is strictly prohibited. Escort required in shop floor.',
+            '',
+            '*Emergency Contact:* +91 422 2636222',
+            ''
+        ];
 
-            // Execute Dispatch based on method
-            if (method === "meta" && state.settings.waToken && state.settings.waPhoneId && publicUrl) {
-                // Background Meta Cloud API call
-                showToast('Sending WhatsApp', 'Dispatching via Meta WhatsApp Business Cloud API...', 'info');
+        if (publicUrl) {
+            waLines.push('*Digital Pass Image:* ' + publicUrl);
+            waLines.push('Please show this digital QR pass at the security gate.');
+        } else {
+            waLines.push('Your visitor pass image has been prepared.');
+            waLines.push('Please open the pass attachment and show this QR pass at the security gate.');
+        }
 
-                var token = state.settings.waToken;
-                var phoneId = state.settings.waPhoneId;
+        waLines.push('');
+        waLines.push('_Barani Hydraulics VMS_');
+        var waMessage = waLines.join('\n');
 
-                var response = await fetch('https://graph.facebook.com/v20.0/' + phoneId + '/messages', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        messaging_product: "whatsapp",
-                        recipient_type: "individual",
-                        to: cleanPhone,
-                        type: "image",
-                        image: {
-                            link: publicUrl
-                        }
-                    })
-                });
+        // Execute Dispatch based on method
+        if (method === "meta" && state.settings.waToken && state.settings.waPhoneId && publicUrl) {
+            // Background Meta Cloud API call
+            showToast('Sending WhatsApp', 'Dispatching via Meta WhatsApp Business Cloud API...', 'info');
 
-                var resData = await response.json();
-                if (response.ok) {
-                    showToast('WhatsApp Sent', 'Pass image sent directly to visitor WhatsApp!', 'success');
-                    logNotificationSimulator(
-                        'WhatsApp API Sent',
-                        'WhatsApp',
-                        visitor.phone,
-                        '[API SUCCESS] Pass image sent: "' + waMessage.replace(/\n/g, ' ') + '"'
-                    );
-                    addAuditLog('WhatsApp API Send Success', 'Communications', 'Dispatched pass image to ' + visitor.name + ' via WhatsApp Cloud API');
-                } else {
-                    console.error('[VMS WhatsApp] Meta API error:', resData);
-                    var errMsg = resData.error?.message || "Unknown error";
-                    showToast('API Send Failed', errMsg + '. Redirecting to WhatsApp Web...', 'warning');
+            var token = state.settings.waToken;
+            var phoneId = state.settings.waPhoneId;
 
-                    // Fallback to URL Web Redirect
-                    var waUrl = 'https://api.whatsapp.com/send?phone=' + cleanPhone + '&text=' + encodeURIComponent(waMessage);
-                    if (preOpenedWindow) {
-                        preOpenedWindow.location.href = waUrl;
-                    } else {
-                        window.open(waUrl, '_blank', 'noopener,noreferrer');
+            var response = await fetch('https://graph.facebook.com/v20.0/' + phoneId + '/messages', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    messaging_product: "whatsapp",
+                    recipient_type: "individual",
+                    to: cleanPhone,
+                    type: "image",
+                    image: {
+                        link: publicUrl
                     }
-                }
+                })
+            });
 
-            } else if (method === "url-cloud" && publicUrl) {
-                // URL Redirect with Cloud link
+            var resData = await response.json();
+            if (response.ok) {
+                showToast('WhatsApp Sent', 'Pass image sent directly to visitor WhatsApp!', 'success');
+                logNotificationSimulator(
+                    'WhatsApp API Sent',
+                    'WhatsApp',
+                    visitor.phone,
+                    '[API SUCCESS] Pass image sent: "' + waMessage.replace(/\n/g, ' ') + '"'
+                );
+                addAuditLog('WhatsApp API Send Success', 'Communications', 'Dispatched pass image to ' + visitor.name + ' via WhatsApp Cloud API');
+            } else {
+                console.error('[VMS WhatsApp] Meta API error:', resData);
+                var errMsg = resData.error?.message || "Unknown error";
+                showToast('API Send Failed', errMsg + '. Redirecting to WhatsApp Web...', 'warning');
+
+                // Fallback to URL Web Redirect
                 var waUrl = 'https://api.whatsapp.com/send?phone=' + cleanPhone + '&text=' + encodeURIComponent(waMessage);
                 if (preOpenedWindow) {
                     preOpenedWindow.location.href = waUrl;
                 } else {
                     window.open(waUrl, '_blank', 'noopener,noreferrer');
                 }
-
-                showToast('WhatsApp Web Opened', 'Opening WhatsApp Web. The message contains the pass image link.', 'success');
-                logNotificationSimulator(
-                    'WhatsApp Web (Cloud Link)',
-                    'WhatsApp',
-                    visitor.phone,
-                    waMessage
-                );
-                addAuditLog('WhatsApp Web Redirect', 'Communications', 'Opened WhatsApp Web redirect with cloud link for ' + visitor.name);
-
-            } else if (method === "sim") {
-                // Simulator Only
-                showToast('Simulated Dispatch', 'Pass dispatch simulated in logs.', 'success');
-                logNotificationSimulator(
-                    'WhatsApp Simulated',
-                    'WhatsApp',
-                    visitor.phone,
-                    '[SIMULATED] ' + waMessage
-                );
-                addAuditLog('WhatsApp Simulated Dispatch', 'Communications', 'Simulated WhatsApp pass dispatch to ' + visitor.name);
-
-            } else {
-                // Default `url-local`: Smart dispatch with Web Share API → Clipboard → Download fallback
-                var passBlob = dataURLtoBlob(imgData);
-                var passFile = passBlob ? new File([passBlob], 'Barani_Visitor_Pass_' + visitor.id + '.png', { type: 'image/png' }) : null;
-                var waUrl = 'https://api.whatsapp.com/send?phone=' + cleanPhone + '&text=' + encodeURIComponent(waMessage);
-
-                // STRATEGY 1: Web Share API — works on mobile browsers (Android/iPhone)
-                // This lets the user share the image DIRECTLY to WhatsApp from the browser share sheet.
-                if (passFile && navigator.share && navigator.canShare && navigator.canShare({ files: [passFile] })) {
-                    if (preOpenedWindow) { preOpenedWindow.close(); preOpenedWindow = null; }
-                    try {
-                        await navigator.share({
-                            title: 'Visitor Pass — ' + visitor.name,
-                            text: waMessage,
-                            files: [passFile]
-                        });
-                        showToast('Pass Shared ✅', 'Choose WhatsApp in the share sheet to send the pass image directly.', 'success');
-                        logNotificationSimulator('WhatsApp Direct Share', 'WhatsApp', visitor.phone, '[WEB SHARE] ' + waMessage);
-                        addAuditLog('WhatsApp Direct Share', 'Communications', 'Shared pass image via Web Share API for ' + visitor.name);
-                        return; // Done — no fallback needed
-                    } catch (shareErr) {
-                        if (shareErr.name !== 'AbortError') {
-                            console.warn('[VMS] Web Share failed, falling back:', shareErr);
-                        } else {
-                            // User cancelled the share sheet — do nothing
-                            if (preOpenedWindow) preOpenedWindow.close();
-                            return;
-                        }
-                    }
-                }
-
-                // STRATEGY 2: Clipboard API — desktop Chrome/Edge
-                // Copies image to clipboard so user just Ctrl+V in WhatsApp Web.
-                var clipboardUsed = false;
-                if (passBlob && window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
-                    try {
-                        await navigator.clipboard.write([new ClipboardItem({ 'image/png': passBlob })]);
-                        clipboardUsed = true;
-                    } catch (clipErr) {
-                        console.warn('[VMS] Clipboard write failed, falling back to download:', clipErr);
-                    }
-                }
-
-                if (clipboardUsed) {
-                    // Open WhatsApp Web and tell the user to paste
-                    if (preOpenedWindow) {
-                        preOpenedWindow.location.href = waUrl;
-                    } else {
-                        window.open(waUrl, '_blank', 'noopener,noreferrer');
-                    }
-                    showToast('✅ Pass Copied to Clipboard!', 'WhatsApp Web opened. Just press Ctrl+V (or Cmd+V) to paste the pass image and send.', 'success');
-                    logNotificationSimulator('WhatsApp Clipboard Paste', 'WhatsApp', visitor.phone, '[CLIPBOARD COPY] ' + waMessage);
-                    addAuditLog('WhatsApp Clipboard Send', 'Communications', 'Copied pass to clipboard and opened WhatsApp Web for ' + visitor.name);
-                } else {
-                    // STRATEGY 3: Classic fallback — download file + redirect (user attaches manually)
-                    var downloadLink = document.createElement('a');
-                    downloadLink.href = imgData;
-                    downloadLink.download = 'Barani_Visitor_Pass_' + visitor.id + '.png';
-                    document.body.appendChild(downloadLink);
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
-
-                    if (preOpenedWindow) {
-                        preOpenedWindow.location.href = waUrl;
-                    } else {
-                        window.open(waUrl, '_blank', 'noopener,noreferrer');
-                    }
-                    showToast('Pass Downloaded 📎', 'WhatsApp Web opened. Attach the downloaded PNG from your Downloads folder and send.', 'info');
-                    logNotificationSimulator('WhatsApp Local Download', 'WhatsApp', visitor.phone, '[LOCAL DOWNLOAD] ' + waMessage);
-                    addAuditLog('WhatsApp Local Send', 'Communications', 'Downloaded pass card and opened WhatsApp Web for ' + visitor.name);
-                }
             }
 
-        } catch (err) {
-            console.error('[VMS] autoSendPassToWhatsApp error:', err);
-            if (preOpenedWindow) preOpenedWindow.close();
-            try {
-                var fb_phone = visitor.phone.replace(/[^0-9]/g, '');
-                if (fb_phone.length === 10) fb_phone = '91' + fb_phone;
-                var fb_msg = 'Welcome to Barani Hydraulics! Your visit has been APPROVED. Visitor ID: ' + visitor.id + '. Host: ' + visitor.hostName + '. Please show your ID at the gate.';
-                window.open('https://api.whatsapp.com/send?phone=' + fb_phone + '&text=' + encodeURIComponent(fb_msg), '_blank');
-            } catch (e2) { /* silently fail */ }
+        } else if (method === "url-cloud" && publicUrl) {
+            // URL Redirect with Cloud link
+            var waUrl = 'https://api.whatsapp.com/send?phone=' + cleanPhone + '&text=' + encodeURIComponent(waMessage);
+            if (preOpenedWindow) {
+                preOpenedWindow.location.href = waUrl;
+            } else {
+                window.open(waUrl, '_blank', 'noopener,noreferrer');
+            }
+
+            showToast('WhatsApp Web Opened', 'Opening WhatsApp Web. The message contains the pass image link.', 'success');
+            logNotificationSimulator(
+                'WhatsApp Web (Cloud Link)',
+                'WhatsApp',
+                visitor.phone,
+                waMessage
+            );
+            addAuditLog('WhatsApp Web Redirect', 'Communications', 'Opened WhatsApp Web redirect with cloud link for ' + visitor.name);
+
+        } else if (method === "sim") {
+            // Simulator Only
+            showToast('Simulated Dispatch', 'Pass dispatch simulated in logs.', 'success');
+            logNotificationSimulator(
+                'WhatsApp Simulated',
+                'WhatsApp',
+                visitor.phone,
+                '[SIMULATED] ' + waMessage
+            );
+            addAuditLog('WhatsApp Simulated Dispatch', 'Communications', 'Simulated WhatsApp pass dispatch to ' + visitor.name);
+
+        } else {
+            // Default `url-local`: Direct redirect to WhatsApp Web (bypassing the assistant modal)
+            var waUrl = 'https://api.whatsapp.com/send?phone=' + cleanPhone + '&text=' + encodeURIComponent(waMessage);
+            if (preOpenedWindow) {
+                preOpenedWindow.location.href = waUrl;
+            } else {
+                window.open(waUrl, '_blank', 'noopener,noreferrer');
+            }
+
+            showToast('WhatsApp Web Opened', 'Opening WhatsApp Web for direct delivery.', 'success');
+            logNotificationSimulator(
+                'WhatsApp Web (Direct)',
+                'WhatsApp',
+                visitor.phone,
+                waMessage
+            );
+            addAuditLog('WhatsApp Web Redirect', 'Communications', 'Opened WhatsApp Web direct for ' + visitor.name);
         }
+
+    } catch (err) {
+        console.error('[VMS] autoSendPassToWhatsApp error:', err);
+        if (preOpenedWindow) preOpenedWindow.close();
+        try {
+            var fb_phone = visitor.phone.replace(/[^0-9]/g, '');
+            if (fb_phone.length === 10) fb_phone = '91' + fb_phone;
+            var fb_msg = 'Welcome to Barani Hydraulics! Your visit has been APPROVED. Visitor ID: ' + visitor.id + '. Host: ' + visitor.hostName + '. Please show your ID at the gate.';
+            window.open('https://api.whatsapp.com/send?phone=' + fb_phone + '&text=' + encodeURIComponent(fb_msg), '_blank');
+        } catch (e2) { /* silently fail */ }
     }
+}
 
 /* ==========================================================================
    22. URL Param Action Handler ? Auto-approve/reject when host clicks email link
    ========================================================================== */
 function checkUrlApprovalAction() {
-        try {
-            var params = new URLSearchParams(window.location.search);
-            var action = params.get('va_action');
-            var visitorId = params.get('va_id');
+    try {
+        var params = new URLSearchParams(window.location.search);
+        var action = params.get('va_action');
+        var visitorId = params.get('va_id');
 
-            if (!action || !visitorId) return;
+        if (!action || !visitorId) return;
 
-            // Clean URL immediately so it does not re-trigger on refresh
-            window.history.replaceState({}, document.title, window.location.pathname);
+        // Clean URL immediately so it does not re-trigger on refresh
+        window.history.replaceState({}, document.title, window.location.pathname);
 
-            // Wait for app state to fully load before acting
-            setTimeout(async function () {
-                // 1. Supabase Cloud-Based Approval
-                if (supabaseClient) {
-                    showToast('Email Approval Link', 'Connecting to Supabase cloud...', 'info');
-                    try {
-                        const statusVal = action === 'approve' ? 'Checked In' : 'Rejected';
-                        const updateObj = { status: statusVal };
-                        if (action === 'approve') {
-                            updateObj.check_in = new Date().toISOString();
-                        }
-
-                        const { error } = await supabaseClient
-                            .from('visitors')
-                            .update(updateObj)
-                            .eq('visitor_code', visitorId);
-
-                        if (!error) {
-                            showToast('Visitor Status Sync', `Success: Request successfully ${action}d!`, 'success');
-                            syncFromSupabase();
-                        } else {
-                            console.error('[VMS] Supabase approval link execution error:', error);
-                            showToast('Approval Failed', 'Failed to update record in Supabase.', 'warning');
-                        }
-                    } catch (err) {
-                        console.error('[VMS] Supabase approval link exception:', err);
-                        showToast('Connection Offline', 'Failed to connect to Supabase server.', 'danger');
+        // Wait for app state to fully load before acting
+        setTimeout(async function () {
+            // 1. Supabase Cloud-Based Approval
+            if (supabaseClient) {
+                showToast('Email Approval Link', 'Connecting to Supabase cloud...', 'info');
+                try {
+                    const statusVal = action === 'approve' ? 'Checked In' : 'Rejected';
+                    const updateObj = { status: statusVal };
+                    if (action === 'approve') {
+                        updateObj.check_in = new Date().toISOString();
                     }
-                    return;
+
+                    const { error } = await supabaseClient
+                        .from('visitors')
+                        .update(updateObj)
+                        .eq('visitor_code', visitorId);
+
+                    if (!error) {
+                        showToast('Visitor Status Sync', `Success: Request successfully ${action}d!`, 'success');
+                        syncFromSupabase();
+                    } else {
+                        console.error('[VMS] Supabase approval link execution error:', error);
+                        showToast('Approval Failed', 'Failed to update record in Supabase.', 'warning');
+                    }
+                } catch (err) {
+                    console.error('[VMS] Supabase approval link exception:', err);
+                    showToast('Connection Offline', 'Failed to connect to Supabase server.', 'danger');
                 }
-
-
-
-                // 2. Offline Browser-Local Fallback
-                var visitor = state.visitors.find(function (v) { return v.id === visitorId; });
-                if (!visitor) {
-                    showToast('Not Found', 'Visitor record ' + visitorId + ' not found. It may have already been processed.', 'warning');
-                    return;
-                }
-                if (visitor.status === 'Checked In' || visitor.status === 'Rejected') {
-                    showToast('Already Processed', 'Visitor ' + visitor.name + ' request was already ' + visitor.status.toLowerCase() + '.', 'info');
-                    return;
-                }
-                if (action === 'approve') {
-                    showToast('Host Approved via Email', 'Auto-approving visitor ' + visitor.name + '...', 'success');
-                    setTimeout(function () { approvePendingVisitor(visitorId); }, 700);
-                } else if (action === 'reject') {
-                    visitor.rejectionReason = 'Rejected by host via email link.';
-                    showToast('Host Rejected via Email', 'Auto-rejecting visitor ' + visitor.name + '.', 'warning');
-                    setTimeout(function () { rejectPendingVisitor(visitorId); }, 700);
-                }
-            }, 1800);
-
-        } catch (err) {
-            console.error('[VMS] checkUrlApprovalAction error:', err);
-        }
-    }
-
-    /* ==========================================================================
-       23. Simulated Email Inbox List Renderers
-       ========================================================================== */
-    function renderSimulatedEmailInbox() {
-        const inboxList = document.getElementById("host-email-inbox-list");
-        if (!inboxList) return;
-
-        const pendingVisitors = state.visitors.filter(v => v.status === "Pending");
-        inboxList.innerHTML = "";
-
-        if (pendingVisitors.length === 0) {
-            inboxList.innerHTML = `<div style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.7rem;">Inbox Empty</div>`;
-
-            // Clear reading pane
-            const emailVisitorName = document.getElementById("host-email-visitor-name");
-            const emailVisitorCo = document.getElementById("host-email-visitor-company");
-            const emailVisitorPurp = document.getElementById("host-email-visitor-purpose");
-            const emailVisitorTime = document.getElementById("host-email-visitor-time");
-            const emailSubjectEl = document.getElementById("host-email-subject");
-            const emailRecipientEl = document.getElementById("host-email-recipient");
-            const emailHostNameEl = document.getElementById("host-email-host-name");
-
-            if (emailVisitorName) emailVisitorName.innerText = "?";
-            if (emailVisitorCo) emailVisitorCo.innerText = "?";
-            if (emailVisitorPurp) emailVisitorPurp.innerText = "?";
-            if (emailVisitorTime) emailVisitorTime.innerText = "?";
-            if (emailSubjectEl) emailSubjectEl.innerText = "No Pending Request";
-            if (emailRecipientEl) emailRecipientEl.innerText = "?";
-            if (emailHostNameEl) emailHostNameEl.innerText = "?";
-
-            activeSimulatedVisitor = null;
-            return;
-        }
-
-        pendingVisitors.forEach((v, idx) => {
-            const item = document.createElement("div");
-            item.style.cssText = "padding: 8px; border-bottom: 1px solid var(--border-color); cursor: pointer; border-left: 3px solid transparent;";
-
-            // Highlight active item
-            if ((activeSimulatedVisitor && activeSimulatedVisitor.id === v.id) || (!activeSimulatedVisitor && idx === 0)) {
-                item.style.borderLeft = "3px solid var(--accent-primary)";
-                item.style.background = "rgba(37,99,235,0.05)";
-                if (!activeSimulatedVisitor || activeSimulatedVisitor.id !== v.id) {
-                    selectSimulatedEmailVisitor(v);
-                }
+                return;
             }
 
-            item.innerHTML = `
+
+
+            // 2. Offline Browser-Local Fallback
+            var visitor = state.visitors.find(function (v) { return v.id === visitorId; });
+            if (!visitor) {
+                showToast('Not Found', 'Visitor record ' + visitorId + ' not found. It may have already been processed.', 'warning');
+                return;
+            }
+            if (visitor.status === 'Checked In' || visitor.status === 'Rejected') {
+                showToast('Already Processed', 'Visitor ' + visitor.name + ' request was already ' + visitor.status.toLowerCase() + '.', 'info');
+                return;
+            }
+            if (action === 'approve') {
+                showToast('Host Approved via Email', 'Auto-approving visitor ' + visitor.name + '...', 'success');
+                setTimeout(function () { approvePendingVisitor(visitorId); }, 700);
+            } else if (action === 'reject') {
+                visitor.rejectionReason = 'Rejected by host via email link.';
+                showToast('Host Rejected via Email', 'Auto-rejecting visitor ' + visitor.name + '.', 'warning');
+                setTimeout(function () { rejectPendingVisitor(visitorId); }, 700);
+            }
+        }, 1800);
+
+    } catch (err) {
+        console.error('[VMS] checkUrlApprovalAction error:', err);
+    }
+}
+
+/* ==========================================================================
+   23. Simulated Email Inbox List Renderers
+   ========================================================================== */
+function renderSimulatedEmailInbox() {
+    const inboxList = document.getElementById("host-email-inbox-list");
+    if (!inboxList) return;
+
+    const pendingVisitors = state.visitors.filter(v => v.status === "Pending");
+    inboxList.innerHTML = "";
+
+    if (pendingVisitors.length === 0) {
+        inboxList.innerHTML = `<div style="padding: 1rem; text-align: center; color: var(--text-secondary); font-size: 0.7rem;">Inbox Empty</div>`;
+
+        // Clear reading pane
+        const emailVisitorName = document.getElementById("host-email-visitor-name");
+        const emailVisitorCo = document.getElementById("host-email-visitor-company");
+        const emailVisitorPurp = document.getElementById("host-email-visitor-purpose");
+        const emailVisitorTime = document.getElementById("host-email-visitor-time");
+        const emailSubjectEl = document.getElementById("host-email-subject");
+        const emailRecipientEl = document.getElementById("host-email-recipient");
+        const emailHostNameEl = document.getElementById("host-email-host-name");
+
+        if (emailVisitorName) emailVisitorName.innerText = "?";
+        if (emailVisitorCo) emailVisitorCo.innerText = "?";
+        if (emailVisitorPurp) emailVisitorPurp.innerText = "?";
+        if (emailVisitorTime) emailVisitorTime.innerText = "?";
+        if (emailSubjectEl) emailSubjectEl.innerText = "No Pending Request";
+        if (emailRecipientEl) emailRecipientEl.innerText = "?";
+        if (emailHostNameEl) emailHostNameEl.innerText = "?";
+
+        activeSimulatedVisitor = null;
+        return;
+    }
+
+    pendingVisitors.forEach((v, idx) => {
+        const item = document.createElement("div");
+        item.style.cssText = "padding: 8px; border-bottom: 1px solid var(--border-color); cursor: pointer; border-left: 3px solid transparent;";
+
+        // Highlight active item
+        if ((activeSimulatedVisitor && activeSimulatedVisitor.id === v.id) || (!activeSimulatedVisitor && idx === 0)) {
+            item.style.borderLeft = "3px solid var(--accent-primary)";
+            item.style.background = "rgba(37,99,235,0.05)";
+            if (!activeSimulatedVisitor || activeSimulatedVisitor.id !== v.id) {
+                selectSimulatedEmailVisitor(v);
+            }
+        }
+
+        item.innerHTML = `
             <div style="font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary);">${v.hostName}</div>
             <div style="color: var(--text-secondary); font-size: 0.65rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 2px 0;">Request: ${v.name}</div>
             <div style="color: var(--accent-primary); font-size: 0.6rem; text-align: right; font-weight: 500;">Pending</div>
         `;
 
-            item.addEventListener("click", () => {
-                selectSimulatedEmailVisitor(v);
-                renderSimulatedEmailInbox();
-            });
-
-            inboxList.appendChild(item);
+        item.addEventListener("click", () => {
+            selectSimulatedEmailVisitor(v);
+            renderSimulatedEmailInbox();
         });
-    }
 
-    function selectSimulatedEmailVisitor(visitor) {
-        activeSimulatedVisitor = visitor;
-
-        const emailRecipientEl = document.getElementById("host-email-recipient");
-        const emailSubjectEl = document.getElementById("host-email-subject");
-        const emailHostNameEl = document.getElementById("host-email-host-name");
-        const emailVisitorName = document.getElementById("host-email-visitor-name");
-        const emailVisitorCo = document.getElementById("host-email-visitor-company");
-        const emailVisitorPurp = document.getElementById("host-email-visitor-purpose");
-        const emailVisitorTime = document.getElementById("host-email-visitor-time");
-
-        const hostEmp = state.employees.find(e => e.id === visitor.hostId);
-        const hostEmail = hostEmp ? hostEmp.email : `${(visitor.hostName || 'host').toLowerCase().replace(/\s+/g, '')}@barani.corp`;
-
-        if (emailRecipientEl) emailRecipientEl.innerText = "?";
-        if (emailSubjectEl) emailSubjectEl.innerText = `Visitor Approval Request ? ${visitor.name} (${visitor.id})`;
-        if (emailHostNameEl) emailHostNameEl.innerText = visitor.hostName;
-        if (emailVisitorName) emailVisitorName.innerText = "?";
-        if (emailVisitorCo) emailVisitorCo.innerText = visitor.company || 'Independent';
-        if (emailVisitorPurp) emailVisitorPurp.innerText = "?";
-        if (emailVisitorTime) emailVisitorTime.innerText = "?";
-
-        // Reset rejection fields in simulator UI
-        const rejectWrapper = document.getElementById("host-email-reject-wrapper");
-        const rejectTextarea = document.getElementById("host-email-rejection-reason");
-        const btnApprove = document.getElementById("btn-host-email-approve");
-        const btnReject = document.getElementById("btn-host-email-reject");
-        const btnCancel = document.getElementById("btn-host-email-cancel-reject");
-
-        if (rejectWrapper) rejectWrapper.style.display = "none";
-        if (rejectTextarea) rejectTextarea.value = "";
-        if (btnCancel) btnCancel.style.display = "none";
-        if (btnReject) btnReject.textContent = "Reject Link";
-        if (btnApprove) btnApprove.style.display = "inline-block";
-    }
-
-    /* ==========================================================================
-       24. Redesigned Category Registration Dashboard & Form Helpers
-       ========================================================================== */
-
-    window.showRegistrationDashboard = function () {
-        // Hide all forms and records viewer
-        document.getElementById("registration-dashboard-wrapper").classList.remove("hidden");
-        document.getElementById("student-registration-wrapper").classList.add("hidden");
-        document.getElementById("customer-registration-wrapper").classList.add("hidden");
-        document.getElementById("vendor-registration-wrapper").classList.add("hidden");
-        document.getElementById("contractor-registration-wrapper").classList.add("hidden");
-        document.getElementById("delivery-registration-wrapper").classList.add("hidden");
-        document.getElementById("service-engineer-registration-wrapper").classList.add("hidden");
-        document.getElementById("view-category-records-wrapper").classList.add("hidden");
-
-        // Stop camera stream
-        stopCategoryCameras();
-
-        // Update counts
-        updateRegistrationDashboardStats();
-    };
-
-    window.openCategoryForm = function (category) {
-        // Hide dashboard and all other wrappers
-        document.getElementById("registration-dashboard-wrapper").classList.add("hidden");
-        document.getElementById("student-registration-wrapper").classList.add("hidden");
-        document.getElementById("customer-registration-wrapper").classList.add("hidden");
-        document.getElementById("vendor-registration-wrapper").classList.add("hidden");
-        document.getElementById("contractor-registration-wrapper").classList.add("hidden");
-        document.getElementById("delivery-registration-wrapper").classList.add("hidden");
-        document.getElementById("service-engineer-registration-wrapper").classList.add("hidden");
-        document.getElementById("view-category-records-wrapper").classList.add("hidden");
-
-        // Show form
-        const wrapper = document.getElementById(`${category}-registration-wrapper`);
-        if (wrapper) {
-            wrapper.classList.remove("hidden");
-        }
-
-        // Set default date to today
-        const dateInput = document.getElementById(`reg-${category}-visit-date`);
-        if (dateInput) {
-            dateInput.value = getLocalDateStr();
-        }
-
-        // Reset fields & states
-        resetCategoryFormState(category);
-
-        // Populate dropdowns if contractor
-        if (category === "contractor") {
-            populateContractorPMDropdown();
-        }
-    };
-
-    function updateRegistrationDashboardStats() {
-        const todayStr = getLocalDateStr();
-
-        // Students
-        if (document.getElementById("count-student-total")) {
-            document.getElementById("count-student-total").innerText = state.studentMaster.length;
-        }
-        if (document.getElementById("count-student-today")) {
-            document.getElementById("count-student-today").innerText = state.visitors.filter(v => v.purpose === "Student" && v.visitDate === todayStr).length;
-        }
-
-        // Customers
-        if (document.getElementById("count-customer-total")) {
-            document.getElementById("count-customer-total").innerText = state.customerMaster.length;
-        }
-        if (document.getElementById("count-customer-today")) {
-            document.getElementById("count-customer-today").innerText = state.visitors.filter(v => v.purpose === "Customer" && v.visitDate === todayStr).length;
-        }
-
-        // Vendors
-        if (document.getElementById("count-vendor-total")) {
-            document.getElementById("count-vendor-total").innerText = state.vendorMaster.length;
-        }
-        if (document.getElementById("count-vendor-today")) {
-            document.getElementById("count-vendor-today").innerText = state.visitors.filter(v => v.purpose === "Vendor" && v.visitDate === todayStr).length;
-        }
-
-        // Contractors
-        if (document.getElementById("count-contractor-total")) {
-            document.getElementById("count-contractor-total").innerText = state.contractorMaster.length;
-        }
-        if (document.getElementById("count-contractor-today")) {
-            document.getElementById("count-contractor-today").innerText = state.visitors.filter(v => v.purpose === "Contractor" && v.visitDate === todayStr).length;
-        }
-
-        // Delivery
-        if (document.getElementById("count-delivery-total")) {
-            document.getElementById("count-delivery-total").innerText = state.deliveryMaster.length;
-        }
-        if (document.getElementById("count-delivery-today")) {
-            document.getElementById("count-delivery-today").innerText = state.visitors.filter(v => v.purpose === "Delivery" && v.visitDate === todayStr).length;
-        }
-
-        // Service Engineers
-        if (document.getElementById("count-service-engineer-total")) {
-            document.getElementById("count-service-engineer-total").innerText = state.serviceEngineerMaster.length;
-        }
-        if (document.getElementById("count-service-engineer-today")) {
-            document.getElementById("count-service-engineer-today").innerText = state.visitors.filter(v => v.purpose === "Service Engineer" && v.visitDate === todayStr).length;
-        }
-    }
-
-    function stopCategoryCameras() {
-        if (state.cameraStream) {
-            state.cameraStream.getTracks().forEach(track => track.stop());
-            state.cameraStream = null;
-        }
-        const categories = ["student", "customer", "vendor", "contractor", "delivery", "service-engineer"];
-        categories.forEach(cat => {
-            const video = document.getElementById(`camera-stream-${cat}`);
-            if (video) video.classList.add("hidden");
-            const status = document.getElementById(`camera-status-${cat}`);
-            if (status) status.textContent = "Camera Inactive";
-            const enableBtn = document.getElementById(`btn-enable-camera-${cat}`);
-            if (enableBtn) enableBtn.classList.remove("hidden");
-            const captureBtn = document.getElementById(`btn-capture-${cat}`);
-            if (captureBtn) captureBtn.classList.add("hidden");
-            const retakeBtn = document.getElementById(`btn-retake-${cat}`);
-            if (retakeBtn) retakeBtn.classList.add("hidden");
-        });
-    }
-
-    window.initCategoryCamera = function (category) {
-        stopCategoryCameras(); // Stop any active camera first
-
-        const video = document.getElementById(`camera-stream-${category}`);
-        const status = document.getElementById(`camera-status-${category}`);
-        const enableBtn = document.getElementById(`btn-enable-camera-${category}`);
-        const captureBtn = document.getElementById(`btn-capture-${category}`);
-
-        if (!video) return;
-
-        status.textContent = "Initializing camera...";
-
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-            .then(stream => {
-                state.cameraStream = stream;
-                video.srcObject = stream;
-                video.classList.remove("hidden");
-                status.textContent = "Live Camera Feed Active";
-                enableBtn.classList.add("hidden");
-                captureBtn.classList.remove("hidden");
-            })
-            .catch(err => {
-                console.error("Camera access error:", err);
-                status.textContent = "Camera access denied or unavailable";
-                showToast("Camera Error", "Could not start camera feed.", "danger");
-            });
-    };
-
-    window.captureCategoryPhoto = function (category) {
-        const video = document.getElementById(`camera-stream-${category}`);
-        const canvas = document.getElementById(`photo-canvas-${category}`);
-        const preview = document.getElementById(`photo-preview-${category}`);
-        const status = document.getElementById(`camera-status-${category}`);
-        const captureBtn = document.getElementById(`btn-capture-${category}`);
-        const retakeBtn = document.getElementById(`btn-retake-${category}`);
-
-        if (!video || !canvas || !preview) return;
-
-        const ctx = canvas.getContext("2d");
-        canvas.width = video.videoWidth || 640;
-        canvas.height = video.videoHeight || 480;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        const dataUrl = canvas.toDataURL("image/jpeg");
-        state.tempVisitorPhoto = dataUrl; // save in state
-
-        preview.src = dataUrl;
-        video.classList.add("hidden");
-        status.textContent = "Photo Captured";
-
-        captureBtn.classList.add("hidden");
-        retakeBtn.classList.remove("hidden");
-
-        // Stop camera stream tracks
-        if (state.cameraStream) {
-            state.cameraStream.getTracks().forEach(track => track.stop());
-            state.cameraStream = null;
-        }
-    };
-
-    window.retakeCategoryPhoto = function (category) {
-        const preview = document.getElementById(`photo-preview-${category}`);
-        if (preview) {
-            preview.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>";
-        }
-        state.tempVisitorPhoto = "";
-        initCategoryCamera(category);
-    };
-
-    function handleCategoryPhotoFileUpload(e, category) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function (evt) {
-            const preview = document.getElementById(`photo-preview-${category}`);
-            if (preview) {
-                preview.src = evt.target.result;
-            }
-            state.tempVisitorPhoto = evt.target.result;
-            const status = document.getElementById(`camera-status-${category}`);
-            if (status) {
-                status.textContent = "Photo Uploaded";
-            }
-            const enableBtn = document.getElementById(`btn-enable-camera-${category}`);
-            if (enableBtn) enableBtn.classList.remove("hidden");
-            const captureBtn = document.getElementById(`btn-capture-${category}`);
-            if (captureBtn) captureBtn.classList.add("hidden");
-            const retakeBtn = document.getElementById(`btn-retake-${category}`);
-            if (retakeBtn) retakeBtn.classList.add("hidden");
-
-            // Stop stream if active
-            if (state.cameraStream) {
-                state.cameraStream.getTracks().forEach(track => track.stop());
-                state.cameraStream = null;
-            }
-            const video = document.getElementById(`camera-stream-${category}`);
-            if (video) video.classList.add("hidden");
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function resetCategoryFormState(category) {
-        state.tempVisitorPhoto = "";
-        state.tempVisitorIdDoc = "";
-
-        const form = document.getElementById(`${category}-registration-form`);
-        if (form) {
-            form.reset();
-        }
-
-        const preview = document.getElementById(`photo-preview-${category}`);
-        if (preview) {
-            preview.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>";
-        }
-
-        // Clear badge or alert classes
-        const badge = document.getElementById(`${category}-badge-alert`);
-        if (badge) {
-            badge.classList.add("hidden");
-        }
-
-        // For student/customer, enable name/phone editing
-        if (category === "student") {
-            document.getElementById("reg-student-name").readOnly = false;
-            document.getElementById("reg-student-phone").readOnly = false;
-            document.getElementById("reg-student-email").readOnly = false;
-            document.getElementById("reg-student-college").readOnly = false;
-            document.getElementById("reg-student-dept").readOnly = false;
-            document.getElementById("reg-student-rollno").readOnly = false;
-            const uploadBtn = document.getElementById("student-id-doc-label");
-            if (uploadBtn) uploadBtn.innerText = "Upload College ID";
-        } else if (category === "customer") {
-            document.getElementById("reg-customer-name").readOnly = false;
-            document.getElementById("reg-customer-phone").readOnly = false;
-            document.getElementById("reg-customer-email").readOnly = false;
-            document.getElementById("reg-customer-company").readOnly = false;
-            document.getElementById("reg-customer-id").value = "CUST" + Math.floor(10000 + Math.random() * 90000);
-            document.getElementById("reg-customer-id").readOnly = false;
-        }
-    }
-
-    window.lookupStudentProfile = function () {
-        const inputVal = document.getElementById("student-lookup-input").value.trim().toLowerCase();
-        if (!inputVal) {
-            showToast("Validation Error", "Please enter Student ID, Phone or scan QR to search.", "warning");
-            return;
-        }
-
-        const match = state.studentMaster.find(s =>
-            (s.studentId && s.studentId.toLowerCase() === inputVal) ||
-            (s.rollNumber && s.rollNumber.toLowerCase() === inputVal) ||
-            (s.phone && s.phone.toLowerCase() === inputVal) ||
-            (s.qrCodeData && s.qrCodeData.toLowerCase() === inputVal)
-        );
-
-        if (match) {
-            // Load details and lock fields
-            document.getElementById("reg-student-name").value = match.name;
-            document.getElementById("reg-student-name").readOnly = true;
-            document.getElementById("reg-student-phone").value = match.phone;
-            document.getElementById("reg-student-phone").readOnly = true;
-            document.getElementById("reg-student-email").value = match.email;
-            document.getElementById("reg-student-email").readOnly = true;
-            document.getElementById("reg-student-college").value = match.college;
-            document.getElementById("reg-student-college").readOnly = true;
-            document.getElementById("reg-student-dept").value = match.department;
-            document.getElementById("reg-student-dept").readOnly = true;
-            document.getElementById("reg-student-rollno").value = match.rollNumber;
-            document.getElementById("reg-student-rollno").readOnly = true;
-
-            if (match.photo) {
-                const preview = document.getElementById("photo-preview-student");
-                if (preview) preview.src = match.photo;
-                state.tempVisitorPhoto = match.photo;
-                const status = document.getElementById("camera-status-student");
-                if (status) status.textContent = "Profile Photo Loaded";
-            }
-
-            const label = document.getElementById("student-id-doc-label");
-            if (label) label.innerText = "College ID Verified";
-
-            const alertBadge = document.getElementById("student-badge-alert");
-            if (alertBadge) alertBadge.classList.remove("hidden");
-
-            showToast("Profile Found", `Welcome back, ${match.name}! Permanent profile loaded.`, "success");
-        } else {
-            showToast("Profile Not Found", "No registered student profile matches search criteria.", "warning");
-        }
-    };
-
-    window.lookupCustomerProfile = function () {
-        const inputVal = document.getElementById("customer-lookup-input").value.trim().toLowerCase();
-        if (!inputVal) {
-            showToast("Validation Error", "Please enter Customer ID, Phone or scan QR to search.", "warning");
-            return;
-        }
-
-        const match = state.customerMaster.find(c =>
-            (c.customerId && c.customerId.toLowerCase() === inputVal) ||
-            (c.phone && c.phone.toLowerCase() === inputVal) ||
-            (c.qrCodeData && c.qrCodeData.toLowerCase() === inputVal)
-        );
-
-        if (match) {
-            // Load details and lock fields
-            document.getElementById("reg-customer-name").value = match.name;
-            document.getElementById("reg-customer-name").readOnly = true;
-            document.getElementById("reg-customer-phone").value = match.phone;
-            document.getElementById("reg-customer-phone").readOnly = true;
-            document.getElementById("reg-customer-email").value = match.email;
-            document.getElementById("reg-customer-email").readOnly = true;
-            document.getElementById("reg-customer-company").value = match.company;
-            document.getElementById("reg-customer-company").readOnly = true;
-            document.getElementById("reg-customer-id").value = match.customerId;
-            document.getElementById("reg-customer-id").readOnly = true;
-
-            if (match.photo) {
-                const preview = document.getElementById("photo-preview-customer");
-                if (preview) preview.src = match.photo;
-                state.tempVisitorPhoto = match.photo;
-                const status = document.getElementById("camera-status-customer");
-                if (status) status.textContent = "Profile Photo Loaded";
-            }
-
-            const alertBadge = document.getElementById("customer-badge-alert");
-            if (alertBadge) alertBadge.classList.remove("hidden");
-
-            showToast("Profile Found", `Welcome back, ${match.name}! Profile loaded.`, "success");
-        } else {
-            showToast("Profile Not Found", "No registered customer profile matches search criteria.", "warning");
-        }
-    };
-
-    window.populateContractorPMDropdown = function () {
-        const pmDropdown = document.getElementById("reg-contractor-pm");
-        if (!pmDropdown) return;
-        pmDropdown.innerHTML = '<option value="">-- Choose Approved Purchase Manual --</option>';
-
-        const approvedPMs = state.purchaseManuals.filter(pm => pm.status === "Approved");
-        approvedPMs.forEach(pm => {
-            const opt = document.createElement("option");
-            opt.value = pm.id;
-            opt.textContent = `${pm.id} - ${pm.companyName} (${pm.natureWork})`;
-            pmDropdown.appendChild(opt);
-        });
-    };
-
-    window.populateContractorWPDropdown = function () {
-        const pmDropdown = document.getElementById("reg-contractor-pm");
-        const wpDropdown = document.getElementById("reg-contractor-wp");
-        if (!pmDropdown || !wpDropdown) return;
-
-        wpDropdown.innerHTML = '<option value="">-- Choose Active Work Permit --</option>';
-        const selectedPmId = pmDropdown.value;
-        if (!selectedPmId) return;
-
-        const approvedWPs = state.workPermits.filter(wp => wp.purchaseManualId === selectedPmId && wp.status === "Approved");
-        approvedWPs.forEach(wp => {
-            const opt = document.createElement("option");
-            opt.value = wp.id;
-            opt.textContent = `${wp.id} - ${wp.workActivity}`;
-            wpDropdown.appendChild(opt);
-        });
-    };
-
-    window.handleStudentRegistrationSubmit = function (e) {
-        e.preventDefault();
-
-        const name = document.getElementById("reg-student-name").value.trim();
-        const phone = document.getElementById("reg-student-phone").value.trim();
-        const email = document.getElementById("reg-student-email").value.trim();
-        const college = document.getElementById("reg-student-college").value.trim();
-        const department = document.getElementById("reg-student-dept").value.trim();
-        const rollNumber = document.getElementById("reg-student-rollno").value.trim();
-        const purpose = document.getElementById("reg-student-purpose").value;
-        const hostNameVal = document.getElementById("reg-student-host").value.trim();
-        const visitDate = document.getElementById("reg-student-visit-date").value;
-        const expectedExit = document.getElementById("reg-student-expected-exit").value;
-
-        const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
-        if (!matchedHost) {
-            showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
-            return;
-        }
-
-        const isLocked = document.getElementById("reg-student-name").readOnly;
-        let studentId = "";
-
-        if (isLocked) {
-            // Fields are locked — user searched first, just reuse the master record
-            const existing = state.studentMaster.find(s => s.phone === phone || s.rollNumber === rollNumber);
-            if (existing) {
-                studentId = existing.studentId;
-                // Refresh photo from master if not captured fresh
-                if (existing.photo && !state.tempVisitorPhoto) {
-                    state.tempVisitorPhoto = existing.photo;
-                }
-            }
-        } else {
-            // New manual entry — check for an existing profile by phone OR roll number
-            const existing = state.studentMaster.find(s => s.phone === phone || s.rollNumber === rollNumber);
-            if (existing) {
-                // Auto-load the existing profile instead of blocking
-                studentId = existing.studentId;
-                if (existing.photo && !state.tempVisitorPhoto) {
-                    state.tempVisitorPhoto = existing.photo;
-                }
-                showToast("Returning Student", `Existing profile for ${existing.name} loaded automatically. Creating new visit.`, "info");
-            } else {
-                // Genuinely new student — create master record
-                studentId = "STU" + (state.studentMaster.length + 10001);
-
-                const newStudent = {
-                    studentId,
-                    name,
-                    phone,
-                    email: email || `${name.toLowerCase().replace(/ /g, "")}@college.edu`,
-                    college,
-                    department,
-                    rollNumber,
-                    photo: state.tempVisitorPhoto || "",
-                    photoIdDoc: state.tempVisitorIdDoc || "",
-                    qrCodeData: studentId,
-                    dateRegistered: getLocalDateStr()
-                };
-
-                state.studentMaster.push(newStudent);
-                saveState();
-            }
-        }
-
-        const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
-        const visitObj = {
-            id: visitId,
-            masterId: studentId,
-            name,
-            phone,
-            email: email || `${name.toLowerCase().replace(/ /g, "")}@college.edu`,
-            company: college,
-            address: "College Institution",
-            purpose: "Student",
-            vehicle: "None",
-            numVisitors: 1,
-            idType: "College ID",
-            idNumber: rollNumber,
-            hostId: matchedHost.id,
-            hostName: matchedHost.name,
-            hostDept: matchedHost.dept,
-            visitDate,
-            checkIn: null,
-            checkOut: null,
-            expectedExit,
-            status: "Pending",
-            photo: state.tempVisitorPhoto || "",
-            photoIdDoc: state.tempVisitorIdDoc || ""
-        };
-
-        pendingRegistrationObj = visitObj;
-        openVisitorPreview(pendingRegistrationObj);
-    };
-
-    window.handleCustomerRegistrationSubmit = function (e) {
-        e.preventDefault();
-
-        const name = document.getElementById("reg-customer-name").value.trim();
-        const phone = document.getElementById("reg-customer-phone").value.trim();
-        const email = document.getElementById("reg-customer-email").value.trim();
-        const company = document.getElementById("reg-customer-company").value.trim();
-        const customerIdInput = document.getElementById("reg-customer-id").value.trim();
-        const purpose = document.getElementById("reg-customer-purpose").value;
-        const idType = document.getElementById("reg-customer-id-type").value;
-        const idNumber = document.getElementById("reg-customer-id-number").value.trim();
-        const vehicle = document.getElementById("reg-customer-vehicle").value.trim();
-        const hostNameVal = document.getElementById("reg-customer-host").value.trim();
-        const visitDate = document.getElementById("reg-customer-visit-date").value;
-        const expectedExit = document.getElementById("reg-customer-expected-exit").value;
-
-        const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
-        if (!matchedHost) {
-            showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
-            return;
-        }
-
-        const isLocked = document.getElementById("reg-customer-name").readOnly;
-        let customerId = customerIdInput;
-
-        if (isLocked) {
-            // Fields are locked — user used Search Profile, reuse existing master record
-            const existing = state.customerMaster.find(c => c.phone === phone);
-            if (existing) {
-                customerId = existing.customerId;
-                if (existing.photo && !state.tempVisitorPhoto) {
-                    state.tempVisitorPhoto = existing.photo;
-                }
-            }
-        } else {
-            // Manual entry — check if a customer with same phone or ID already exists
-            const existing = state.customerMaster.find(c => c.phone === phone || (customerId && c.customerId === customerId));
-            if (existing) {
-                // Auto-load instead of blocking
-                customerId = existing.customerId;
-                if (existing.photo && !state.tempVisitorPhoto) {
-                    state.tempVisitorPhoto = existing.photo;
-                }
-                showToast("Returning Customer", `Existing profile for ${existing.name} loaded automatically. Creating new visit.`, "info");
-            } else {
-                // Genuinely new customer — create master record
-                if (!customerId) customerId = "CUST" + (state.customerMaster.length + 10001);
-                const newCustomer = {
-                    customerId,
-                    name,
-                    phone,
-                    email: email || `${name.toLowerCase().replace(/ /g, "")}@example.com`,
-                    company,
-                    photo: state.tempVisitorPhoto || "",
-                    qrCodeData: customerId,
-                    dateRegistered: getLocalDateStr()
-                };
-
-                state.customerMaster.push(newCustomer);
-                saveState();
-            }
-        }
-
-        const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
-        const visitObj = {
-            id: visitId,
-            masterId: customerId,
-            name,
-            phone,
-            email: email || `${name.toLowerCase().replace(/ /g, "")}@example.com`,
-            company,
-            address: "Business Customer Location",
-            purpose: "Customer",
-            vehicle,
-            numVisitors: 1,
-            idType,
-            idNumber,
-            hostId: matchedHost.id,
-            hostName: matchedHost.name,
-            hostDept: matchedHost.dept,
-            visitDate,
-            checkIn: null,
-            checkOut: null,
-            expectedExit,
-            status: "Pending",
-            photo: state.tempVisitorPhoto || "",
-            photoIdDoc: ""
-        };
-
-        pendingRegistrationObj = visitObj;
-        openVisitorPreview(pendingRegistrationObj);
-    };
-
-    window.handleVendorRegistrationSubmit = function (e) {
-        e.preventDefault();
-
-        const name = document.getElementById("reg-vendor-name").value.trim();
-        const phone = document.getElementById("reg-vendor-phone").value.trim();
-        const company = document.getElementById("reg-vendor-company").value.trim();
-        const invoice = document.getElementById("reg-vendor-invoice").value.trim();
-        const idType = document.getElementById("reg-vendor-id-type").value;
-        const idNumber = document.getElementById("reg-vendor-id-number").value.trim();
-        const vehicle = document.getElementById("reg-vendor-vehicle").value.trim();
-        const hostNameVal = document.getElementById("reg-vendor-host").value.trim();
-        const visitDate = document.getElementById("reg-vendor-visit-date").value;
-        const expectedExit = document.getElementById("reg-vendor-expected-exit").value;
-
-        const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
-        if (!matchedHost) {
-            showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
-            return;
-        }
-
-        let vendorId = "";
-        const existing = state.vendorMaster.find(v => v.phone === phone);
-        if (existing) {
-            vendorId = existing.vendorId;
-        } else {
-            vendorId = "VND" + (state.vendorMaster.length + 10001);
-            const newVendor = {
-                vendorId,
-                name,
-                phone,
-                company,
-                dateRegistered: getLocalDateStr()
-            };
-            state.vendorMaster.push(newVendor);
-            saveState();
-        }
-
-        const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
-        const visitObj = {
-            id: visitId,
-            masterId: vendorId,
-            name,
-            phone,
-            email: `${name.toLowerCase().replace(/ /g, "")}@vendor.com`,
-            company,
-            address: invoice ? `Delivery Invoice: ${invoice}` : "Vendor Delivery Site",
-            purpose: "Vendor",
-            vehicle,
-            numVisitors: 1,
-            idType,
-            idNumber,
-            hostId: matchedHost.id,
-            hostName: matchedHost.name,
-            hostDept: matchedHost.dept,
-            visitDate,
-            checkIn: null,
-            checkOut: null,
-            expectedExit,
-            status: "Pending",
-            photo: state.tempVisitorPhoto || "",
-            photoIdDoc: ""
-        };
-
-        pendingRegistrationObj = visitObj;
-        openVisitorPreview(pendingRegistrationObj);
-    };
-
-    window.handleContractorRegistrationSubmit = function (e) {
-        e.preventDefault();
-
-        const name = document.getElementById("reg-contractor-name").value.trim();
-        const phone = document.getElementById("reg-contractor-phone").value.trim();
-        const company = document.getElementById("reg-contractor-company").value.trim();
-        const vehicle = document.getElementById("reg-contractor-vehicle").value.trim();
-        const pmId = document.getElementById("reg-contractor-pm").value;
-        const wpId = document.getElementById("reg-contractor-wp").value;
-        const idType = document.getElementById("reg-contractor-id-type").value;
-        const idNumber = document.getElementById("reg-contractor-id-number").value.trim();
-        const hostNameVal = document.getElementById("reg-contractor-host").value.trim();
-        const visitDate = document.getElementById("reg-contractor-visit-date").value;
-        const expectedExit = document.getElementById("reg-contractor-expected-exit").value;
-
-        const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
-        if (!matchedHost) {
-            showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
-            return;
-        }
-
-        let contractorId = "";
-        const existing = state.contractorMaster.find(c => c.phone === phone);
-        if (existing) {
-            contractorId = existing.contractorId;
-        } else {
-            contractorId = "CNT" + (state.contractorMaster.length + 10001);
-            const newContractor = {
-                contractorId,
-                name,
-                phone,
-                company,
-                dateRegistered: getLocalDateStr()
-            };
-            state.contractorMaster.push(newContractor);
-            saveState();
-        }
-
-        const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
-        const visitObj = {
-            id: visitId,
-            masterId: contractorId,
-            name,
-            phone,
-            email: `${name.toLowerCase().replace(/ /g, "")}@contractor.com`,
-            company,
-            address: `Linked PM: ${pmId} | WP: ${wpId}`,
-            purpose: "Contractor",
-            vehicle,
-            numVisitors: 1,
-            idType,
-            idNumber,
-            hostId: matchedHost.id,
-            hostName: matchedHost.name,
-            hostDept: matchedHost.dept,
-            visitDate,
-            checkIn: null,
-            checkOut: null,
-            expectedExit,
-            status: "Pending",
-            photo: state.tempVisitorPhoto || "",
-            photoIdDoc: ""
-        };
-
-        pendingRegistrationObj = visitObj;
-        openVisitorPreview(pendingRegistrationObj);
-    };
-
-    window.handleDeliveryRegistrationSubmit = function (e) {
-        e.preventDefault();
-
-        const name = document.getElementById("reg-delivery-name").value.trim();
-        const phone = document.getElementById("reg-delivery-phone").value.trim();
-        const agency = document.getElementById("reg-delivery-agency").value;
-        const invoice = document.getElementById("reg-delivery-invoice").value.trim();
-        const items = document.getElementById("reg-delivery-items").value.trim();
-        const vehicle = document.getElementById("reg-delivery-vehicle").value.trim();
-        const hostNameVal = document.getElementById("reg-delivery-host").value.trim();
-        const visitDate = document.getElementById("reg-delivery-visit-date").value;
-        const expectedExit = document.getElementById("reg-delivery-expected-exit").value;
-
-        const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
-        if (!matchedHost) {
-            showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
-            return;
-        }
-
-        let deliveryId = "";
-        const existing = state.deliveryMaster.find(d => d.phone === phone);
-        if (existing) {
-            deliveryId = existing.deliveryId;
-        } else {
-            deliveryId = "DLV" + (state.deliveryMaster.length + 10001);
-            const newDelivery = {
-                deliveryId,
-                name,
-                phone,
-                agency,
-                dateRegistered: getLocalDateStr()
-            };
-            state.deliveryMaster.push(newDelivery);
-            saveState();
-        }
-
-        const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
-        const visitObj = {
-            id: visitId,
-            masterId: deliveryId,
-            name,
-            phone,
-            email: `${name.toLowerCase().replace(/ /g, "")}@delivery.com`,
-            company: agency,
-            address: `Challan: ${invoice} | Items: ${items}`,
-            purpose: "Delivery",
-            vehicle,
-            numVisitors: 1,
-            idType: "Delivery Challan",
-            idNumber: invoice,
-            hostId: matchedHost.id,
-            hostName: matchedHost.name,
-            hostDept: matchedHost.dept,
-            visitDate,
-            checkIn: null,
-            checkOut: null,
-            expectedExit,
-            status: "Pending",
-            photo: state.tempVisitorPhoto || "",
-            photoIdDoc: ""
-        };
-
-        pendingRegistrationObj = visitObj;
-        openVisitorPreview(pendingRegistrationObj);
-    };
-
-    window.handleServiceEngineerRegistrationSubmit = function (e) {
-        e.preventDefault();
-
-        const name = document.getElementById("reg-service-engineer-name").value.trim();
-        const phone = document.getElementById("reg-service-engineer-phone").value.trim();
-        const company = document.getElementById("reg-service-engineer-company").value.trim();
-        const machine = document.getElementById("reg-service-engineer-machine").value.trim();
-        const callNo = document.getElementById("reg-service-engineer-callno").value.trim();
-        const vehicle = document.getElementById("reg-service-engineer-vehicle").value.trim();
-        const idType = document.getElementById("reg-service-engineer-id-type").value;
-        const idNumber = document.getElementById("reg-service-engineer-id-number").value.trim();
-        const hostNameVal = document.getElementById("reg-service-engineer-host").value.trim();
-        const visitDate = document.getElementById("reg-service-engineer-visit-date").value;
-        const expectedExit = document.getElementById("reg-service-engineer-expected-exit").value;
-
-        const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
-        if (!matchedHost) {
-            showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
-            return;
-        }
-
-        let engineerId = "";
-        const existing = state.serviceEngineerMaster.find(s => s.phone === phone);
-        if (existing) {
-            engineerId = existing.engineerId;
-        } else {
-            engineerId = "ENG" + (state.serviceEngineerMaster.length + 10001);
-            const newEngineer = {
-                engineerId,
-                name,
-                phone,
-                company,
-                dateRegistered: getLocalDateStr()
-            };
-            state.serviceEngineerMaster.push(newEngineer);
-            saveState();
-        }
-
-        const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
-        const visitObj = {
-            id: visitId,
-            masterId: engineerId,
-            name,
-            phone,
-            email: `${name.toLowerCase().replace(/ /g, "")}@service.com`,
-            company,
-            address: `Machine: ${machine} | Ticket: ${callNo}`,
-            purpose: "Service Engineer",
-            vehicle,
-            numVisitors: 1,
-            idType,
-            idNumber,
-            hostId: matchedHost.id,
-            hostName: matchedHost.name,
-            hostDept: matchedHost.dept,
-            visitDate,
-            checkIn: null,
-            checkOut: null,
-            expectedExit,
-            status: "Pending",
-            photo: state.tempVisitorPhoto || "",
-            photoIdDoc: ""
-        };
-
-        pendingRegistrationObj = visitObj;
-        openVisitorPreview(pendingRegistrationObj);
-    };
-
-    let currentViewCategory = "";
-
-    window.viewCategoryRecords = function (category) {
-        currentViewCategory = category;
-
-        // Hide dashboard and forms, show records table
-        document.getElementById("registration-dashboard-wrapper").classList.add("hidden");
-        document.getElementById("student-registration-wrapper").classList.add("hidden");
-        document.getElementById("customer-registration-wrapper").classList.add("hidden");
-        document.getElementById("vendor-registration-wrapper").classList.add("hidden");
-        document.getElementById("contractor-registration-wrapper").classList.add("hidden");
-        document.getElementById("delivery-registration-wrapper").classList.add("hidden");
-        document.getElementById("service-engineer-registration-wrapper").classList.add("hidden");
-
-        const wrapper = document.getElementById("view-category-records-wrapper");
+        inboxList.appendChild(item);
+    });
+}
+
+function selectSimulatedEmailVisitor(visitor) {
+    activeSimulatedVisitor = visitor;
+
+    const emailRecipientEl = document.getElementById("host-email-recipient");
+    const emailSubjectEl = document.getElementById("host-email-subject");
+    const emailHostNameEl = document.getElementById("host-email-host-name");
+    const emailVisitorName = document.getElementById("host-email-visitor-name");
+    const emailVisitorCo = document.getElementById("host-email-visitor-company");
+    const emailVisitorPurp = document.getElementById("host-email-visitor-purpose");
+    const emailVisitorTime = document.getElementById("host-email-visitor-time");
+
+    const hostEmp = state.employees.find(e => e.id === visitor.hostId);
+    const hostEmail = "manojkumarnj01@gmail.com";
+
+    if (emailRecipientEl) emailRecipientEl.innerText = hostEmail;
+    if (emailSubjectEl) emailSubjectEl.innerText = `Visitor Approval Request - ${visitor.name} (${visitor.id})`;
+    if (emailHostNameEl) emailHostNameEl.innerText = visitor.hostName;
+    if (emailVisitorName) emailVisitorName.innerText = visitor.name;
+    if (emailVisitorCo) emailVisitorCo.innerText = visitor.company || 'Independent';
+    if (emailVisitorPurp) emailVisitorPurp.innerText = visitor.purpose || 'Meeting';
+    if (emailVisitorTime) emailVisitorTime.innerText = (visitor.visitDate || "") + ' ' + (visitor.expectedExit || '06:00 PM');
+
+    // Reset rejection fields in simulator UI
+    const rejectWrapper = document.getElementById("host-email-reject-wrapper");
+    const rejectTextarea = document.getElementById("host-email-rejection-reason");
+    const btnApprove = document.getElementById("btn-host-email-approve");
+    const btnReject = document.getElementById("btn-host-email-reject");
+    const btnCancel = document.getElementById("btn-host-email-cancel-reject");
+
+    if (rejectWrapper) rejectWrapper.style.display = "none";
+    if (rejectTextarea) rejectTextarea.value = "";
+    if (btnCancel) btnCancel.style.display = "none";
+    if (btnReject) btnReject.textContent = "Reject Link";
+    if (btnApprove) btnApprove.style.display = "inline-block";
+}
+
+/* ==========================================================================
+   24. Redesigned Category Registration Dashboard & Form Helpers
+   ========================================================================== */
+
+window.showRegistrationDashboard = function () {
+    // Hide all forms and records viewer
+    document.getElementById("registration-dashboard-wrapper").classList.remove("hidden");
+    document.getElementById("student-registration-wrapper").classList.add("hidden");
+    document.getElementById("customer-registration-wrapper").classList.add("hidden");
+    document.getElementById("vendor-registration-wrapper").classList.add("hidden");
+    document.getElementById("contractor-registration-wrapper").classList.add("hidden");
+    document.getElementById("delivery-registration-wrapper").classList.add("hidden");
+    document.getElementById("service-engineer-registration-wrapper").classList.add("hidden");
+    document.getElementById("view-category-records-wrapper").classList.add("hidden");
+
+    // Stop camera stream
+    stopCategoryCameras();
+
+    // Update counts
+    updateRegistrationDashboardStats();
+};
+
+window.openCategoryForm = function (category) {
+    // Hide dashboard and all other wrappers
+    document.getElementById("registration-dashboard-wrapper").classList.add("hidden");
+    document.getElementById("student-registration-wrapper").classList.add("hidden");
+    document.getElementById("customer-registration-wrapper").classList.add("hidden");
+    document.getElementById("vendor-registration-wrapper").classList.add("hidden");
+    document.getElementById("contractor-registration-wrapper").classList.add("hidden");
+    document.getElementById("delivery-registration-wrapper").classList.add("hidden");
+    document.getElementById("service-engineer-registration-wrapper").classList.add("hidden");
+    document.getElementById("view-category-records-wrapper").classList.add("hidden");
+
+    // Show form
+    const wrapper = document.getElementById(`${category}-registration-wrapper`);
+    if (wrapper) {
         wrapper.classList.remove("hidden");
+    }
 
-        document.getElementById("category-records-search").value = "";
+    // Set default date to today
+    const dateInput = document.getElementById(`reg-${category}-visit-date`);
+    if (dateInput) {
+        dateInput.value = getLocalDateStr();
+    }
 
-        // Update title
-        const title = document.getElementById("category-records-title");
-        title.innerText = getCategoryTitle(category) + " Directory";
+    // Reset fields & states
+    resetCategoryFormState(category);
 
-        renderCategoryRecordsTable();
+    // Populate dropdowns if contractor
+    if (category === "contractor") {
+        populateContractorPMDropdown();
+    }
+};
+
+function updateRegistrationDashboardStats() {
+    const todayStr = getLocalDateStr();
+
+    // Students
+    if (document.getElementById("count-student-total")) {
+        document.getElementById("count-student-total").innerText = state.studentMaster.length;
+    }
+    if (document.getElementById("count-student-today")) {
+        document.getElementById("count-student-today").innerText = state.visitors.filter(v => v.purpose === "Student" && v.visitDate === todayStr).length;
+    }
+
+    // Customers
+    if (document.getElementById("count-customer-total")) {
+        document.getElementById("count-customer-total").innerText = state.customerMaster.length;
+    }
+    if (document.getElementById("count-customer-today")) {
+        document.getElementById("count-customer-today").innerText = state.visitors.filter(v => v.purpose === "Customer" && v.visitDate === todayStr).length;
+    }
+
+    // Vendors
+    if (document.getElementById("count-vendor-total")) {
+        document.getElementById("count-vendor-total").innerText = state.vendorMaster.length;
+    }
+    if (document.getElementById("count-vendor-today")) {
+        document.getElementById("count-vendor-today").innerText = state.visitors.filter(v => v.purpose === "Vendor" && v.visitDate === todayStr).length;
+    }
+
+    // Contractors
+    if (document.getElementById("count-contractor-total")) {
+        document.getElementById("count-contractor-total").innerText = state.contractorMaster.length;
+    }
+    if (document.getElementById("count-contractor-today")) {
+        document.getElementById("count-contractor-today").innerText = state.visitors.filter(v => v.purpose === "Contractor" && v.visitDate === todayStr).length;
+    }
+
+    // Delivery
+    if (document.getElementById("count-delivery-total")) {
+        document.getElementById("count-delivery-total").innerText = state.deliveryMaster.length;
+    }
+    if (document.getElementById("count-delivery-today")) {
+        document.getElementById("count-delivery-today").innerText = state.visitors.filter(v => v.purpose === "Delivery" && v.visitDate === todayStr).length;
+    }
+
+    // Service Engineers
+    if (document.getElementById("count-service-engineer-total")) {
+        document.getElementById("count-service-engineer-total").innerText = state.serviceEngineerMaster.length;
+    }
+    if (document.getElementById("count-service-engineer-today")) {
+        document.getElementById("count-service-engineer-today").innerText = state.visitors.filter(v => v.purpose === "Service Engineer" && v.visitDate === todayStr).length;
+    }
+}
+
+function stopCategoryCameras() {
+    if (state.cameraStream) {
+        state.cameraStream.getTracks().forEach(track => track.stop());
+        state.cameraStream = null;
+    }
+    const categories = ["student", "customer", "vendor", "contractor", "delivery", "service-engineer"];
+    categories.forEach(cat => {
+        const video = document.getElementById(`camera-stream-${cat}`);
+        if (video) video.classList.add("hidden");
+        const status = document.getElementById(`camera-status-${cat}`);
+        if (status) status.textContent = "Camera Inactive";
+        const enableBtn = document.getElementById(`btn-enable-camera-${cat}`);
+        if (enableBtn) enableBtn.classList.remove("hidden");
+        const captureBtn = document.getElementById(`btn-capture-${cat}`);
+        if (captureBtn) captureBtn.classList.add("hidden");
+        const retakeBtn = document.getElementById(`btn-retake-${cat}`);
+        if (retakeBtn) retakeBtn.classList.add("hidden");
+    });
+}
+
+window.initCategoryCamera = function (category) {
+    stopCategoryCameras(); // Stop any active camera first
+
+    const video = document.getElementById(`camera-stream-${category}`);
+    const status = document.getElementById(`camera-status-${category}`);
+    const enableBtn = document.getElementById(`btn-enable-camera-${category}`);
+    const captureBtn = document.getElementById(`btn-capture-${category}`);
+
+    if (!video) return;
+
+    status.textContent = "Initializing camera...";
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+        .then(stream => {
+            state.cameraStream = stream;
+            video.srcObject = stream;
+            video.classList.remove("hidden");
+            status.textContent = "Live Camera Feed Active";
+            enableBtn.classList.add("hidden");
+            captureBtn.classList.remove("hidden");
+        })
+        .catch(err => {
+            console.error("Camera access error:", err);
+            status.textContent = "Camera access denied or unavailable";
+            showToast("Camera Error", "Could not start camera feed.", "danger");
+        });
+};
+
+window.captureCategoryPhoto = function (category) {
+    const video = document.getElementById(`camera-stream-${category}`);
+    const canvas = document.getElementById(`photo-canvas-${category}`);
+    const preview = document.getElementById(`photo-preview-${category}`);
+    const status = document.getElementById(`camera-status-${category}`);
+    const captureBtn = document.getElementById(`btn-capture-${category}`);
+    const retakeBtn = document.getElementById(`btn-retake-${category}`);
+
+    if (!video || !canvas || !preview) return;
+
+    const ctx = canvas.getContext("2d");
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const dataUrl = canvas.toDataURL("image/jpeg");
+    state.tempVisitorPhoto = dataUrl; // save in state
+
+    preview.src = dataUrl;
+    video.classList.add("hidden");
+    status.textContent = "Photo Captured";
+
+    captureBtn.classList.add("hidden");
+    retakeBtn.classList.remove("hidden");
+
+    // Stop camera stream tracks
+    if (state.cameraStream) {
+        state.cameraStream.getTracks().forEach(track => track.stop());
+        state.cameraStream = null;
+    }
+};
+
+window.retakeCategoryPhoto = function (category) {
+    const preview = document.getElementById(`photo-preview-${category}`);
+    if (preview) {
+        preview.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>";
+    }
+    state.tempVisitorPhoto = "";
+    initCategoryCamera(category);
+};
+
+function handleCategoryPhotoFileUpload(e, category) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (evt) {
+        const preview = document.getElementById(`photo-preview-${category}`);
+        if (preview) {
+            preview.src = evt.target.result;
+        }
+        state.tempVisitorPhoto = evt.target.result;
+        const status = document.getElementById(`camera-status-${category}`);
+        if (status) {
+            status.textContent = "Photo Uploaded";
+        }
+        const enableBtn = document.getElementById(`btn-enable-camera-${category}`);
+        if (enableBtn) enableBtn.classList.remove("hidden");
+        const captureBtn = document.getElementById(`btn-capture-${category}`);
+        if (captureBtn) captureBtn.classList.add("hidden");
+        const retakeBtn = document.getElementById(`btn-retake-${category}`);
+        if (retakeBtn) retakeBtn.classList.add("hidden");
+
+        // Stop stream if active
+        if (state.cameraStream) {
+            state.cameraStream.getTracks().forEach(track => track.stop());
+            state.cameraStream = null;
+        }
+        const video = document.getElementById(`camera-stream-${category}`);
+        if (video) video.classList.add("hidden");
     };
+    reader.readAsDataURL(file);
+}
 
-    function getCategoryTitle(cat) {
-        switch (cat) {
-            case "student": return "?? Students";
-            case "customer": return "?? Customers";
-            case "vendor": return "?? Vendors";
-            case "contractor": return "?? Contractors";
-            case "delivery": return "?? Delivery Personnel";
-            case "service-engineer": return "?? Service Engineers";
-            default: return "Visitor";
+function resetCategoryFormState(category) {
+    state.tempVisitorPhoto = "";
+    state.tempVisitorIdDoc = "";
+
+    const form = document.getElementById(`${category}-registration-form`);
+    if (form) {
+        form.reset();
+    }
+
+    const preview = document.getElementById(`photo-preview-${category}`);
+    if (preview) {
+        preview.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>";
+    }
+
+    // Clear badge or alert classes
+    const badge = document.getElementById(`${category}-badge-alert`);
+    if (badge) {
+        badge.classList.add("hidden");
+    }
+
+    // For student/customer, enable name/phone editing
+    if (category === "student") {
+        document.getElementById("reg-student-name").readOnly = false;
+        document.getElementById("reg-student-phone").readOnly = false;
+        document.getElementById("reg-student-email").readOnly = false;
+        document.getElementById("reg-student-college").readOnly = false;
+        document.getElementById("reg-student-dept").readOnly = false;
+        document.getElementById("reg-student-rollno").readOnly = false;
+        const uploadBtn = document.getElementById("student-id-doc-label");
+        if (uploadBtn) uploadBtn.innerText = "Upload College ID";
+    } else if (category === "customer") {
+        document.getElementById("reg-customer-name").readOnly = false;
+        document.getElementById("reg-customer-phone").readOnly = false;
+        document.getElementById("reg-customer-email").readOnly = false;
+        document.getElementById("reg-customer-company").readOnly = false;
+        document.getElementById("reg-customer-id").value = "CUST" + Math.floor(10000 + Math.random() * 90000);
+        document.getElementById("reg-customer-id").readOnly = false;
+    }
+}
+
+window.lookupStudentProfile = function () {
+    const inputVal = document.getElementById("student-lookup-input").value.trim().toLowerCase();
+    if (!inputVal) {
+        showToast("Validation Error", "Please enter Student ID, Phone or scan QR to search.", "warning");
+        return;
+    }
+
+    const match = state.studentMaster.find(s =>
+        (s.studentId && s.studentId.toLowerCase() === inputVal) ||
+        (s.rollNumber && s.rollNumber.toLowerCase() === inputVal) ||
+        (s.phone && s.phone.toLowerCase() === inputVal) ||
+        (s.qrCodeData && s.qrCodeData.toLowerCase() === inputVal)
+    );
+
+    if (match) {
+        // Load details and lock fields
+        document.getElementById("reg-student-name").value = match.name;
+        document.getElementById("reg-student-name").readOnly = true;
+        document.getElementById("reg-student-phone").value = match.phone;
+        document.getElementById("reg-student-phone").readOnly = true;
+        document.getElementById("reg-student-email").value = match.email;
+        document.getElementById("reg-student-email").readOnly = true;
+        document.getElementById("reg-student-college").value = match.college;
+        document.getElementById("reg-student-college").readOnly = true;
+        document.getElementById("reg-student-dept").value = match.department;
+        document.getElementById("reg-student-dept").readOnly = true;
+        document.getElementById("reg-student-rollno").value = match.rollNumber;
+        document.getElementById("reg-student-rollno").readOnly = true;
+
+        if (match.photo) {
+            const preview = document.getElementById("photo-preview-student");
+            if (preview) preview.src = match.photo;
+            state.tempVisitorPhoto = match.photo;
+            const status = document.getElementById("camera-status-student");
+            if (status) status.textContent = "Profile Photo Loaded";
+        }
+
+        const label = document.getElementById("student-id-doc-label");
+        if (label) label.innerText = "College ID Verified";
+
+        const alertBadge = document.getElementById("student-badge-alert");
+        if (alertBadge) alertBadge.classList.remove("hidden");
+
+        showToast("Profile Found", `Welcome back, ${match.name}! Permanent profile loaded.`, "success");
+    } else {
+        showToast("Profile Not Found", "No registered student profile matches search criteria.", "warning");
+    }
+};
+
+window.lookupCustomerProfile = function () {
+    const inputVal = document.getElementById("customer-lookup-input").value.trim().toLowerCase();
+    if (!inputVal) {
+        showToast("Validation Error", "Please enter Customer ID, Phone or scan QR to search.", "warning");
+        return;
+    }
+
+    const match = state.customerMaster.find(c =>
+        (c.customerId && c.customerId.toLowerCase() === inputVal) ||
+        (c.phone && c.phone.toLowerCase() === inputVal) ||
+        (c.qrCodeData && c.qrCodeData.toLowerCase() === inputVal)
+    );
+
+    if (match) {
+        // Load details and lock fields
+        document.getElementById("reg-customer-name").value = match.name;
+        document.getElementById("reg-customer-name").readOnly = true;
+        document.getElementById("reg-customer-phone").value = match.phone;
+        document.getElementById("reg-customer-phone").readOnly = true;
+        document.getElementById("reg-customer-email").value = match.email;
+        document.getElementById("reg-customer-email").readOnly = true;
+        document.getElementById("reg-customer-company").value = match.company;
+        document.getElementById("reg-customer-company").readOnly = true;
+        document.getElementById("reg-customer-id").value = match.customerId;
+        document.getElementById("reg-customer-id").readOnly = true;
+
+        if (match.photo) {
+            const preview = document.getElementById("photo-preview-customer");
+            if (preview) preview.src = match.photo;
+            state.tempVisitorPhoto = match.photo;
+            const status = document.getElementById("camera-status-customer");
+            if (status) status.textContent = "Profile Photo Loaded";
+        }
+
+        const alertBadge = document.getElementById("customer-badge-alert");
+        if (alertBadge) alertBadge.classList.remove("hidden");
+
+        showToast("Profile Found", `Welcome back, ${match.name}! Profile loaded.`, "success");
+    } else {
+        showToast("Profile Not Found", "No registered customer profile matches search criteria.", "warning");
+    }
+};
+
+window.populateContractorPMDropdown = function () {
+    const pmDropdown = document.getElementById("reg-contractor-pm");
+    if (!pmDropdown) return;
+    pmDropdown.innerHTML = '<option value="">-- Choose Approved Purchase Manual --</option>';
+
+    const approvedPMs = state.purchaseManuals.filter(pm => pm.status === "Approved");
+    approvedPMs.forEach(pm => {
+        const opt = document.createElement("option");
+        opt.value = pm.id;
+        opt.textContent = `${pm.id} - ${pm.companyName} (${pm.natureWork})`;
+        pmDropdown.appendChild(opt);
+    });
+};
+
+window.populateContractorWPDropdown = function () {
+    const pmDropdown = document.getElementById("reg-contractor-pm");
+    const wpDropdown = document.getElementById("reg-contractor-wp");
+    if (!pmDropdown || !wpDropdown) return;
+
+    wpDropdown.innerHTML = '<option value="">-- Choose Active Work Permit --</option>';
+    const selectedPmId = pmDropdown.value;
+    if (!selectedPmId) return;
+
+    const approvedWPs = state.workPermits.filter(wp => wp.purchaseManualId === selectedPmId && wp.status === "Approved");
+    approvedWPs.forEach(wp => {
+        const opt = document.createElement("option");
+        opt.value = wp.id;
+        opt.textContent = `${wp.id} - ${wp.workActivity}`;
+        wpDropdown.appendChild(opt);
+    });
+};
+
+window.handleStudentRegistrationSubmit = function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("reg-student-name").value.trim();
+    const phone = document.getElementById("reg-student-phone").value.trim();
+    const email = document.getElementById("reg-student-email").value.trim();
+    const college = document.getElementById("reg-student-college").value.trim();
+    const department = document.getElementById("reg-student-dept").value.trim();
+    const rollNumber = document.getElementById("reg-student-rollno").value.trim();
+    const purpose = document.getElementById("reg-student-purpose").value;
+    const hostNameVal = document.getElementById("reg-student-host").value.trim();
+    const visitDate = document.getElementById("reg-student-visit-date").value;
+    const expectedExit = document.getElementById("reg-student-expected-exit").value;
+
+    const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
+    if (!matchedHost) {
+        showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
+        return;
+    }
+
+    const isLocked = document.getElementById("reg-student-name").readOnly;
+    let studentId = "";
+
+    if (isLocked) {
+        // Fields are locked — user searched first, just reuse the master record
+        const existing = state.studentMaster.find(s => s.phone === phone || s.rollNumber === rollNumber);
+        if (existing) {
+            studentId = existing.studentId;
+            // Refresh photo from master if not captured fresh
+            if (existing.photo && !state.tempVisitorPhoto) {
+                state.tempVisitorPhoto = existing.photo;
+            }
+        }
+    } else {
+        // New manual entry — check for an existing profile by phone OR roll number
+        const existing = state.studentMaster.find(s => s.phone === phone || s.rollNumber === rollNumber);
+        if (existing) {
+            // Auto-load the existing profile instead of blocking
+            studentId = existing.studentId;
+            if (existing.photo && !state.tempVisitorPhoto) {
+                state.tempVisitorPhoto = existing.photo;
+            }
+            showToast("Returning Student", `Existing profile for ${existing.name} loaded automatically. Creating new visit.`, "info");
+        } else {
+            // Genuinely new student — create master record
+            studentId = "STU" + (state.studentMaster.length + 10001);
+
+            const newStudent = {
+                studentId,
+                name,
+                phone,
+                email: email || `${name.toLowerCase().replace(/ /g, "")}@college.edu`,
+                college,
+                department,
+                rollNumber,
+                photo: state.tempVisitorPhoto || "",
+                photoIdDoc: state.tempVisitorIdDoc || "",
+                qrCodeData: studentId,
+                dateRegistered: getLocalDateStr()
+            };
+
+            state.studentMaster.push(newStudent);
+            saveState();
         }
     }
 
-    function renderCategoryRecordsTable() {
-        const thead = document.getElementById("category-records-thead");
-        const tbody = document.getElementById("category-records-tbody");
-        if (!thead || !tbody) return;
+    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+    const visitObj = {
+        id: visitId,
+        masterId: studentId,
+        name,
+        phone,
+        email: email || `${name.toLowerCase().replace(/ /g, "")}@college.edu`,
+        company: college,
+        address: "College Institution",
+        purpose: "Student",
+        vehicle: "None",
+        numVisitors: 1,
+        idType: "College ID",
+        idNumber: rollNumber,
+        hostId: matchedHost.id,
+        hostName: matchedHost.name,
+        hostDept: matchedHost.dept,
+        visitDate,
+        checkIn: null,
+        checkOut: null,
+        expectedExit,
+        status: "Pending",
+        photo: state.tempVisitorPhoto || "",
+        photoIdDoc: state.tempVisitorIdDoc || ""
+    };
 
-        thead.innerHTML = "";
-        tbody.innerHTML = "";
+    pendingRegistrationObj = visitObj;
+    openVisitorPreview(pendingRegistrationObj);
+};
 
-        const searchKeyword = document.getElementById("category-records-search").value.trim().toLowerCase();
+window.handleCustomerRegistrationSubmit = function (e) {
+    e.preventDefault();
 
-        let headers = [];
-        let records = [];
+    const name = document.getElementById("reg-customer-name").value.trim();
+    const phone = document.getElementById("reg-customer-phone").value.trim();
+    const email = document.getElementById("reg-customer-email").value.trim();
+    const company = document.getElementById("reg-customer-company").value.trim();
+    const customerIdInput = document.getElementById("reg-customer-id").value.trim();
+    const purpose = document.getElementById("reg-customer-purpose").value;
+    const idType = document.getElementById("reg-customer-id-type").value;
+    const idNumber = document.getElementById("reg-customer-id-number").value.trim();
+    const vehicle = document.getElementById("reg-customer-vehicle").value.trim();
+    const hostNameVal = document.getElementById("reg-customer-host").value.trim();
+    const visitDate = document.getElementById("reg-customer-visit-date").value;
+    const expectedExit = document.getElementById("reg-customer-expected-exit").value;
 
-        if (currentViewCategory === "student") {
-            headers = ["ID", "Name", "Phone", "College", "Roll No", "Course", "QR Code"];
-            records = state.studentMaster.filter(r =>
-                r.studentId.toLowerCase().includes(searchKeyword) ||
-                r.name.toLowerCase().includes(searchKeyword) ||
-                r.phone.toLowerCase().includes(searchKeyword) ||
-                r.college.toLowerCase().includes(searchKeyword) ||
-                r.rollNumber.toLowerCase().includes(searchKeyword)
-            ).map(r => ({
-                id: r.studentId,
-                col1: r.name,
-                col2: r.phone,
-                col3: r.college,
-                col4: r.rollNumber,
-                col5: r.department,
-                qr: r.qrCodeData
-            }));
-        } else if (currentViewCategory === "customer") {
-            headers = ["ID", "Name", "Phone", "Company", "Email", "QR Code"];
-            records = state.customerMaster.filter(r =>
-                r.customerId.toLowerCase().includes(searchKeyword) ||
-                r.name.toLowerCase().includes(searchKeyword) ||
-                r.phone.toLowerCase().includes(searchKeyword) ||
-                r.company.toLowerCase().includes(searchKeyword)
-            ).map(r => ({
-                id: r.customerId,
-                col1: r.name,
-                col2: r.phone,
-                col3: r.company,
-                col4: r.email,
-                col5: "",
-                qr: r.qrCodeData
-            }));
-        } else if (currentViewCategory === "vendor") {
-            headers = ["ID", "Name", "Phone", "Company", "Reg Date"];
-            records = state.vendorMaster.filter(r =>
-                r.vendorId.toLowerCase().includes(searchKeyword) ||
-                r.name.toLowerCase().includes(searchKeyword) ||
-                r.phone.toLowerCase().includes(searchKeyword) ||
-                r.company.toLowerCase().includes(searchKeyword)
-            ).map(r => ({
-                id: r.vendorId,
-                col1: r.name,
-                col2: r.phone,
-                col3: r.company,
-                col4: r.dateRegistered,
-                col5: "",
-                qr: ""
-            }));
-        } else if (currentViewCategory === "contractor") {
-            headers = ["ID", "Name", "Phone", "Agency", "Reg Date"];
-            records = state.contractorMaster.filter(r =>
-                r.contractorId.toLowerCase().includes(searchKeyword) ||
-                r.name.toLowerCase().includes(searchKeyword) ||
-                r.phone.toLowerCase().includes(searchKeyword) ||
-                r.company.toLowerCase().includes(searchKeyword)
-            ).map(r => ({
-                id: r.contractorId,
-                col1: r.name,
-                col2: r.phone,
-                col3: r.company,
-                col4: r.dateRegistered,
-                col5: "",
-                qr: ""
-            }));
-        } else if (currentViewCategory === "delivery") {
-            headers = ["ID", "Name", "Phone", "Agency", "Reg Date"];
-            records = state.deliveryMaster.filter(r =>
-                r.deliveryId.toLowerCase().includes(searchKeyword) ||
-                r.name.toLowerCase().includes(searchKeyword) ||
-                r.phone.toLowerCase().includes(searchKeyword) ||
-                r.agency.toLowerCase().includes(searchKeyword)
-            ).map(r => ({
-                id: r.deliveryId,
-                col1: r.name,
-                col2: r.phone,
-                col3: r.agency,
-                col4: r.dateRegistered,
-                col5: "",
-                qr: ""
-            }));
-        } else if (currentViewCategory === "service-engineer") {
-            headers = ["ID", "Name", "Phone", "Company", "Reg Date"];
-            records = state.serviceEngineerMaster.filter(r =>
-                r.engineerId.toLowerCase().includes(searchKeyword) ||
-                r.name.toLowerCase().includes(searchKeyword) ||
-                r.phone.toLowerCase().includes(searchKeyword) ||
-                r.company.toLowerCase().includes(searchKeyword)
-            ).map(r => ({
-                id: r.engineerId,
-                col1: r.name,
-                col2: r.phone,
-                col3: r.company,
-                col4: r.dateRegistered,
-                col5: "",
-                qr: ""
-            }));
-        }
+    const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
+    if (!matchedHost) {
+        showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
+        return;
+    }
 
-        // Header row
-        const trHead = document.createElement("tr");
-        headers.forEach(h => {
-            const th = document.createElement("th");
-            th.innerText = h;
-            trHead.appendChild(th);
-        });
-        thead.appendChild(trHead);
+    const isLocked = document.getElementById("reg-customer-name").readOnly;
+    let customerId = customerIdInput;
 
-        // Body rows
-        if (records.length === 0) {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `<td colspan="${headers.length}" class="empty-state">No directory profile listings found.</td>`;
-            tbody.appendChild(tr);
-            return;
-        }
-
-        records.forEach(r => {
-            const tr = document.createElement("tr");
-            let qrCellHtml = "";
-            if (headers.includes("QR Code") && r.qr) {
-                qrCellHtml = `<td><button type="button" class="btn btn-secondary btn-sm" onclick="showPermanentQR('${r.id}', '${r.qr}')">Show QR</button></td>`;
+    if (isLocked) {
+        // Fields are locked — user used Search Profile, reuse existing master record
+        const existing = state.customerMaster.find(c => c.phone === phone);
+        if (existing) {
+            customerId = existing.customerId;
+            if (existing.photo && !state.tempVisitorPhoto) {
+                state.tempVisitorPhoto = existing.photo;
             }
+        }
+    } else {
+        // Manual entry — check if a customer with same phone or ID already exists
+        const existing = state.customerMaster.find(c => c.phone === phone || (customerId && c.customerId === customerId));
+        if (existing) {
+            // Auto-load instead of blocking
+            customerId = existing.customerId;
+            if (existing.photo && !state.tempVisitorPhoto) {
+                state.tempVisitorPhoto = existing.photo;
+            }
+            showToast("Returning Customer", `Existing profile for ${existing.name} loaded automatically. Creating new visit.`, "info");
+        } else {
+            // Genuinely new customer — create master record
+            if (!customerId) customerId = "CUST" + (state.customerMaster.length + 10001);
+            const newCustomer = {
+                customerId,
+                name,
+                phone,
+                email: email || `${name.toLowerCase().replace(/ /g, "")}@example.com`,
+                company,
+                photo: state.tempVisitorPhoto || "",
+                qrCodeData: customerId,
+                dateRegistered: getLocalDateStr()
+            };
 
-            tr.innerHTML = `
+            state.customerMaster.push(newCustomer);
+            saveState();
+        }
+    }
+
+    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+    const visitObj = {
+        id: visitId,
+        masterId: customerId,
+        name,
+        phone,
+        email: email || `${name.toLowerCase().replace(/ /g, "")}@example.com`,
+        company,
+        address: "Business Customer Location",
+        purpose: "Customer",
+        vehicle,
+        numVisitors: 1,
+        idType,
+        idNumber,
+        hostId: matchedHost.id,
+        hostName: matchedHost.name,
+        hostDept: matchedHost.dept,
+        visitDate,
+        checkIn: null,
+        checkOut: null,
+        expectedExit,
+        status: "Pending",
+        photo: state.tempVisitorPhoto || "",
+        photoIdDoc: ""
+    };
+
+    pendingRegistrationObj = visitObj;
+    openVisitorPreview(pendingRegistrationObj);
+};
+
+window.handleVendorRegistrationSubmit = function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("reg-vendor-name").value.trim();
+    const phone = document.getElementById("reg-vendor-phone").value.trim();
+    const company = document.getElementById("reg-vendor-company").value.trim();
+    const invoice = document.getElementById("reg-vendor-invoice").value.trim();
+    const idType = document.getElementById("reg-vendor-id-type").value;
+    const idNumber = document.getElementById("reg-vendor-id-number").value.trim();
+    const vehicle = document.getElementById("reg-vendor-vehicle").value.trim();
+    const hostNameVal = document.getElementById("reg-vendor-host").value.trim();
+    const visitDate = document.getElementById("reg-vendor-visit-date").value;
+    const expectedExit = document.getElementById("reg-vendor-expected-exit").value;
+
+    const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
+    if (!matchedHost) {
+        showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
+        return;
+    }
+
+    let vendorId = "";
+    const existing = state.vendorMaster.find(v => v.phone === phone);
+    if (existing) {
+        vendorId = existing.vendorId;
+    } else {
+        vendorId = "VND" + (state.vendorMaster.length + 10001);
+        const newVendor = {
+            vendorId,
+            name,
+            phone,
+            company,
+            dateRegistered: getLocalDateStr()
+        };
+        state.vendorMaster.push(newVendor);
+        saveState();
+    }
+
+    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+    const visitObj = {
+        id: visitId,
+        masterId: vendorId,
+        name,
+        phone,
+        email: `${name.toLowerCase().replace(/ /g, "")}@vendor.com`,
+        company,
+        address: invoice ? `Delivery Invoice: ${invoice}` : "Vendor Delivery Site",
+        purpose: "Vendor",
+        vehicle,
+        numVisitors: 1,
+        idType,
+        idNumber,
+        hostId: matchedHost.id,
+        hostName: matchedHost.name,
+        hostDept: matchedHost.dept,
+        visitDate,
+        checkIn: null,
+        checkOut: null,
+        expectedExit,
+        status: "Pending",
+        photo: state.tempVisitorPhoto || "",
+        photoIdDoc: ""
+    };
+
+    pendingRegistrationObj = visitObj;
+    openVisitorPreview(pendingRegistrationObj);
+};
+
+window.handleContractorRegistrationSubmit = function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("reg-contractor-name").value.trim();
+    const phone = document.getElementById("reg-contractor-phone").value.trim();
+    const company = document.getElementById("reg-contractor-company").value.trim();
+    const vehicle = document.getElementById("reg-contractor-vehicle").value.trim();
+    const pmId = document.getElementById("reg-contractor-pm").value;
+    const wpId = document.getElementById("reg-contractor-wp").value;
+    const idType = document.getElementById("reg-contractor-id-type").value;
+    const idNumber = document.getElementById("reg-contractor-id-number").value.trim();
+    const hostNameVal = document.getElementById("reg-contractor-host").value.trim();
+    const visitDate = document.getElementById("reg-contractor-visit-date").value;
+    const expectedExit = document.getElementById("reg-contractor-expected-exit").value;
+
+    const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
+    if (!matchedHost) {
+        showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
+        return;
+    }
+
+    let contractorId = "";
+    const existing = state.contractorMaster.find(c => c.phone === phone);
+    if (existing) {
+        contractorId = existing.contractorId;
+    } else {
+        contractorId = "CNT" + (state.contractorMaster.length + 10001);
+        const newContractor = {
+            contractorId,
+            name,
+            phone,
+            company,
+            dateRegistered: getLocalDateStr()
+        };
+        state.contractorMaster.push(newContractor);
+        saveState();
+    }
+
+    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+    const visitObj = {
+        id: visitId,
+        masterId: contractorId,
+        name,
+        phone,
+        email: `${name.toLowerCase().replace(/ /g, "")}@contractor.com`,
+        company,
+        address: `Linked PM: ${pmId} | WP: ${wpId}`,
+        purpose: "Contractor",
+        vehicle,
+        numVisitors: 1,
+        idType,
+        idNumber,
+        hostId: matchedHost.id,
+        hostName: matchedHost.name,
+        hostDept: matchedHost.dept,
+        visitDate,
+        checkIn: null,
+        checkOut: null,
+        expectedExit,
+        status: "Pending",
+        photo: state.tempVisitorPhoto || "",
+        photoIdDoc: ""
+    };
+
+    pendingRegistrationObj = visitObj;
+    openVisitorPreview(pendingRegistrationObj);
+};
+
+window.handleDeliveryRegistrationSubmit = function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("reg-delivery-name").value.trim();
+    const phone = document.getElementById("reg-delivery-phone").value.trim();
+    const agency = document.getElementById("reg-delivery-agency").value;
+    const invoice = document.getElementById("reg-delivery-invoice").value.trim();
+    const items = document.getElementById("reg-delivery-items").value.trim();
+    const vehicle = document.getElementById("reg-delivery-vehicle").value.trim();
+    const hostNameVal = document.getElementById("reg-delivery-host").value.trim();
+    const visitDate = document.getElementById("reg-delivery-visit-date").value;
+    const expectedExit = document.getElementById("reg-delivery-expected-exit").value;
+
+    const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
+    if (!matchedHost) {
+        showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
+        return;
+    }
+
+    let deliveryId = "";
+    const existing = state.deliveryMaster.find(d => d.phone === phone);
+    if (existing) {
+        deliveryId = existing.deliveryId;
+    } else {
+        deliveryId = "DLV" + (state.deliveryMaster.length + 10001);
+        const newDelivery = {
+            deliveryId,
+            name,
+            phone,
+            agency,
+            dateRegistered: getLocalDateStr()
+        };
+        state.deliveryMaster.push(newDelivery);
+        saveState();
+    }
+
+    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+    const visitObj = {
+        id: visitId,
+        masterId: deliveryId,
+        name,
+        phone,
+        email: `${name.toLowerCase().replace(/ /g, "")}@delivery.com`,
+        company: agency,
+        address: `Challan: ${invoice} | Items: ${items}`,
+        purpose: "Delivery",
+        vehicle,
+        numVisitors: 1,
+        idType: "Delivery Challan",
+        idNumber: invoice,
+        hostId: matchedHost.id,
+        hostName: matchedHost.name,
+        hostDept: matchedHost.dept,
+        visitDate,
+        checkIn: null,
+        checkOut: null,
+        expectedExit,
+        status: "Pending",
+        photo: state.tempVisitorPhoto || "",
+        photoIdDoc: ""
+    };
+
+    pendingRegistrationObj = visitObj;
+    openVisitorPreview(pendingRegistrationObj);
+};
+
+window.handleServiceEngineerRegistrationSubmit = function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("reg-service-engineer-name").value.trim();
+    const phone = document.getElementById("reg-service-engineer-phone").value.trim();
+    const company = document.getElementById("reg-service-engineer-company").value.trim();
+    const machine = document.getElementById("reg-service-engineer-machine").value.trim();
+    const callNo = document.getElementById("reg-service-engineer-callno").value.trim();
+    const vehicle = document.getElementById("reg-service-engineer-vehicle").value.trim();
+    const idType = document.getElementById("reg-service-engineer-id-type").value;
+    const idNumber = document.getElementById("reg-service-engineer-id-number").value.trim();
+    const hostNameVal = document.getElementById("reg-service-engineer-host").value.trim();
+    const visitDate = document.getElementById("reg-service-engineer-visit-date").value;
+    const expectedExit = document.getElementById("reg-service-engineer-expected-exit").value;
+
+    const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
+    if (!matchedHost) {
+        showToast("Host Not Found", "Please choose an employee from suggestions dropdown list.", "danger");
+        return;
+    }
+
+    let engineerId = "";
+    const existing = state.serviceEngineerMaster.find(s => s.phone === phone);
+    if (existing) {
+        engineerId = existing.engineerId;
+    } else {
+        engineerId = "ENG" + (state.serviceEngineerMaster.length + 10001);
+        const newEngineer = {
+            engineerId,
+            name,
+            phone,
+            company,
+            dateRegistered: getLocalDateStr()
+        };
+        state.serviceEngineerMaster.push(newEngineer);
+        saveState();
+    }
+
+    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+    const visitObj = {
+        id: visitId,
+        masterId: engineerId,
+        name,
+        phone,
+        email: `${name.toLowerCase().replace(/ /g, "")}@service.com`,
+        company,
+        address: `Machine: ${machine} | Ticket: ${callNo}`,
+        purpose: "Service Engineer",
+        vehicle,
+        numVisitors: 1,
+        idType,
+        idNumber,
+        hostId: matchedHost.id,
+        hostName: matchedHost.name,
+        hostDept: matchedHost.dept,
+        visitDate,
+        checkIn: null,
+        checkOut: null,
+        expectedExit,
+        status: "Pending",
+        photo: state.tempVisitorPhoto || "",
+        photoIdDoc: ""
+    };
+
+    pendingRegistrationObj = visitObj;
+    openVisitorPreview(pendingRegistrationObj);
+};
+
+let currentViewCategory = "";
+
+window.viewCategoryRecords = function (category) {
+    currentViewCategory = category;
+
+    // Hide dashboard and forms, show records table
+    document.getElementById("registration-dashboard-wrapper").classList.add("hidden");
+    document.getElementById("student-registration-wrapper").classList.add("hidden");
+    document.getElementById("customer-registration-wrapper").classList.add("hidden");
+    document.getElementById("vendor-registration-wrapper").classList.add("hidden");
+    document.getElementById("contractor-registration-wrapper").classList.add("hidden");
+    document.getElementById("delivery-registration-wrapper").classList.add("hidden");
+    document.getElementById("service-engineer-registration-wrapper").classList.add("hidden");
+
+    const wrapper = document.getElementById("view-category-records-wrapper");
+    wrapper.classList.remove("hidden");
+
+    document.getElementById("category-records-search").value = "";
+
+    // Update title
+    const title = document.getElementById("category-records-title");
+    title.innerText = getCategoryTitle(category) + " Directory";
+
+    renderCategoryRecordsTable();
+};
+
+function getCategoryTitle(cat) {
+    switch (cat) {
+        case "student": return "?? Students";
+        case "customer": return "?? Customers";
+        case "vendor": return "?? Vendors";
+        case "contractor": return "?? Contractors";
+        case "delivery": return "?? Delivery Personnel";
+        case "service-engineer": return "?? Service Engineers";
+        default: return "Visitor";
+    }
+}
+
+function renderCategoryRecordsTable() {
+    const thead = document.getElementById("category-records-thead");
+    const tbody = document.getElementById("category-records-tbody");
+    if (!thead || !tbody) return;
+
+    thead.innerHTML = "";
+    tbody.innerHTML = "";
+
+    const searchKeyword = document.getElementById("category-records-search").value.trim().toLowerCase();
+
+    let headers = [];
+    let records = [];
+
+    if (currentViewCategory === "student") {
+        headers = ["ID", "Name", "Phone", "College", "Roll No", "Course", "QR Code"];
+        records = state.studentMaster.filter(r =>
+            r.studentId.toLowerCase().includes(searchKeyword) ||
+            r.name.toLowerCase().includes(searchKeyword) ||
+            r.phone.toLowerCase().includes(searchKeyword) ||
+            r.college.toLowerCase().includes(searchKeyword) ||
+            r.rollNumber.toLowerCase().includes(searchKeyword)
+        ).map(r => ({
+            id: r.studentId,
+            col1: r.name,
+            col2: r.phone,
+            col3: r.college,
+            col4: r.rollNumber,
+            col5: r.department,
+            qr: r.qrCodeData
+        }));
+    } else if (currentViewCategory === "customer") {
+        headers = ["ID", "Name", "Phone", "Company", "Email", "QR Code"];
+        records = state.customerMaster.filter(r =>
+            r.customerId.toLowerCase().includes(searchKeyword) ||
+            r.name.toLowerCase().includes(searchKeyword) ||
+            r.phone.toLowerCase().includes(searchKeyword) ||
+            r.company.toLowerCase().includes(searchKeyword)
+        ).map(r => ({
+            id: r.customerId,
+            col1: r.name,
+            col2: r.phone,
+            col3: r.company,
+            col4: r.email,
+            col5: "",
+            qr: r.qrCodeData
+        }));
+    } else if (currentViewCategory === "vendor") {
+        headers = ["ID", "Name", "Phone", "Company", "Reg Date"];
+        records = state.vendorMaster.filter(r =>
+            r.vendorId.toLowerCase().includes(searchKeyword) ||
+            r.name.toLowerCase().includes(searchKeyword) ||
+            r.phone.toLowerCase().includes(searchKeyword) ||
+            r.company.toLowerCase().includes(searchKeyword)
+        ).map(r => ({
+            id: r.vendorId,
+            col1: r.name,
+            col2: r.phone,
+            col3: r.company,
+            col4: r.dateRegistered,
+            col5: "",
+            qr: ""
+        }));
+    } else if (currentViewCategory === "contractor") {
+        headers = ["ID", "Name", "Phone", "Agency", "Reg Date"];
+        records = state.contractorMaster.filter(r =>
+            r.contractorId.toLowerCase().includes(searchKeyword) ||
+            r.name.toLowerCase().includes(searchKeyword) ||
+            r.phone.toLowerCase().includes(searchKeyword) ||
+            r.company.toLowerCase().includes(searchKeyword)
+        ).map(r => ({
+            id: r.contractorId,
+            col1: r.name,
+            col2: r.phone,
+            col3: r.company,
+            col4: r.dateRegistered,
+            col5: "",
+            qr: ""
+        }));
+    } else if (currentViewCategory === "delivery") {
+        headers = ["ID", "Name", "Phone", "Agency", "Reg Date"];
+        records = state.deliveryMaster.filter(r =>
+            r.deliveryId.toLowerCase().includes(searchKeyword) ||
+            r.name.toLowerCase().includes(searchKeyword) ||
+            r.phone.toLowerCase().includes(searchKeyword) ||
+            r.agency.toLowerCase().includes(searchKeyword)
+        ).map(r => ({
+            id: r.deliveryId,
+            col1: r.name,
+            col2: r.phone,
+            col3: r.agency,
+            col4: r.dateRegistered,
+            col5: "",
+            qr: ""
+        }));
+    } else if (currentViewCategory === "service-engineer") {
+        headers = ["ID", "Name", "Phone", "Company", "Reg Date"];
+        records = state.serviceEngineerMaster.filter(r =>
+            r.engineerId.toLowerCase().includes(searchKeyword) ||
+            r.name.toLowerCase().includes(searchKeyword) ||
+            r.phone.toLowerCase().includes(searchKeyword) ||
+            r.company.toLowerCase().includes(searchKeyword)
+        ).map(r => ({
+            id: r.engineerId,
+            col1: r.name,
+            col2: r.phone,
+            col3: r.company,
+            col4: r.dateRegistered,
+            col5: "",
+            qr: ""
+        }));
+    }
+
+    // Header row
+    const trHead = document.createElement("tr");
+    headers.forEach(h => {
+        const th = document.createElement("th");
+        th.innerText = h;
+        trHead.appendChild(th);
+    });
+    thead.appendChild(trHead);
+
+    // Body rows
+    if (records.length === 0) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="${headers.length}" class="empty-state">No directory profile listings found.</td>`;
+        tbody.appendChild(tr);
+        return;
+    }
+
+    records.forEach(r => {
+        const tr = document.createElement("tr");
+        let qrCellHtml = "";
+        if (headers.includes("QR Code") && r.qr) {
+            qrCellHtml = `<td><button type="button" class="btn btn-secondary btn-sm" onclick="showPermanentQR('${r.id}', '${r.qr}')">Show QR</button></td>`;
+        }
+
+        tr.innerHTML = `
             <td><code>${r.id}</code></td>
             <td><strong>${r.col1}</strong></td>
             <td>${r.col2}</td>
@@ -8331,19 +8166,19 @@ function checkUrlApprovalAction() {
             ${r.col5 && headers.includes("Course") ? `<td>${r.col5}</td>` : ""}
             ${qrCellHtml}
         `;
-            tbody.appendChild(tr);
-        });
-    }
+        tbody.appendChild(tr);
+    });
+}
 
-    window.filterCategoryRecords = function () {
-        renderCategoryRecordsTable();
-    };
+window.filterCategoryRecords = function () {
+    renderCategoryRecordsTable();
+};
 
-    window.showPermanentQR = function (id, qrPayload) {
-        const modal = document.createElement("div");
-        modal.className = "modal active";
-        modal.style.zIndex = "2000";
-        modal.innerHTML = `
+window.showPermanentQR = function (id, qrPayload) {
+    const modal = document.createElement("div");
+    modal.className = "modal active";
+    modal.style.zIndex = "2000";
+    modal.innerHTML = `
         <div class="modal-content" style="max-width: 320px; text-align: center; padding: 2rem;">
             <h3 style="margin-bottom: 0.5rem;">Permanent QR Code</h3>
             <p class="text-secondary text-sm mb-4">${id}</p>
@@ -8353,281 +8188,281 @@ function checkUrlApprovalAction() {
             </div>
         </div>
     `;
-        document.body.appendChild(modal);
+    document.body.appendChild(modal);
 
-        setTimeout(() => {
-            try {
-                new QRCode(document.getElementById("popup-qr-container"), {
-                    text: qrPayload,
-                    width: 150,
-                    height: 150,
-                    colorDark: "#0f172a",
-                    colorLight: "#ffffff"
-                });
-            } catch (err) {
-                console.error(err);
-                document.getElementById("popup-qr-container").innerText = qrPayload;
-            }
-        }, 100);
-    };
-
-    /* ==========================================================================
-       INTERACTIVE DASHBOARD DETAILS DRAWER & SENSORS (AI VMS UPGRADE)
-       ========================================================================== */
-    let drawerActiveKpi = null;
-    let drawerCurrentPage = 0;
-    const drawerPageSize = 5;
-    let drawerFilteredData = [];
-    let drawerChartInstance = null;
-
-    function setupInteractiveDashboard() {
-        console.log("[Dashboard] Initializing interactive KPI card sensors...");
-        const kpis = [
-            { id: "stat-waiting", label: "Waiting Visitors", icon: "?", segment: "waiting" },
-            { id: "stat-pending", label: "Pending Approval Queue", icon: "??", segment: "pending" },
-            { id: "stat-active-in", label: "Inside Campus", icon: "??", segment: "inside" },
-            { id: "stat-checked-out", label: "Visitors Exited", icon: "??", segment: "exited" },
-            { id: "stat-rejected", label: "Rejected Registrations", icon: "?", segment: "rejected" },
-            { id: "stat-blacklisted", label: "Blacklisted Records", icon: "?", segment: "blacklisted" },
-            { id: "stat-frequent", label: "Frequent Visitors", icon: "??", segment: "frequent" },
-            { id: "stat-total-today", label: "Today's Total Logs", icon: "??", segment: "today" },
-            { id: "stat-pm-draft", label: "Purchase Manual Drafts", icon: "??", segment: "pm-draft" },
-            { id: "stat-pm-pending", label: "Purchase Manual Pending", icon: "?", segment: "pm-pending" },
-            { id: "stat-pm-approved", label: "Purchase Manual Approved", icon: "?", segment: "pm-approved" },
-            { id: "stat-pm-rejected", label: "Purchase Manual Rejected", icon: "?", segment: "pm-rejected" },
-            { id: "stat-active-permits", label: "Active Work Permits", icon: "??", segment: "permits" }
-        ];
-
-        kpis.forEach(kpi => {
-            const el = document.getElementById(kpi.id);
-            if (el) {
-                const card = el.closest(".stat-card");
-                if (card) {
-                    card.style.cursor = "pointer";
-                    card.classList.add("interactive-stat-card");
-                    card.addEventListener("click", () => openCardDetailDrawer(kpi));
-                }
-            }
-        });
-
-        // Close button
-        const btnClose = document.getElementById("btn-close-drawer");
-        if (btnClose) {
-            btnClose.addEventListener("click", () => {
-                document.getElementById("dashboard-detail-drawer").classList.add("hidden");
-                drawerActiveKpi = null;
+    setTimeout(() => {
+        try {
+            new QRCode(document.getElementById("popup-qr-container"), {
+                text: qrPayload,
+                width: 150,
+                height: 150,
+                colorDark: "#0f172a",
+                colorLight: "#ffffff"
             });
+        } catch (err) {
+            console.error(err);
+            document.getElementById("popup-qr-container").innerText = qrPayload;
         }
+    }, 100);
+};
 
-        // Filters and search
-        const searchInput = document.getElementById("drawer-search");
-        if (searchInput) {
-            searchInput.oninput = () => {
-                drawerCurrentPage = 0;
-                renderDrawerContent();
-            };
-        }
+/* ==========================================================================
+   INTERACTIVE DASHBOARD DETAILS DRAWER & SENSORS (AI VMS UPGRADE)
+   ========================================================================== */
+let drawerActiveKpi = null;
+let drawerCurrentPage = 0;
+const drawerPageSize = 5;
+let drawerFilteredData = [];
+let drawerChartInstance = null;
 
-        const purposeFilter = document.getElementById("drawer-filter-purpose");
-        if (purposeFilter) {
-            purposeFilter.onchange = () => {
-                drawerCurrentPage = 0;
-                renderDrawerContent();
-            };
-        }
+function setupInteractiveDashboard() {
+    console.log("[Dashboard] Initializing interactive KPI card sensors...");
+    const kpis = [
+        { id: "stat-waiting", label: "Waiting Visitors", icon: "?", segment: "waiting" },
+        { id: "stat-pending", label: "Pending Approval Queue", icon: "??", segment: "pending" },
+        { id: "stat-active-in", label: "Inside Campus", icon: "??", segment: "inside" },
+        { id: "stat-checked-out", label: "Visitors Exited", icon: "??", segment: "exited" },
+        { id: "stat-rejected", label: "Rejected Registrations", icon: "?", segment: "rejected" },
+        { id: "stat-blacklisted", label: "Blacklisted Records", icon: "?", segment: "blacklisted" },
+        { id: "stat-frequent", label: "Frequent Visitors", icon: "??", segment: "frequent" },
+        { id: "stat-total-today", label: "Today's Total Logs", icon: "??", segment: "today" },
+        { id: "stat-pm-draft", label: "Purchase Manual Drafts", icon: "??", segment: "pm-draft" },
+        { id: "stat-pm-pending", label: "Purchase Manual Pending", icon: "?", segment: "pm-pending" },
+        { id: "stat-pm-approved", label: "Purchase Manual Approved", icon: "?", segment: "pm-approved" },
+        { id: "stat-pm-rejected", label: "Purchase Manual Rejected", icon: "?", segment: "pm-rejected" },
+        { id: "stat-active-permits", label: "Active Work Permits", icon: "??", segment: "permits" }
+    ];
 
-        const deptFilter = document.getElementById("drawer-filter-dept");
-        if (deptFilter) {
-            deptFilter.onchange = () => {
-                drawerCurrentPage = 0;
-                renderDrawerContent();
-            };
+    kpis.forEach(kpi => {
+        const el = document.getElementById(kpi.id);
+        if (el) {
+            const card = el.closest(".stat-card");
+            if (card) {
+                card.style.cursor = "pointer";
+                card.classList.add("interactive-stat-card");
+                card.addEventListener("click", () => openCardDetailDrawer(kpi));
+            }
         }
+    });
 
-        // Pagination buttons
-        const btnPrev = document.getElementById("btn-drawer-prev");
-        if (btnPrev) {
-            btnPrev.onclick = () => {
-                if (drawerCurrentPage > 0) {
-                    drawerCurrentPage--;
-                    renderDrawerTable();
-                }
-            };
-        }
-
-        const btnNext = document.getElementById("btn-drawer-next");
-        if (btnNext) {
-            btnNext.onclick = () => {
-                const maxPage = Math.ceil(drawerFilteredData.length / drawerPageSize) - 1;
-                if (drawerCurrentPage < maxPage) {
-                    drawerCurrentPage++;
-                    renderDrawerTable();
-                }
-            };
-        }
-
-        // Export buttons inside drawer
-        const btnExportCsv = document.getElementById("btn-drawer-export-csv");
-        if (btnExportCsv) {
-            btnExportCsv.onclick = () => exportDrawerDataCSV();
-        }
-        const btnExportPdf = document.getElementById("btn-drawer-export-pdf");
-        if (btnExportPdf) {
-            btnExportPdf.onclick = () => exportDrawerDataPDF();
-        }
-
-        // Animate stats values counting up on dashboard load
-        animateDashboardStats();
+    // Close button
+    const btnClose = document.getElementById("btn-close-drawer");
+    if (btnClose) {
+        btnClose.addEventListener("click", () => {
+            document.getElementById("dashboard-detail-drawer").classList.add("hidden");
+            drawerActiveKpi = null;
+        });
     }
 
-    function openCardDetailDrawer(kpi) {
-        drawerActiveKpi = kpi;
-        drawerCurrentPage = 0;
-
-        const drawer = document.getElementById("dashboard-detail-drawer");
-        if (!drawer) return;
-
-        drawer.classList.remove("hidden");
-        document.getElementById("drawer-icon").innerText = kpi.icon;
-        document.getElementById("drawer-title").innerText = kpi.label;
-
-        // Show/Hide filter inputs based on segment type
-        const isVisitorSeg = ["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(kpi.segment);
-        const purposeFilter = document.getElementById("drawer-filter-purpose");
-        const deptFilter = document.getElementById("drawer-filter-dept");
-
-        if (purposeFilter) purposeFilter.style.display = isVisitorSeg ? "inline-block" : "none";
-        if (deptFilter) {
-            deptFilter.style.display = (isVisitorSeg || kpi.segment.startsWith("pm-")) ? "inline-block" : "none";
-
-            // Populate Departments select list
-            deptFilter.innerHTML = '<option value="all">All Departments</option>';
-            state.departments.forEach(d => {
-                const opt = document.createElement("option");
-                opt.value = d.name;
-                opt.innerText = d.name;
-                deptFilter.appendChild(opt);
-            });
-        }
-
-        // Scroll to the drawer smoothly
-        drawer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-        renderDrawerContent();
+    // Filters and search
+    const searchInput = document.getElementById("drawer-search");
+    if (searchInput) {
+        searchInput.oninput = () => {
+            drawerCurrentPage = 0;
+            renderDrawerContent();
+        };
     }
 
-    function renderDrawerContent() {
-        if (!drawerActiveKpi) return;
+    const purposeFilter = document.getElementById("drawer-filter-purpose");
+    if (purposeFilter) {
+        purposeFilter.onchange = () => {
+            drawerCurrentPage = 0;
+            renderDrawerContent();
+        };
+    }
 
-        const segment = drawerActiveKpi.segment;
-        let rawData = [];
+    const deptFilter = document.getElementById("drawer-filter-dept");
+    if (deptFilter) {
+        deptFilter.onchange = () => {
+            drawerCurrentPage = 0;
+            renderDrawerContent();
+        };
+    }
 
-        // 1. Gather raw data by segment
-        if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
-            const todayStr = getLocalDateStr();
-            if (segment === "waiting") {
-                rawData = state.visitors.filter(v => v.status === "Pending" || v.status === "Approved");
-            } else if (segment === "pending") {
-                rawData = state.visitors.filter(v => v.status === "Pending");
-            } else if (segment === "inside") {
-                rawData = state.visitors.filter(v => v.status === "Checked In");
-            } else if (segment === "exited") {
-                rawData = state.visitors.filter(v => v.status === "Checked Out");
-            } else if (segment === "rejected") {
-                rawData = state.visitors.filter(v => v.status === "Rejected" || v.status === "Denied");
-            } else if (segment === "today") {
-                rawData = state.visitors.filter(v => v.visitDate === todayStr);
-            } else if (segment === "frequent") {
-                const counts = {};
-                state.visitors.forEach(v => { if (v.phone) counts[v.phone] = (counts[v.phone] || 0) + 1; });
-                const freqPhones = Object.keys(counts).filter(p => counts[p] >= 2);
-                const freqList = [];
-                freqPhones.forEach(phone => {
-                    const logs = state.visitors.filter(v => v.phone === phone);
-                    if (logs.length > 0) freqList.push(logs[logs.length - 1]);
-                });
-                rawData = freqList;
+    // Pagination buttons
+    const btnPrev = document.getElementById("btn-drawer-prev");
+    if (btnPrev) {
+        btnPrev.onclick = () => {
+            if (drawerCurrentPage > 0) {
+                drawerCurrentPage--;
+                renderDrawerTable();
             }
-        } else if (segment === "blacklisted") {
-            rawData = state.blacklist;
-        } else if (segment.startsWith("pm-")) {
-            const pmStatus = segment.split("-")[1]; // draft, pending, approved, rejected
-            const statusMap = {
-                draft: ["Draft"],
-                pending: ["Submitted", "Pending"],
-                approved: ["Approved"],
-                rejected: ["Rejected"]
-            };
-            const targetStatuses = statusMap[pmStatus] || [];
-            rawData = state.purchaseManuals.filter(pm => targetStatuses.includes(pm.status));
-        } else if (segment === "permits") {
-            rawData = state.workPermits;
-        }
+        };
+    }
 
-        // 2. Apply search and select filters
-        const searchVal = document.getElementById("drawer-search").value.trim().toLowerCase();
-        const purposeVal = document.getElementById("drawer-filter-purpose").value;
-        const deptVal = document.getElementById("drawer-filter-dept").value;
-
-        drawerFilteredData = rawData.filter(item => {
-            // Text search match
-            let textMatch = true;
-            if (searchVal !== "") {
-                if (item.name) textMatch = textMatch && item.name.toLowerCase().includes(searchVal);
-                if (item.id) textMatch = textMatch || item.id.toLowerCase().includes(searchVal);
-                if (item.phone) textMatch = textMatch || item.phone.toLowerCase().includes(searchVal);
-                if (item.company) textMatch = textMatch || item.company.toLowerCase().includes(searchVal);
-                if (item.hostName) textMatch = textMatch || item.hostName.toLowerCase().includes(searchVal);
-                if (item.reason) textMatch = textMatch || item.reason.toLowerCase().includes(searchVal);
+    const btnNext = document.getElementById("btn-drawer-next");
+    if (btnNext) {
+        btnNext.onclick = () => {
+            const maxPage = Math.ceil(drawerFilteredData.length / drawerPageSize) - 1;
+            if (drawerCurrentPage < maxPage) {
+                drawerCurrentPage++;
+                renderDrawerTable();
             }
+        };
+    }
 
-            // Filters select match
-            let purposeMatch = true;
-            if (purposeVal !== "all" && item.purpose) {
-                purposeMatch = item.purpose === purposeVal;
-            }
+    // Export buttons inside drawer
+    const btnExportCsv = document.getElementById("btn-drawer-export-csv");
+    if (btnExportCsv) {
+        btnExportCsv.onclick = () => exportDrawerDataCSV();
+    }
+    const btnExportPdf = document.getElementById("btn-drawer-export-pdf");
+    if (btnExportPdf) {
+        btnExportPdf.onclick = () => exportDrawerDataPDF();
+    }
 
-            let deptMatch = true;
-            if (deptVal !== "all") {
-                if (item.hostDept) deptMatch = item.hostDept === deptVal;
-                else if (item.department) deptMatch = item.department === deptVal;
-            }
+    // Animate stats values counting up on dashboard load
+    animateDashboardStats();
+}
 
-            return textMatch && purposeMatch && deptMatch;
+function openCardDetailDrawer(kpi) {
+    drawerActiveKpi = kpi;
+    drawerCurrentPage = 0;
+
+    const drawer = document.getElementById("dashboard-detail-drawer");
+    if (!drawer) return;
+
+    drawer.classList.remove("hidden");
+    document.getElementById("drawer-icon").innerText = kpi.icon;
+    document.getElementById("drawer-title").innerText = kpi.label;
+
+    // Show/Hide filter inputs based on segment type
+    const isVisitorSeg = ["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(kpi.segment);
+    const purposeFilter = document.getElementById("drawer-filter-purpose");
+    const deptFilter = document.getElementById("drawer-filter-dept");
+
+    if (purposeFilter) purposeFilter.style.display = isVisitorSeg ? "inline-block" : "none";
+    if (deptFilter) {
+        deptFilter.style.display = (isVisitorSeg || kpi.segment.startsWith("pm-")) ? "inline-block" : "none";
+
+        // Populate Departments select list
+        deptFilter.innerHTML = '<option value="all">All Departments</option>';
+        state.departments.forEach(d => {
+            const opt = document.createElement("option");
+            opt.value = d.name;
+            opt.innerText = d.name;
+            deptFilter.appendChild(opt);
         });
+    }
 
-        // 3. Render analytical headers
-        const totalCount = rawData.length;
-        const filteredCount = drawerFilteredData.length;
-        const percentage = totalCount > 0 ? Math.round((filteredCount / totalCount) * 100) : 0;
+    // Scroll to the drawer smoothly
+    drawer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-        // Count today's items
+    renderDrawerContent();
+}
+
+function renderDrawerContent() {
+    if (!drawerActiveKpi) return;
+
+    const segment = drawerActiveKpi.segment;
+    let rawData = [];
+
+    // 1. Gather raw data by segment
+    if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
         const todayStr = getLocalDateStr();
-        let todayCount = 0;
-        drawerFilteredData.forEach(item => {
-            const itemDate = item.visitDate || item.dateAdded || (item.createdDate ? item.createdDate.split("T")[0] : null);
-            if (itemDate === todayStr) todayCount++;
-        });
-
-        document.getElementById("drawer-stat-total").innerText = filteredCount;
-        document.getElementById("drawer-stat-percentage").innerText = `${percentage}%`;
-        document.getElementById("drawer-stat-today").innerText = todayCount;
-
-        // 4. Render headers & pagination parameters
-        renderDrawerTableHeaders(segment);
-        renderDrawerTable();
-
-        // 5. Render Chart analytics inside drawer
-        renderDrawerSubChart(segment, drawerFilteredData);
+        if (segment === "waiting") {
+            rawData = state.visitors.filter(v => v.status === "Pending" || v.status === "Approved");
+        } else if (segment === "pending") {
+            rawData = state.visitors.filter(v => v.status === "Pending");
+        } else if (segment === "inside") {
+            rawData = state.visitors.filter(v => v.status === "Checked In");
+        } else if (segment === "exited") {
+            rawData = state.visitors.filter(v => v.status === "Checked Out");
+        } else if (segment === "rejected") {
+            rawData = state.visitors.filter(v => v.status === "Rejected" || v.status === "Denied");
+        } else if (segment === "today") {
+            rawData = state.visitors.filter(v => v.visitDate === todayStr);
+        } else if (segment === "frequent") {
+            const counts = {};
+            state.visitors.forEach(v => { if (v.phone) counts[v.phone] = (counts[v.phone] || 0) + 1; });
+            const freqPhones = Object.keys(counts).filter(p => counts[p] >= 2);
+            const freqList = [];
+            freqPhones.forEach(phone => {
+                const logs = state.visitors.filter(v => v.phone === phone);
+                if (logs.length > 0) freqList.push(logs[logs.length - 1]);
+            });
+            rawData = freqList;
+        }
+    } else if (segment === "blacklisted") {
+        rawData = state.blacklist;
+    } else if (segment.startsWith("pm-")) {
+        const pmStatus = segment.split("-")[1]; // draft, pending, approved, rejected
+        const statusMap = {
+            draft: ["Draft"],
+            pending: ["Submitted", "Pending"],
+            approved: ["Approved"],
+            rejected: ["Rejected"]
+        };
+        const targetStatuses = statusMap[pmStatus] || [];
+        rawData = state.purchaseManuals.filter(pm => targetStatuses.includes(pm.status));
+    } else if (segment === "permits") {
+        rawData = state.workPermits;
     }
 
-    function renderDrawerTableHeaders(segment) {
-        const thead = document.getElementById("drawer-table-head");
-        thead.innerHTML = "";
+    // 2. Apply search and select filters
+    const searchVal = document.getElementById("drawer-search").value.trim().toLowerCase();
+    const purposeVal = document.getElementById("drawer-filter-purpose").value;
+    const deptVal = document.getElementById("drawer-filter-dept").value;
 
-        const tr = document.createElement("tr");
-        if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
-            tr.innerHTML = `
+    drawerFilteredData = rawData.filter(item => {
+        // Text search match
+        let textMatch = true;
+        if (searchVal !== "") {
+            if (item.name) textMatch = textMatch && item.name.toLowerCase().includes(searchVal);
+            if (item.id) textMatch = textMatch || item.id.toLowerCase().includes(searchVal);
+            if (item.phone) textMatch = textMatch || item.phone.toLowerCase().includes(searchVal);
+            if (item.company) textMatch = textMatch || item.company.toLowerCase().includes(searchVal);
+            if (item.hostName) textMatch = textMatch || item.hostName.toLowerCase().includes(searchVal);
+            if (item.reason) textMatch = textMatch || item.reason.toLowerCase().includes(searchVal);
+        }
+
+        // Filters select match
+        let purposeMatch = true;
+        if (purposeVal !== "all" && item.purpose) {
+            purposeMatch = item.purpose === purposeVal;
+        }
+
+        let deptMatch = true;
+        if (deptVal !== "all") {
+            if (item.hostDept) deptMatch = item.hostDept === deptVal;
+            else if (item.department) deptMatch = item.department === deptVal;
+        }
+
+        return textMatch && purposeMatch && deptMatch;
+    });
+
+    // 3. Render analytical headers
+    const totalCount = rawData.length;
+    const filteredCount = drawerFilteredData.length;
+    const percentage = totalCount > 0 ? Math.round((filteredCount / totalCount) * 100) : 0;
+
+    // Count today's items
+    const todayStr = getLocalDateStr();
+    let todayCount = 0;
+    drawerFilteredData.forEach(item => {
+        const itemDate = item.visitDate || item.dateAdded || (item.createdDate ? item.createdDate.split("T")[0] : null);
+        if (itemDate === todayStr) todayCount++;
+    });
+
+    document.getElementById("drawer-stat-total").innerText = filteredCount;
+    document.getElementById("drawer-stat-percentage").innerText = `${percentage}%`;
+    document.getElementById("drawer-stat-today").innerText = todayCount;
+
+    // 4. Render headers & pagination parameters
+    renderDrawerTableHeaders(segment);
+    renderDrawerTable();
+
+    // 5. Render Chart analytics inside drawer
+    renderDrawerSubChart(segment, drawerFilteredData);
+}
+
+function renderDrawerTableHeaders(segment) {
+    const thead = document.getElementById("drawer-table-head");
+    thead.innerHTML = "";
+
+    const tr = document.createElement("tr");
+    if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
+        tr.innerHTML = `
             <th>Visitor ID</th>
             <th>Name & Company</th>
             <th>Host Details</th>
@@ -8635,8 +8470,8 @@ function checkUrlApprovalAction() {
             <th>Status</th>
             <th>Actions</th>
         `;
-        } else if (segment === "blacklisted") {
-            tr.innerHTML = `
+    } else if (segment === "blacklisted") {
+        tr.innerHTML = `
             <th>ID</th>
             <th>Blacklisted Person</th>
             <th>Phone</th>
@@ -8644,8 +8479,8 @@ function checkUrlApprovalAction() {
             <th>Reason</th>
             <th>Date Added</th>
         `;
-        } else if (segment.startsWith("pm-")) {
-            tr.innerHTML = `
+    } else if (segment.startsWith("pm-")) {
+        tr.innerHTML = `
             <th>PM ID</th>
             <th>Department</th>
             <th>Agent Name</th>
@@ -8653,8 +8488,8 @@ function checkUrlApprovalAction() {
             <th>Contract Type</th>
             <th>Status</th>
         `;
-        } else if (segment === "permits") {
-            tr.innerHTML = `
+    } else if (segment === "permits") {
+        tr.innerHTML = `
             <th>Permit ID</th>
             <th>PM Ref ID</th>
             <th>Contractor Details</th>
@@ -8662,39 +8497,39 @@ function checkUrlApprovalAction() {
             <th>Validity Dates</th>
             <th>Status</th>
         `;
-        }
-        thead.appendChild(tr);
+    }
+    thead.appendChild(tr);
+}
+
+function renderDrawerTable() {
+    const tbody = document.getElementById("drawer-table-body");
+    tbody.innerHTML = "";
+
+    const totalRecords = drawerFilteredData.length;
+    const totalPages = Math.ceil(totalRecords / drawerPageSize);
+
+    // Adjust current page if out of bounds
+    if (drawerCurrentPage >= totalPages && totalPages > 0) {
+        drawerCurrentPage = totalPages - 1;
     }
 
-    function renderDrawerTable() {
-        const tbody = document.getElementById("drawer-table-body");
-        tbody.innerHTML = "";
+    const startIdx = drawerCurrentPage * drawerPageSize;
+    const endIdx = Math.min(startIdx + drawerPageSize, totalRecords);
+    const visiblePageData = drawerFilteredData.slice(startIdx, endIdx);
 
-        const totalRecords = drawerFilteredData.length;
-        const totalPages = Math.ceil(totalRecords / drawerPageSize);
-
-        // Adjust current page if out of bounds
-        if (drawerCurrentPage >= totalPages && totalPages > 0) {
-            drawerCurrentPage = totalPages - 1;
+    // Update pagination labels
+    const paginationText = document.querySelector("#drawer-pagination-info span");
+    if (paginationText) {
+        if (totalRecords === 0) {
+            paginationText.innerText = "Showing 0 to 0 of 0 entries";
+        } else {
+            paginationText.innerText = `Showing ${startIdx + 1} to ${endIdx} of ${totalRecords} entries`;
         }
+    }
 
-        const startIdx = drawerCurrentPage * drawerPageSize;
-        const endIdx = Math.min(startIdx + drawerPageSize, totalRecords);
-        const visiblePageData = drawerFilteredData.slice(startIdx, endIdx);
-
-        // Update pagination labels
-        const paginationText = document.querySelector("#drawer-pagination-info span");
-        if (paginationText) {
-            if (totalRecords === 0) {
-                paginationText.innerText = "Showing 0 to 0 of 0 entries";
-            } else {
-                paginationText.innerText = `Showing ${startIdx + 1} to ${endIdx} of ${totalRecords} entries`;
-            }
-        }
-
-        if (visiblePageData.length === 0) {
-            const colSpan = document.getElementById("drawer-table-head").querySelectorAll("th").length || 6;
-            tbody.innerHTML = `
+    if (visiblePageData.length === 0) {
+        const colSpan = document.getElementById("drawer-table-head").querySelectorAll("th").length || 6;
+        tbody.innerHTML = `
             <tr>
                 <td colspan="${colSpan}" class="empty-state" style="text-align: center; padding: 2rem;">
                     <div style="font-size: 2rem; margin-bottom: 0.5rem;">📁</div>
@@ -8702,16 +8537,16 @@ function checkUrlApprovalAction() {
                 </td>
             </tr>
         `;
-            return;
-        }
+        return;
+    }
 
-        const segment = drawerActiveKpi.segment;
-        visiblePageData.forEach(item => {
-            const tr = document.createElement("tr");
+    const segment = drawerActiveKpi.segment;
+    visiblePageData.forEach(item => {
+        const tr = document.createElement("tr");
 
-            if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
-                const timeVal = item.checkIn ? new Date(item.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (item.visitDate || "Pending approval");
-                tr.innerHTML = `
+        if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
+            const timeVal = item.checkIn ? new Date(item.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : (item.visitDate || "Pending approval");
+            tr.innerHTML = `
                 <td><code>${item.id}</code></td>
                 <td>
                     <div style="font-weight:600;">${item.name}</div>
@@ -8738,8 +8573,8 @@ function checkUrlApprovalAction() {
                     </div>
                 </td>
             `;
-            } else if (segment === "blacklisted") {
-                tr.innerHTML = `
+        } else if (segment === "blacklisted") {
+            tr.innerHTML = `
                 <td><code>${item.id}</code></td>
                 <td><strong>${item.name}</strong></td>
                 <td>${item.phone}</td>
@@ -8747,8 +8582,8 @@ function checkUrlApprovalAction() {
                 <td><span class="text-xs text-danger" style="color:var(--accent-danger); font-weight:500;">${item.reason}</span></td>
                 <td>${item.dateAdded}</td>
             `;
-            } else if (segment.startsWith("pm-")) {
-                tr.innerHTML = `
+        } else if (segment.startsWith("pm-")) {
+            tr.innerHTML = `
                 <td><code>${item.id}</code></td>
                 <td><strong>${item.department}</strong></td>
                 <td>${item.agentName}</td>
@@ -8756,8 +8591,8 @@ function checkUrlApprovalAction() {
                 <td><span class="text-xs">${item.contractType}</span></td>
                 <td><span class="badge-status ${item.status.toLowerCase()}">${item.status}</span></td>
             `;
-            } else if (segment === "permits") {
-                tr.innerHTML = `
+        } else if (segment === "permits") {
+            tr.innerHTML = `
                 <td><code>${item.id}</code></td>
                 <td><code>${item.pmId}</code></td>
                 <td>
@@ -8768,165 +8603,165 @@ function checkUrlApprovalAction() {
                 <td><span class="text-xs">${item.startDate} to ${item.endDate}</span></td>
                 <td><span class="badge-status ${item.status.toLowerCase()}">${item.status}</span></td>
             `;
+        }
+        tbody.appendChild(tr);
+    });
+}
+
+function renderDrawerSubChart(segment, dataList) {
+    const chartContainer = document.getElementById("drawer-chart-container");
+    if (!chartContainer || typeof Chart === 'undefined') return;
+
+    if (dataList.length === 0) {
+        chartContainer.style.display = "none";
+        return;
+    }
+
+    chartContainer.style.display = "block";
+    const ctx = document.getElementById("chart-drawer-sub");
+    if (!ctx) return;
+
+    if (drawerChartInstance) {
+        drawerChartInstance.destroy();
+    }
+
+    // Determine aggregations based on category
+    let labels = [];
+    let data = [];
+    let labelText = "Frequency Count";
+
+    if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
+        // Group by Purpose
+        const purposeCounts = {};
+        dataList.forEach(v => {
+            const p = v.purpose || "Other";
+            purposeCounts[p] = (purposeCounts[p] || 0) + 1;
+        });
+        labels = Object.keys(purposeCounts);
+        data = Object.values(purposeCounts);
+        labelText = "Purpose of Visit";
+    } else if (segment === "blacklisted") {
+        // Group by reason keywords
+        const reasonCounts = { "Unauthorized Entry": 0, "Behavior Issues": 0, "ID Mismatch": 0, "Others": 0 };
+        dataList.forEach(b => {
+            const r = b.reason.toLowerCase();
+            if (r.includes("photograph") || r.includes("unauthorized") || r.includes("trespass")) reasonCounts["Unauthorized Entry"]++;
+            else if (r.includes("behavior") || r.includes("hostile") || r.includes("fight")) reasonCounts["Behavior Issues"]++;
+            else if (r.includes("identity") || r.includes("refused") || r.includes("fake")) reasonCounts["ID Mismatch"]++;
+            else reasonCounts["Others"]++;
+        });
+        labels = Object.keys(reasonCounts);
+        data = Object.values(reasonCounts);
+        labelText = "Security Block Category";
+    } else {
+        // Group by Department
+        const deptCounts = {};
+        dataList.forEach(item => {
+            const d = item.hostDept || item.department || item.workDepartment || "Other";
+            deptCounts[d] = (deptCounts[d] || 0) + 1;
+        });
+        labels = Object.keys(deptCounts);
+        data = Object.values(deptCounts);
+        labelText = "Operational Department";
+    }
+
+    drawerChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: labelText,
+                data: data,
+                backgroundColor: ['#3b82f6', '#10b981', '#fbbf24', '#ef4444', '#a855f7', '#64748b'],
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+}
+
+function animateDashboardStats() {
+    const elements = [
+        "stat-waiting", "stat-pending", "stat-active-in", "stat-checked-out",
+        "stat-rejected", "stat-blacklisted", "stat-frequent", "stat-total-today",
+        "stat-pm-draft", "stat-pm-pending", "stat-pm-approved", "stat-pm-rejected",
+        "stat-active-permits"
+    ];
+
+    elements.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        const target = parseInt(el.innerText) || 0;
+        if (target === 0) return;
+
+        let current = 0;
+        const duration = 800; // ms
+        const stepTime = Math.max(10, Math.floor(duration / target));
+
+        el.innerText = "0";
+        const timer = setInterval(() => {
+            current += Math.ceil(target / 40) || 1;
+            if (current >= target) {
+                el.innerText = target;
+                clearInterval(timer);
+            } else {
+                el.innerText = current;
             }
-            tbody.appendChild(tr);
-        });
+        }, stepTime);
+    });
+}
+
+function exportDrawerDataCSV() {
+    if (drawerFilteredData.length === 0) {
+        showToast("Export Failed", "No records found in current filters to export.", "warning");
+        return;
     }
 
-    function renderDrawerSubChart(segment, dataList) {
-        const chartContainer = document.getElementById("drawer-chart-container");
-        if (!chartContainer || typeof Chart === 'undefined') return;
+    let csvContent = "data:text/csv;charset=utf-8,";
+    const headers = Object.keys(drawerFilteredData[0]).filter(k => k !== 'photo');
+    csvContent += headers.join(",") + "\n";
 
-        if (dataList.length === 0) {
-            chartContainer.style.display = "none";
-            return;
-        }
-
-        chartContainer.style.display = "block";
-        const ctx = document.getElementById("chart-drawer-sub");
-        if (!ctx) return;
-
-        if (drawerChartInstance) {
-            drawerChartInstance.destroy();
-        }
-
-        // Determine aggregations based on category
-        let labels = [];
-        let data = [];
-        let labelText = "Frequency Count";
-
-        if (["waiting", "pending", "inside", "exited", "rejected", "today", "frequent"].includes(segment)) {
-            // Group by Purpose
-            const purposeCounts = {};
-            dataList.forEach(v => {
-                const p = v.purpose || "Other";
-                purposeCounts[p] = (purposeCounts[p] || 0) + 1;
-            });
-            labels = Object.keys(purposeCounts);
-            data = Object.values(purposeCounts);
-            labelText = "Purpose of Visit";
-        } else if (segment === "blacklisted") {
-            // Group by reason keywords
-            const reasonCounts = { "Unauthorized Entry": 0, "Behavior Issues": 0, "ID Mismatch": 0, "Others": 0 };
-            dataList.forEach(b => {
-                const r = b.reason.toLowerCase();
-                if (r.includes("photograph") || r.includes("unauthorized") || r.includes("trespass")) reasonCounts["Unauthorized Entry"]++;
-                else if (r.includes("behavior") || r.includes("hostile") || r.includes("fight")) reasonCounts["Behavior Issues"]++;
-                else if (r.includes("identity") || r.includes("refused") || r.includes("fake")) reasonCounts["ID Mismatch"]++;
-                else reasonCounts["Others"]++;
-            });
-            labels = Object.keys(reasonCounts);
-            data = Object.values(reasonCounts);
-            labelText = "Security Block Category";
-        } else {
-            // Group by Department
-            const deptCounts = {};
-            dataList.forEach(item => {
-                const d = item.hostDept || item.department || item.workDepartment || "Other";
-                deptCounts[d] = (deptCounts[d] || 0) + 1;
-            });
-            labels = Object.keys(deptCounts);
-            data = Object.values(deptCounts);
-            labelText = "Operational Department";
-        }
-
-        drawerChartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: labelText,
-                    data: data,
-                    backgroundColor: ['#3b82f6', '#10b981', '#fbbf24', '#ef4444', '#a855f7', '#64748b'],
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-            }
+    drawerFilteredData.forEach(row => {
+        const values = headers.map(header => {
+            const val = row[header] === null || row[header] === undefined ? "" : String(row[header]).replace(/"/g, '""');
+            return `"${val}"`;
         });
+        csvContent += values.join(",") + "\n";
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `VMS_Card_Report_${drawerActiveKpi.segment}_${getLocalDateStr()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast("CSV Exported", "Detailed records downloaded successfully.", "success");
+}
+
+function exportDrawerDataPDF() {
+    if (drawerFilteredData.length === 0) {
+        showToast("PDF Export Failed", "No records inside card query to print.", "warning");
+        return;
     }
 
-    function animateDashboardStats() {
-        const elements = [
-            "stat-waiting", "stat-pending", "stat-active-in", "stat-checked-out",
-            "stat-rejected", "stat-blacklisted", "stat-frequent", "stat-total-today",
-            "stat-pm-draft", "stat-pm-pending", "stat-pm-approved", "stat-pm-rejected",
-            "stat-active-permits"
-        ];
-
-        elements.forEach(id => {
-            const el = document.getElementById(id);
-            if (!el) return;
-
-            const target = parseInt(el.innerText) || 0;
-            if (target === 0) return;
-
-            let current = 0;
-            const duration = 800; // ms
-            const stepTime = Math.max(10, Math.floor(duration / target));
-
-            el.innerText = "0";
-            const timer = setInterval(() => {
-                current += Math.ceil(target / 40) || 1;
-                if (current >= target) {
-                    el.innerText = target;
-                    clearInterval(timer);
-                } else {
-                    el.innerText = current;
-                }
-            }, stepTime);
-        });
+    const win = window.open("", "_blank");
+    if (!win) {
+        showToast("Popup Blocked", "Please permit popups to view and download reports.", "warning");
+        return;
     }
 
-    function exportDrawerDataCSV() {
-        if (drawerFilteredData.length === 0) {
-            showToast("Export Failed", "No records found in current filters to export.", "warning");
-            return;
-        }
+    let rowsHtml = "";
+    const segment = drawerActiveKpi.segment;
 
-        let csvContent = "data:text/csv;charset=utf-8,";
-        const headers = Object.keys(drawerFilteredData[0]).filter(k => k !== 'photo');
-        csvContent += headers.join(",") + "\n";
-
-        drawerFilteredData.forEach(row => {
-            const values = headers.map(header => {
-                const val = row[header] === null || row[header] === undefined ? "" : String(row[header]).replace(/"/g, '""');
-                return `"${val}"`;
-            });
-            csvContent += values.join(",") + "\n";
-        });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `VMS_Card_Report_${drawerActiveKpi.segment}_${getLocalDateStr()}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showToast("CSV Exported", "Detailed records downloaded successfully.", "success");
-    }
-
-    function exportDrawerDataPDF() {
-        if (drawerFilteredData.length === 0) {
-            showToast("PDF Export Failed", "No records inside card query to print.", "warning");
-            return;
-        }
-
-        const win = window.open("", "_blank");
-        if (!win) {
-            showToast("Popup Blocked", "Please permit popups to view and download reports.", "warning");
-            return;
-        }
-
-        let rowsHtml = "";
-        const segment = drawerActiveKpi.segment;
-
-        drawerFilteredData.forEach((r, idx) => {
-            rowsHtml += `
+    drawerFilteredData.forEach((r, idx) => {
+        rowsHtml += `
             <tr style="border-bottom:1px solid #e2e8f0; font-size:11px;">
                 <td style="padding:10px;"><code>${r.id || r.name}</code></td>
                 <td style="padding:10px;"><strong>${r.name || r.department || r.id}</strong></td>
@@ -8936,9 +8771,9 @@ function checkUrlApprovalAction() {
                 <td style="padding:10px;"><span style="background:#f1f5f9; padding:2px 6px; border-radius:50px; font-weight:bold; font-size:9px;">${r.status || 'Active'}</span></td>
             </tr>
         `;
-        });
+    });
 
-        win.document.write(`
+    win.document.write(`
         <html>
         <head>
             <title>Barani VMS - ${drawerActiveKpi.label} Details</title>
@@ -8980,82 +8815,195 @@ function checkUrlApprovalAction() {
         </body>
         </html>
     `);
-        win.document.close();
+    win.document.close();
+}
+
+// ==========================================================================
+// 27. SECURITY FEATURE: Sliding Session Timeout and Warning Dialog
+// ==========================================================================
+let sessionLastActivity = Date.now();
+const sessionTimeoutDuration = 15 * 60 * 1000; // 15 minutes
+const sessionWarningThreshold = 14 * 60 * 1000; // Warning at 14 minutes (60s before expiry)
+let sessionWarningActive = false;
+let sessionCountdownInterval = null;
+let sessionWarningTimeRemaining = 60;
+
+function initSessionTimeoutTracker() {
+    console.log("[VMS Security] Active session sliding timeout tracker initialized.");
+
+    // Activity indicators
+    const resetSessionActivity = () => {
+        if (!state.currentUser) return; // only track while logged in
+        sessionLastActivity = Date.now();
+        if (sessionWarningActive) {
+            sessionWarningActive = false;
+            document.getElementById("modal-session-timeout")?.classList.remove("active");
+            clearInterval(sessionCountdownInterval);
+        }
+    };
+
+    window.addEventListener("mousemove", resetSessionActivity);
+    window.addEventListener("keydown", resetSessionActivity);
+    window.addEventListener("click", resetSessionActivity);
+    window.addEventListener("scroll", resetSessionActivity);
+
+    // Main sliding monitor interval (runs every 5 seconds)
+    setInterval(() => {
+        if (!state.currentUser) return; // not logged in
+
+        const inactiveTime = Date.now() - sessionLastActivity;
+
+        if (inactiveTime >= sessionTimeoutDuration) {
+            // Force Log out
+            clearInterval(sessionCountdownInterval);
+            document.getElementById("modal-session-timeout")?.classList.remove("active");
+            handleLogoutClick();
+            showToast("Session Expired", "You have been logged out due to inactivity.", "danger");
+            addAuditLog("Session Expired", "System", `Automatic logout due to 15 minutes of inactivity.`);
+        }
+        else if (inactiveTime >= sessionWarningThreshold && !sessionWarningActive) {
+            // Trigger 60s warning modal
+            sessionWarningActive = true;
+            sessionWarningTimeRemaining = Math.ceil((sessionTimeoutDuration - inactiveTime) / 1000);
+
+            const modal = document.getElementById("modal-session-timeout");
+            const counter = document.getElementById("timeout-seconds-counter");
+            if (modal && counter) {
+                counter.innerText = sessionWarningTimeRemaining;
+                modal.classList.add("active");
+
+                // Secondary countdown ticker
+                sessionCountdownInterval = setInterval(() => {
+                    sessionWarningTimeRemaining--;
+                    if (sessionWarningTimeRemaining <= 0) {
+                        clearInterval(sessionCountdownInterval);
+                    } else {
+                        counter.innerText = sessionWarningTimeRemaining;
+                    }
+                }, 1000);
+            }
+        }
+    }, 5000);
+
+    // Connect keep alive button
+    const btnKeepAlive = document.getElementById("btn-session-keep-alive");
+    if (btnKeepAlive) {
+        btnKeepAlive.onclick = () => {
+            resetSessionActivity();
+            showToast("Session Renewed", "Your security session has been extended for another 15 minutes.", "success");
+        };
     }
 
-    // ==========================================================================
-    // 27. SECURITY FEATURE: Sliding Session Timeout and Warning Dialog
-    // ==========================================================================
-    let sessionLastActivity = Date.now();
-    const sessionTimeoutDuration = 15 * 60 * 1000; // 15 minutes
-    const sessionWarningThreshold = 14 * 60 * 1000; // Warning at 14 minutes (60s before expiry)
-    let sessionWarningActive = false;
-    let sessionCountdownInterval = null;
-    let sessionWarningTimeRemaining = 60;
 
-    function initSessionTimeoutTracker() {
-        console.log("[VMS Security] Active session sliding timeout tracker initialized.");
 
-        // Activity indicators
-        const resetSessionActivity = () => {
-            if (!state.currentUser) return; // only track while logged in
-            sessionLastActivity = Date.now();
-            if (sessionWarningActive) {
-                sessionWarningActive = false;
-                document.getElementById("modal-session-timeout")?.classList.remove("active");
-                clearInterval(sessionCountdownInterval);
-            }
-        };
+    window.waAssistShareDirect = async function () {
+        if (!state.activeWaVisitor || !state.activeWaImage) return;
+        const cleanPhone = state.activeWaVisitor.phone.replace(/[^0-9]/g, '');
+        const waPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        window.addEventListener("mousemove", resetSessionActivity);
-        window.addEventListener("keydown", resetSessionActivity);
-        window.addEventListener("click", resetSessionActivity);
-        window.addEventListener("scroll", resetSessionActivity);
+        const waMessage = [
+            '*Welcome to Barani Hydraulics India Pvt. Ltd!*',
+            '',
+            'Your visit has been *APPROVED*.',
+            '',
+            '*Visitor ID:* ' + state.activeWaVisitor.id,
+            '*Name:* ' + state.activeWaVisitor.name,
+            '*Host:* ' + state.activeWaVisitor.hostName + ' - ' + state.activeWaVisitor.hostDept,
+            '*Purpose:* ' + (state.activeWaVisitor.purpose || 'Meeting'),
+            '*Entry Time:* ' + timeStr,
+            '*Exit Time:* ' + (state.activeWaVisitor.expectedExit || '06:00 PM'),
+            '',
+            '_Barani Hydraulics VMS_'
+        ].join('\n');
 
-        // Main sliding monitor interval (runs every 5 seconds)
-        setInterval(() => {
-            if (!state.currentUser) return; // not logged in
+        const passBlob = dataURLtoBlob(state.activeWaImage);
+        const passFile = passBlob ? new File([passBlob], 'Barani_Visitor_Pass_' + state.activeWaVisitor.id + '.png', { type: 'image/png' }) : null;
 
-            const inactiveTime = Date.now() - sessionLastActivity;
-
-            if (inactiveTime >= sessionTimeoutDuration) {
-                // Force Log out
-                clearInterval(sessionCountdownInterval);
-                document.getElementById("modal-session-timeout")?.classList.remove("active");
-                handleLogoutClick();
-                showToast("Session Expired", "You have been logged out due to inactivity.", "danger");
-                addAuditLog("Session Expired", "System", `Automatic logout due to 15 minutes of inactivity.`);
-            }
-            else if (inactiveTime >= sessionWarningThreshold && !sessionWarningActive) {
-                // Trigger 60s warning modal
-                sessionWarningActive = true;
-                sessionWarningTimeRemaining = Math.ceil((sessionTimeoutDuration - inactiveTime) / 1000);
-
-                const modal = document.getElementById("modal-session-timeout");
-                const counter = document.getElementById("timeout-seconds-counter");
-                if (modal && counter) {
-                    counter.innerText = sessionWarningTimeRemaining;
-                    modal.classList.add("active");
-
-                    // Secondary countdown ticker
-                    sessionCountdownInterval = setInterval(() => {
-                        sessionWarningTimeRemaining--;
-                        if (sessionWarningTimeRemaining <= 0) {
-                            clearInterval(sessionCountdownInterval);
-                        } else {
-                            counter.innerText = sessionWarningTimeRemaining;
-                        }
-                    }, 1000);
+        if (passFile && navigator.share && navigator.canShare && navigator.canShare({ files: [passFile] })) {
+            try {
+                await navigator.share({
+                    title: 'Visitor Pass — ' + state.activeWaVisitor.name,
+                    text: waMessage,
+                    files: [passFile]
+                });
+                showToast('Pass Shared ✅', 'Shared directly.', 'success');
+                addAuditLog('WhatsApp Direct Share', 'Communications', 'Shared pass image via Web Share API for ' + state.activeWaVisitor.name);
+            } catch (shareErr) {
+                if (shareErr.name !== 'AbortError') {
+                    console.warn('[VMS] Web Share failed:', shareErr);
+                    showToast('Share Failed', 'Could not share file directly.', 'danger');
                 }
             }
-        }, 5000);
-
-        // Connect keep alive button
-        const btnKeepAlive = document.getElementById("btn-session-keep-alive");
-        if (btnKeepAlive) {
-            btnKeepAlive.onclick = () => {
-                resetSessionActivity();
-                showToast("Session Renewed", "Your security session has been extended for another 15 minutes.", "success");
-            };
+        } else {
+            showToast('Not Supported', 'Web Share is not supported on this browser/device.', 'warning');
         }
-    }
+    };
+
+    window.waAssistCopyImage = async function () {
+        if (!state.activeWaImage) return;
+        const passBlob = dataURLtoBlob(state.activeWaImage);
+        if (passBlob && window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+            try {
+                await navigator.clipboard.write([new ClipboardItem({ 'image/png': passBlob })]);
+                showToast('✅ Pass Copied!', 'Visitor pass image copied to clipboard. Press Ctrl+V in WhatsApp to paste.', 'success');
+
+                const copyBtn = document.getElementById("wa-assist-btn-copy");
+                if (copyBtn) {
+                    copyBtn.classList.remove("btn-primary");
+                    copyBtn.classList.add("btn-success");
+                    copyBtn.innerHTML = `
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        Copied!
+                    `;
+                    setTimeout(() => {
+                        copyBtn.classList.remove("btn-success");
+                        copyBtn.classList.add("btn-primary");
+                        copyBtn.innerHTML = `
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                            </svg>
+                            Copy Pass Image
+                        `;
+                    }, 3000);
+                }
+            } catch (clipErr) {
+                console.warn('[VMS] Clipboard write failed:', clipErr);
+                showToast('Copy Failed', 'Failed to copy image to clipboard.', 'danger');
+            }
+        } else {
+            showToast('Not Supported', 'Clipboard writing is not supported in this browser.', 'warning');
+        }
+    };
+
+    window.waAssistOpenWhatsApp = function () {
+        if (!state.activeWaVisitor) return;
+        const cleanPhone = state.activeWaVisitor.phone.replace(/[^0-9]/g, '');
+        const waPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        const waMessage = [
+            '*Welcome to Barani Hydraulics India Pvt. Ltd!*',
+            '',
+            'Your visit has been *APPROVED*.',
+            '',
+            '*Visitor ID:* ' + state.activeWaVisitor.id,
+            '*Name:* ' + state.activeWaVisitor.name,
+            '*Host:* ' + state.activeWaVisitor.hostName + ' - ' + state.activeWaVisitor.hostDept,
+            '*Purpose:* ' + (state.activeWaVisitor.purpose || 'Meeting'),
+            '*Entry Time:* ' + timeStr,
+            '*Exit Time:* ' + (state.activeWaVisitor.expectedExit || '06:00 PM'),
+            '',
+            '_Barani Hydraulics VMS_'
+        ].join('\n');
+
+        const waUrl = 'https://api.whatsapp.com/send?phone=' + waPhone + '&text=' + encodeURIComponent(waMessage);
+        window.open(waUrl, '_blank', 'noopener,noreferrer');
+        showToast('WhatsApp Opened ↗', 'Redirecting to chat...', 'success');
+    };
+}

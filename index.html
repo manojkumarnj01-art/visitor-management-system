@@ -3543,12 +3543,7 @@
                     </svg>
                     <span>Print Pass</span>
                 </button>
-                <button type="button" class="btn btn-secondary" id="btn-download-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                    </svg>
-                    <span>Download</span>
-                </button>
+
                 <button type="button" class="btn btn-success" id="btn-share-badge-wa">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon">
                         <path
@@ -3655,14 +3650,7 @@
             </div>
             <div class="modal-footer" style="gap: 0.75rem; flex-wrap: wrap; justify-content: flex-end;">
                 <button type="button" class="btn btn-secondary btn-close-modal">Cancel</button>
-                <!-- Download button (always available) -->
-                <button type="button" class="btn btn-secondary" id="wa-assist-btn-download"
-                    onclick="waAssistDownload()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                    </svg>
-                    Download
-                </button>
+
                 <!-- Mobile: Web Share -->
                 <button type="button" id="wa-assist-btn-share" style="display:none;" class="btn btn-success"
                     onclick="waAssistShareDirect()">
@@ -3868,7 +3856,7 @@
                     <div
                         style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
                         <strong>From:</strong> &lt;vms@barani.in&gt;<br>
-                        <strong>To:</strong> <span id="host-email-recipient">host@barani.corp</span><br>
+                        <strong>To:</strong> <span id="host-email-recipient">manojkumarnj01@gmail.com</span><br>
                         <strong>Subject:</strong> <span id="host-email-subject">Visitor Approval Request - Rahul</span>
                     </div>
 
@@ -4021,46 +4009,7 @@
         </div>
     </div>
 
-    <!-- MODAL 8: OTP VERIFICATION MODAL -->
-    <div id="modal-otp-verify" class="app-modal" style="z-index: 2500;">
-        <div class="modal-dialog" style="max-width: 380px;">
-            <div class="modal-header">
-                <h3>OTP Mobile Verification</h3>
-                <button type="button" class="btn-close-modal">✕</button>
-            </div>
-            <div class="modal-body text-center" style="padding: 1.5rem 2rem;">
-                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📲</div>
-                <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem;">Enter SMS Code</h4>
-                <p class="text-secondary text-xs mb-4">A temporary 4-digit code has been dispatched via SMS to <strong
-                        id="otp-phone-display">+91 XXXXX XX982</strong>.</p>
 
-                <div class="flex justify-center mb-4" style="gap: 12px; justify-content: center; display: flex;">
-                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-input-digit"
-                        id="otp-1" required
-                        style="width: 48px; height: 48px; font-size: 1.4rem; text-align: center; border: 2px solid var(--border-color); border-radius: var(--border-radius-md); font-weight: 700; background: var(--bg-body); color: var(--text-primary); outline: none; transition: border-color 0.15s;">
-                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-input-digit"
-                        id="otp-2" required
-                        style="width: 48px; height: 48px; font-size: 1.4rem; text-align: center; border: 2px solid var(--border-color); border-radius: var(--border-radius-md); font-weight: 700; background: var(--bg-body); color: var(--text-primary); outline: none; transition: border-color 0.15s;">
-                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-input-digit"
-                        id="otp-3" required
-                        style="width: 48px; height: 48px; font-size: 1.4rem; text-align: center; border: 2px solid var(--border-color); border-radius: var(--border-radius-md); font-weight: 700; background: var(--bg-body); color: var(--text-primary); outline: none; transition: border-color 0.15s;">
-                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-input-digit"
-                        id="otp-4" required
-                        style="width: 48px; height: 48px; font-size: 1.4rem; text-align: center; border: 2px solid var(--border-color); border-radius: var(--border-radius-md); font-weight: 700; background: var(--bg-body); color: var(--text-primary); outline: none; transition: border-color 0.15s;">
-                </div>
-
-                <div class="text-xs text-muted mb-2">
-                    Didn't receive verification alert? <span id="btn-resend-otp"
-                        style="color: var(--accent-primary); cursor: pointer; font-weight: 600;">Resend OTP</span>
-                </div>
-                <p id="otp-helper-msg" class="text-xs text-success hidden" style="font-weight: 600;"></p>
-            </div>
-            <div class="modal-footer" style="gap: 10px;">
-                <button type="button" class="btn btn-secondary btn-close-modal" style="flex: 1;">Cancel</button>
-                <button type="button" class="btn btn-primary" id="btn-submit-otp" style="flex: 1;">Confirm OTP</button>
-            </div>
-        </div>
-    </div>
 
     <!-- MODAL 9: WORK PERMIT DETAILS PREVIEW (PRINTABLE) -->
     <div id="modal-work-permit-detail" class="app-modal" style="z-index: 2200;">

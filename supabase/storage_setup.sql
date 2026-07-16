@@ -26,10 +26,9 @@ CREATE POLICY "Allow Public Upload Access on Passes"
 ON storage.objects FOR INSERT
 WITH CHECK (bucket_id = 'visitor-passes');
 
--- Restrict file updates to authenticated admin/gatekeeper roles
-CREATE POLICY "Allow Authenticated Users to Update Passes"
+-- Enable public update/overwrite of passes
+CREATE POLICY "Allow Public Update Access on Passes"
 ON storage.objects FOR UPDATE
-TO authenticated
 USING (bucket_id = 'visitor-passes')
 WITH CHECK (bucket_id = 'visitor-passes');
 
