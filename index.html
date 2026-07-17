@@ -269,412 +269,44 @@
                 </div>
             </header>
 
+            <!-- Fixed Top Summary Bar -->
+            <div id="top-summary-bar" class="top-summary-bar no-print">
+                <div class="summary-item">
+                    <span class="summary-icon">📤</span>
+                    <div class="summary-details">
+                        <span class="summary-label">Checked Out</span>
+                        <span class="summary-value checked-out" id="summary-checked-out">0</span>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-icon">📅</span>
+                    <div class="summary-details">
+                        <span class="summary-label">Visitors Today</span>
+                        <span class="summary-value visitors-today" id="summary-visitors-today">0</span>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-icon">🏢</span>
+                    <div class="summary-details">
+                        <span class="summary-label">Currently In Campus</span>
+                        <span class="summary-value in-campus" id="summary-in-campus">0</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Content Scroll Body -->
             <div class="content-body">
 
                 <!-- VIEW 1: DASHBOARD -->
                 <section id="view-dashboard" class="page-view">
-                    <div class="stats-grid"
-                        style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                        <div class="stat-card">
-                            <div class="stat-icon bg-soft-amber">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <path d="M12 6v6l4 2" />
-                                    <circle cx="12" cy="12" r="9" />
-                                </svg>
-                            </div>
-                            <div class="stat-data">
-                                <h3 id="stat-waiting">0</h3>
-                                <p data-i18n="visitors-waiting">Visitors Waiting</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon bg-soft-blue">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <circle cx="12" cy="12" r="9" />
-                                    <path d="M12 8v4l2 2" />
-                                </svg>
-                            </div>
-                            <div class="stat-data">
-                                <h3 id="stat-pending">0</h3>
-                                <p data-i18n="pending-approval">Pending Approval</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon bg-soft-emerald">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                    <circle cx="9" cy="7" r="4" />
-                                </svg>
-                            </div>
-                            <div class="stat-data">
-                                <h3 id="stat-active-in">0</h3>
-                                <p data-i18n="inside-campus">Visitors Inside</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon bg-soft-purple">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
-                                </svg>
-                            </div>
-                            <div class="stat-data">
-                                <h3 id="stat-checked-out">0</h3>
-                                <p data-i18n="checked-out">Visitors Exited</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <circle cx="12" cy="12" r="9" />
-                                    <line x1="15" y1="9" x2="9" y2="15" />
-                                    <line x1="9" y1="9" x2="15" y2="15" />
-                                </svg>
-                            </div>
-                            <div class="stat-data">
-                                <h3 id="stat-rejected">0</h3>
-                                <p data-i18n="rejected-visitors">Rejected</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background:linear-gradient(135deg,#374151,#111827);">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <path
-                                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                                    <line x1="12" y1="9" x2="12" y2="13" />
-                                    <line x1="12" y1="17" x2="12.01" y2="17" />
-                                </svg>
-                            </div>
-                            <div class="stat-data">
-                                <h3 id="stat-blacklisted">0</h3>
-                                <p data-i18n="blacklisted-visitors">Blacklisted</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background:linear-gradient(135deg,#06b6d4,#0e7490);">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                    <circle cx="9" cy="7" r="4" />
-                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                </svg>
-                            </div>
-                            <div class="stat-data">
-                                <h3 id="stat-frequent">0</h3>
-                                <p data-i18n="frequent-visitors">Frequent Visitors</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon bg-soft-blue">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                    <circle cx="9" cy="7" r="4" />
-                                </svg>
-                            </div>
-                            <div class="stat-data">
-                                <h3 id="stat-total-today">0</h3>
-                                <p data-i18n="visitors-today">Today Total</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Secondary Stats: Purchase Manual & Work Permit -->
-                    <div class="stats-grid"
-                        style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-top: 1rem; margin-bottom: 1.5rem;">
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background:linear-gradient(135deg,#64748b,#334155);">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                    <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                </svg>
-                            </div>
-                            <div class="stat-data">
-                                <h3 id="stat-pm-draft">0</h3>
-                                <p data-i18n="pm-drafts">PM Drafts</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon bg-soft-amber">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <circle cx="12" cy="12" r="9" />
-                                    <polyline points="12 6 12 12 16 14" />
-                                </svg>
-                            </div>
-                            <div class="stat-data">
-                                <h3 id="stat-pm-pending">0</h3>
-                                <p data-i18n="pm-pending">PM Pending</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon bg-soft-emerald">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                    <polyline points="22 4 12 14.01 9 11.01" />
-                                </svg>
-                            </div>
-                            <div class="stat-data">
-                                <h3 id="stat-pm-approved">0</h3>
-                                <p data-i18n="pm-approved">PM Approved</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon" style="background:linear-gradient(135deg,#ef4444,#b91c1c);">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <circle cx="12" cy="12" r="9" />
-                                    <line x1="15" y1="9" x2="9" y2="15" />
-                                    <line x1="9" y1="9" x2="15" y2="15" />
-                                </svg>
-                            </div>
-                            <div class="stat-data">
-                                <h3 id="stat-pm-rejected">0</h3>
-                                <p data-i18n="pm-rejected">PM Rejected</p>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon bg-soft-purple">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                                </svg>
-                            </div>
-                            <div class="stat-data">
-                                <h3 id="stat-active-permits">0</h3>
-                                <p data-i18n="active-work-permits">Active Permits</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h2 data-i18n="quick-actions">Quick Actions</h2>
-                        </div>
-                        <div class="quick-actions-panel">
-                            <div class="quick-action-btn" id="btn-quick-register">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    style="width:28px;height:28px;color:var(--accent-primary)">
-                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                    <circle cx="9" cy="7" r="4" />
-                                    <line x1="19" y1="8" x2="19" y2="14" />
-                                    <line x1="16" y1="11" x2="22" y2="11" />
-                                </svg>
-                                <span data-i18n="nav-register">Register Visitor</span>
-                            </div>
-                            <div class="quick-action-btn" id="btn-quick-search">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    style="width:28px;height:28px;color:var(--accent-primary)">
-                                    <circle cx="11" cy="11" r="8" />
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                                </svg>
-                                <span data-i18n="nav-emp-search">Employee Search</span>
-                            </div>
-                            <div class="quick-action-btn" id="btn-quick-checkout">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    style="width:28px;height:28px;color:var(--accent-primary)">
-                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
-                                </svg>
-                                <span data-i18n="checkout-visitor-btn">Check-Out Visitor</span>
-                            </div>
-                            <div class="quick-action-btn" id="btn-quick-history">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    style="width:28px;height:28px;color:var(--accent-primary)">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <polyline points="12 6 12 12 16 14" />
-                                </svg>
-                                <span data-i18n="nav-history">Visitor History</span>
-                            </div>
-                            <div class="quick-action-btn" id="btn-quick-reports">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    style="width:28px;height:28px;color:var(--accent-primary)">
-                                    <line x1="18" y1="20" x2="18" y2="10" />
-                                    <line x1="12" y1="20" x2="12" y2="4" />
-                                    <line x1="6" y1="20" x2="6" y2="14" />
-                                </svg>
-                                <span data-i18n="reports-page-btn">Reports</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="dashboard-card">
-                        <div class="card-header justify-between">
-                            <h2 data-i18n="current-visitors">Current Visitors inside Campus</h2>
-                            <input type="text" id="db-search-visitors" style="max-width: 250px;"
-                                placeholder="Filter current visitors..."
-                                data-i18n-placeholder="filter-visitors-placeholder">
-                        </div>
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th data-i18n="tbl-visitor-id">Visitor ID</th>
-                                        <th data-i18n="tbl-visitor-details">Visitor Details</th>
-                                        <th data-i18n="tbl-host-employee">Host Employee</th>
-                                        <th data-i18n="tbl-checked-in">Checked In</th>
-                                        <th data-i18n="tbl-status">Status</th>
-                                        <th data-i18n="tbl-actions">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="db-active-visitors-table">
-                                    <!-- Dynamic content loaded by JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Dashboard Interactive Analytics Charts (Chart.js) -->
-                    <div
-                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 data-i18n="chart-vol-hdr">Visitor Volume Trend (7 Days)</h2>
-                            </div>
-                            <div style="padding: 1rem; position: relative; height: 260px;">
-                                <canvas id="chart-visitor-volume"></canvas>
-                            </div>
-                        </div>
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 data-i18n="chart-dept-hdr">Department-wise Visitor Distribution</h2>
-                            </div>
-                            <div style="padding: 1rem; position: relative; height: 260px;">
-                                <canvas id="chart-dept-visitors"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem;">
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 data-i18n="chart-cat-hdr">Visitor Purpose Categories</h2>
-                            </div>
-                            <div style="padding: 1rem; position: relative; height: 260px;">
-                                <canvas id="chart-visitor-categories"></canvas>
-                            </div>
-                        </div>
-                        <div class="dashboard-card">
-                            <div class="card-header">
-                                <h2 data-i18n="chart-comp-hdr">Top Visiting Guest Companies</h2>
-                            </div>
-                            <div style="padding: 1rem; position: relative; height: 260px;">
-                                <canvas id="chart-top-companies"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pending Approval Queue Card -->
-                    <div class="dashboard-card" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
-                        <div class="card-header justify-between">
-                            <h2>⏳ Pending Host Approval Queue</h2>
-                            <span id="pending-queue-count"
-                                style="background: rgba(245,158,11,0.15); color: #d97706; font-size: 0.75rem; font-weight: 700; padding: 2px 10px; border-radius: 50px;">0
-                                Pending</span>
-                        </div>
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Visitor</th>
-                                        <th>Company</th>
-                                        <th>Host Employee</th>
-                                        <th>Department</th>
-                                        <th>Purpose</th>
-                                        <th>Registered</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="db-pending-approval-table">
-                                    <tr>
-                                        <td colspan="7" class="empty-state">No visitors awaiting approval.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Interactive Dashboard Card Detail Drawer -->
-                    <div id="dashboard-detail-drawer" class="hidden no-print" style="margin-top: 2rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 1.5rem; transition: all 0.3s ease;">
-                        <div class="card-header justify-between" style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem; display: flex; align-items: center;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span id="drawer-icon" style="font-size: 1.5rem;">📊</span>
-                                <div>
-                                    <h2 id="drawer-title" style="margin: 0; font-size: 1.25rem;">Card Details</h2>
-                                    <p id="drawer-subtitle" class="text-secondary" style="font-size: 0.75rem; margin: 2px 0 0 0;">Interactive data analytics and logs</p>
-                                </div>
-                            </div>
-                            <button type="button" class="btn btn-secondary btn-sm" id="btn-close-drawer" style="padding: 4px 8px; cursor: pointer;">✕ Close</button>
-                        </div>
-                        
-                        <!-- Mini Analytics Header Row -->
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
-                            <div class="stat-card" style="padding: 0.75rem 1rem; background: var(--bg-body); cursor: default; display: flex; flex-direction: column;">
-                                <div class="stat-data">
-                                    <h4 id="drawer-stat-total" style="font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--text-primary);">0</h4>
-                                    <p style="font-size: 0.7rem; color: var(--text-muted); margin: 2px 0 0 0;">Total Records</p>
-                                </div>
-                            </div>
-                            <div class="stat-card" style="padding: 0.75rem 1rem; background: var(--bg-body); cursor: default; display: flex; flex-direction: column;">
-                                <div class="stat-data">
-                                    <h4 id="drawer-stat-percentage" style="font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--accent-primary);">0%</h4>
-                                    <p style="font-size: 0.7rem; color: var(--text-muted); margin: 2px 0 0 0;">Percentage of Total</p>
-                                </div>
-                            </div>
-                            <div class="stat-card" style="padding: 0.75rem 1rem; background: var(--bg-body); cursor: default; display: flex; flex-direction: column;">
-                                <div class="stat-data">
-                                    <h4 id="drawer-stat-today" style="font-size: 1.5rem; font-weight: 700; margin: 0; color: var(--accent-success);">0</h4>
-                                    <p style="font-size: 0.7rem; color: var(--text-muted); margin: 2px 0 0 0;">Today's Count</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Filters and Search Controls -->
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; justify-content: space-between; margin-bottom: 1rem; background: var(--bg-body); padding: 0.75rem 1rem; border-radius: var(--border-radius-lg); border: 1px solid var(--border-color);">
-                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; flex: 1; min-width: 250px;">
-                                <input type="text" id="drawer-search" placeholder="Search records by name, ID, phone..." style="max-width: 280px; font-size: 0.8rem; padding: 6px 10px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm);">
-                                <select id="drawer-filter-purpose" style="font-size: 0.8rem; padding: 6px 10px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm);">
-                                    <option value="all">All Purposes</option>
-                                    <option value="Meeting">Meeting</option>
-                                    <option value="Interview">Interview</option>
-                                    <option value="Delivery">Delivery</option>
-                                    <option value="Maintenance">Maintenance</option>
-                                </select>
-                                <select id="drawer-filter-dept" style="font-size: 0.8rem; padding: 6px 10px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm);">
-                                    <option value="all">All Departments</option>
-                                </select>
-                            </div>
-                            <div class="flex gap-2">
-                                <button type="button" class="btn btn-secondary btn-sm" id="btn-drawer-export-csv" style="padding: 6px 12px; font-size: 0.75rem;">Export CSV</button>
-                                <button type="button" class="btn btn-secondary btn-sm" id="btn-drawer-export-pdf" style="padding: 6px 12px; font-size: 0.75rem;">Export PDF</button>
-                            </div>
-                        </div>
-
-                        <!-- Data List Layout (with Chart & Table side-by-side) -->
-                        <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1rem;">
-                            <!-- Data Table -->
-                            <div class="table-container" style="border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); overflow: hidden;">
-                                <table class="data-table">
-                                    <thead id="drawer-table-head">
-                                        <!-- Dynamic headers -->
-                                    </thead>
-                                    <tbody id="drawer-table-body">
-                                        <!-- Dynamic records -->
-                                    </tbody>
-                                </table>
-                                <!-- Virtual Scroll/Pagination Info -->
-                                <div id="drawer-pagination-info" style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: var(--bg-body); border-top: 1px solid var(--border-color); font-size: 0.75rem; color: var(--text-secondary);">
-                                    <span>Showing 0 to 0 of 0 entries</span>
-                                    <div class="flex gap-1">
-                                        <button type="button" class="btn btn-secondary btn-sm" id="btn-drawer-prev" style="padding: 2px 8px; font-size: 0.7rem; cursor: pointer;">Prev</button>
-                                        <button type="button" class="btn btn-secondary btn-sm" id="btn-drawer-next" style="padding: 2px 8px; font-size: 0.7rem; cursor: pointer;">Next</button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Drawer sub-chart wrapper -->
-                            <div style="border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 1rem; background: var(--bg-body); display: none;" id="drawer-chart-container">
-                                <h4 style="margin: 0 0 10px 0; font-size: 0.9rem; font-weight: 600;">Time distribution forecast (Historical Activity Patterns)</h4>
-                                <div style="position: relative; height: 180px;">
-                                    <canvas id="chart-drawer-sub"></canvas>
-                                </div>
-                            </div>
+                    <div class="dashboard-card" style="padding: 2.5rem; text-align: center; max-width: 600px; margin: 2rem auto;">
+                        <div style="font-size: 3.5rem; margin-bottom: 1rem;">🏢</div>
+                        <h2 style="font-size: 1.5rem; color: var(--accent-primary); margin-bottom: 0.5rem;">Barani Visitor Management</h2>
+                        <p class="text-secondary" style="font-size: 0.9rem; margin-bottom: 1.5rem;">
+                            Welcome to the security control console. Use the sidebar navigation to register new visitors, search employees, or check out visitors.
+                        </p>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">
+                            Gatekeeper System Active • Press Ctrl+P to print passes
                         </div>
                     </div>
                 </section>
@@ -785,75 +417,7 @@
                                     </div>
                                 </div>
 
-                                <!-- 4. Contractors Card -->
-                                <div class="registration-card">
-                                    <div class="card-icon-wrapper">👷</div>
-                                    <h3 class="card-title">Contractors</h3>
-                                    <p class="card-description">Contract Workers</p>
-                                    <div class="card-stats">
-                                        <div class="stat-item">
-                                            <span class="text-muted text-xs">Registered</span>
-                                            <span class="stat-val" id="count-contractor-total">0</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="text-muted text-xs">Today's Entry</span>
-                                            <span class="stat-val" id="count-contractor-today">0</span>
-                                        </div>
-                                    </div>
-                                    <div class="card-actions">
-                                        <button type="button" class="btn btn-primary btn-sm flex-grow"
-                                            onclick="openCategoryForm('contractor')">Register Contractor</button>
-                                        <button type="button" class="btn btn-secondary btn-sm"
-                                            onclick="viewCategoryRecords('contractor')">View Contractors</button>
-                                    </div>
                                 </div>
-
-                                <!-- 5. Delivery Card -->
-                                <div class="registration-card">
-                                    <div class="card-icon-wrapper">📦</div>
-                                    <h3 class="card-title">Delivery</h3>
-                                    <p class="card-description">Courier & Delivery Personnel</p>
-                                    <div class="card-stats">
-                                        <div class="stat-item">
-                                            <span class="text-muted text-xs">Registered</span>
-                                            <span class="stat-val" id="count-delivery-total">0</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="text-muted text-xs">Today's Entry</span>
-                                            <span class="stat-val" id="count-delivery-today">0</span>
-                                        </div>
-                                    </div>
-                                    <div class="card-actions">
-                                        <button type="button" class="btn btn-primary btn-sm flex-grow"
-                                            onclick="openCategoryForm('delivery')">Register Delivery</button>
-                                        <button type="button" class="btn btn-secondary btn-sm"
-                                            onclick="viewCategoryRecords('delivery')">View Deliveries</button>
-                                    </div>
-                                </div>
-
-                                <!-- 6. Service Engineers Card -->
-                                <div class="registration-card">
-                                    <div class="card-icon-wrapper">🛠</div>
-                                    <h3 class="card-title">Service Engineers</h3>
-                                    <p class="card-description">Machine Service & Maintenance</p>
-                                    <div class="card-stats">
-                                        <div class="stat-item">
-                                            <span class="text-muted text-xs">Registered</span>
-                                            <span class="stat-val" id="count-service-engineer-total">0</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="text-muted text-xs">Today's Entry</span>
-                                            <span class="stat-val" id="count-service-engineer-today">0</span>
-                                        </div>
-                                    </div>
-                                    <div class="card-actions">
-                                        <button type="button" class="btn btn-primary btn-sm flex-grow"
-                                            onclick="openCategoryForm('service-engineer')">Register Engineer</button>
-                                        <button type="button" class="btn btn-secondary btn-sm"
-                                            onclick="viewCategoryRecords('service-engineer')">View Engineers</button>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         <!-- 1. Student Registration Form Wrapper -->
@@ -874,7 +438,7 @@
                                     </div>
                                 </div>
 
-                                <form id="student-registration-form" class="app-form">
+                                <form id="student-registration-form" class="app-form" autocomplete="off">
                                     <div class="form-row">
                                         <!-- Form Column Left -->
                                         <div class="col-8">
@@ -886,36 +450,36 @@
                                                 <div class="form-group col-6">
                                                     <label for="reg-student-name">Student Name *</label>
                                                     <input type="text" id="reg-student-name" placeholder="Full Name"
-                                                        required>
+                                                        required autocomplete="off">
                                                 </div>
                                                 <div class="form-group col-6">
                                                     <label for="reg-student-phone">Phone Number *</label>
                                                     <input type="tel" id="reg-student-phone" placeholder="Phone Number"
-                                                        required>
+                                                        required autocomplete="off">
                                                 </div>
                                             </div>
                                             <div class="form-row" style="margin-bottom: 1rem;">
                                                 <div class="form-group col-6">
                                                     <label for="reg-student-email">Email Address</label>
                                                     <input type="email" id="reg-student-email"
-                                                        placeholder="student@college.edu">
+                                                        placeholder="student@college.edu" autocomplete="off">
                                                 </div>
                                                 <div class="form-group col-6">
                                                     <label for="reg-student-college">College / Institution *</label>
                                                     <input type="text" id="reg-student-college"
-                                                        placeholder="College Name" required>
+                                                        placeholder="College Name" required autocomplete="off">
                                                 </div>
                                             </div>
                                             <div class="form-row" style="margin-bottom: 1rem;">
                                                 <div class="form-group col-6">
                                                     <label for="reg-student-dept">Department / Course *</label>
                                                     <input type="text" id="reg-student-dept"
-                                                        placeholder="e.g. BE Mechanical" required>
+                                                        placeholder="e.g. BE Mechanical" required autocomplete="off">
                                                 </div>
                                                 <div class="form-group col-6">
                                                     <label for="reg-student-rollno">Roll Number / Student ID *</label>
                                                     <input type="text" id="reg-student-rollno" placeholder="Roll Number"
-                                                        required>
+                                                        required autocomplete="off">
                                                 </div>
                                             </div>
                                             <div class="form-row" style="margin-bottom: 1rem;">
@@ -924,7 +488,7 @@
                                                     <label for="reg-student-id-doc-file" class="file-upload-btn"
                                                         style="width: 100%; border: 1px dashed var(--border-color); padding: 0.6rem 0.5rem; text-align: center; border-radius: var(--border-radius-md); display: block; background: #ffffff; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 0.75rem; margin-bottom: 0; cursor: pointer;">
                                                         <input type="file" id="reg-student-id-doc-file"
-                                                            class="file-upload-input" accept="image/*">
+                                                            class="file-upload-input" accept="image/*" autocomplete="off">
                                                         <span id="student-id-doc-label">Upload College ID</span>
                                                     </label>
                                                 </div>
@@ -947,18 +511,28 @@
                                                     <label for="reg-student-host">Whom to Meet *</label>
                                                     <div class="autocomplete-container">
                                                         <input type="text" id="reg-student-host"
-                                                            placeholder="Type employee name to search..." required>
+                                                            placeholder="Type employee name to search..." required autocomplete="off">
                                                         <div id="reg-student-host-suggestions" class="suggestions-box">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group col-3">
                                                     <label for="reg-student-visit-date">Visit Date</label>
-                                                    <input type="date" id="reg-student-visit-date" required>
+                                                    <input type="date" id="reg-student-visit-date" required autocomplete="off">
                                                 </div>
                                                 <div class="form-group col-3">
                                                     <label for="reg-student-expected-exit">Expected Exit Time</label>
-                                                    <input type="time" id="reg-student-expected-exit" required>
+                                                    <input type="time" id="reg-student-expected-exit" required autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="form-row" style="margin-bottom: 1rem;">
+                                                <div class="form-group col-6">
+                                                    <label for="reg-student-start-date">Start Date *</label>
+                                                    <input type="date" id="reg-student-start-date" required autocomplete="off">
+                                                </div>
+                                                <div class="form-group col-6">
+                                                    <label for="reg-student-end-date">End Date *</label>
+                                                    <input type="date" id="reg-student-end-date" required autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
@@ -1001,7 +575,7 @@
                                                     <label for="visitor-photo-file-student" class="file-upload-btn"
                                                         style="cursor: pointer; display: inline-block; padding: 0.4rem 0.8rem; font-size: 0.75rem;">
                                                         <input type="file" id="visitor-photo-file-student"
-                                                            class="file-upload-input" accept="image/*">
+                                                            class="file-upload-input" accept="image/*" autocomplete="off">
                                                         <span>Upload Image</span>
                                                     </label>
                                                 </div>
@@ -1036,7 +610,7 @@
                                     </div>
                                 </div>
 
-                                <form id="customer-registration-form" class="app-form">
+                                <form id="customer-registration-form" class="app-form" autocomplete="off">
                                     <div class="form-row">
                                         <!-- Form Column Left -->
                                         <div class="col-8">
@@ -1048,31 +622,31 @@
                                                 <div class="form-group col-6">
                                                     <label for="reg-customer-name">Customer Name *</label>
                                                     <input type="text" id="reg-customer-name" placeholder="Full Name"
-                                                        required>
+                                                        required autocomplete="off">
                                                 </div>
                                                 <div class="form-group col-6">
                                                     <label for="reg-customer-phone">Phone Number *</label>
                                                     <input type="tel" id="reg-customer-phone" placeholder="Phone Number"
-                                                        required>
+                                                        required autocomplete="off">
                                                 </div>
                                             </div>
                                             <div class="form-row" style="margin-bottom: 1rem;">
                                                 <div class="form-group col-6">
                                                     <label for="reg-customer-email">Email Address</label>
                                                     <input type="email" id="reg-customer-email"
-                                                        placeholder="name@company.com">
+                                                        placeholder="name@company.com" autocomplete="off">
                                                 </div>
                                                 <div class="form-group col-6">
                                                     <label for="reg-customer-company">Company Name *</label>
                                                     <input type="text" id="reg-customer-company"
-                                                        placeholder="e.g. Acme Corp" required>
+                                                        placeholder="e.g. Acme Corp" required autocomplete="off">
                                                 </div>
                                             </div>
                                             <div class="form-row" style="margin-bottom: 1rem;">
                                                 <div class="form-group col-6">
                                                     <label for="reg-customer-id">Customer ID (Auto-Generated or
                                                         Manual)</label>
-                                                    <input type="text" id="reg-customer-id" placeholder="CUST10001">
+                                                    <input type="text" id="reg-customer-id" placeholder="CUST10001" autocomplete="off">
                                                 </div>
                                                 <div class="form-group col-6">
                                                     <label for="reg-customer-purpose">Purpose of Visit *</label>
@@ -1101,12 +675,12 @@
                                                 <div class="form-group col-4">
                                                     <label for="reg-customer-id-number">ID Number (Optional)</label>
                                                     <input type="text" id="reg-customer-id-number"
-                                                        placeholder="ID Card Number">
+                                                        placeholder="ID Card Number" autocomplete="off">
                                                 </div>
                                                 <div class="form-group col-4">
                                                     <label for="reg-customer-vehicle">Vehicle Number</label>
                                                     <input type="text" id="reg-customer-vehicle"
-                                                        placeholder="e.g. KA-51-AB-1234">
+                                                        placeholder="e.g. KA-51-AB-1234" autocomplete="off">
                                                 </div>
                                             </div>
                                             <div class="form-row" style="margin-bottom: 1rem;">
@@ -1114,18 +688,18 @@
                                                     <label for="reg-customer-host">Whom to Meet *</label>
                                                     <div class="autocomplete-container">
                                                         <input type="text" id="reg-customer-host"
-                                                            placeholder="Type employee name to search..." required>
+                                                            placeholder="Type employee name to search..." required autocomplete="off">
                                                         <div id="reg-customer-host-suggestions" class="suggestions-box">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group col-3">
                                                     <label for="reg-customer-visit-date">Visit Date</label>
-                                                    <input type="date" id="reg-customer-visit-date" required>
+                                                    <input type="date" id="reg-customer-visit-date" required autocomplete="off">
                                                 </div>
                                                 <div class="form-group col-3">
                                                     <label for="reg-customer-expected-exit">Expected Exit Time</label>
-                                                    <input type="time" id="reg-customer-expected-exit" required>
+                                                    <input type="time" id="reg-customer-expected-exit" required autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
@@ -1168,7 +742,7 @@
                                                     <label for="visitor-photo-file-customer" class="file-upload-btn"
                                                         style="cursor: pointer; display: inline-block; padding: 0.4rem 0.8rem; font-size: 0.75rem;">
                                                         <input type="file" id="visitor-photo-file-customer"
-                                                            class="file-upload-input" accept="image/*">
+                                                            class="file-upload-input" accept="image/*" autocomplete="off">
                                                         <span>Upload Image</span>
                                                     </label>
                                                 </div>
@@ -1193,7 +767,7 @@
                                 <div class="card-header">
                                     <h2>🚚 Vendor Registration Form</h2>
                                 </div>
-                                <form id="vendor-registration-form" class="app-form">
+                                <form id="vendor-registration-form" class="app-form" autocomplete="off">
                                     <div class="form-row">
                                         <!-- Form Column Left -->
                                         <div class="col-8">
@@ -1201,12 +775,12 @@
                                                 <div class="form-group col-6">
                                                     <label for="reg-vendor-name">Vendor Name *</label>
                                                     <input type="text" id="reg-vendor-name" placeholder="Full Name"
-                                                        required>
+                                                        required autocomplete="off">
                                                 </div>
                                                 <div class="form-group col-6">
                                                     <label for="reg-vendor-phone">Phone Number *</label>
                                                     <input type="tel" id="reg-vendor-phone" placeholder="Phone Number"
-                                                        required>
+                                                        required autocomplete="off">
                                                 </div>
                                             </div>
                                             <div class="form-row" style="margin-bottom: 1rem;">
@@ -1214,13 +788,13 @@
                                                     <label for="reg-vendor-company">Vendor / Supplier Company Name
                                                         *</label>
                                                     <input type="text" id="reg-vendor-company"
-                                                        placeholder="e.g. Tata Steel" required>
+                                                        placeholder="e.g. Tata Steel" required autocomplete="off">
                                                 </div>
                                                 <div class="form-group col-6">
                                                     <label for="reg-vendor-invoice">Goods Delivery Details / Invoice
                                                         Number</label>
                                                     <input type="text" id="reg-vendor-invoice"
-                                                        placeholder="Invoice / Delivery Challan Number">
+                                                        placeholder="Invoice / Delivery Challan Number" autocomplete="off">
                                                 </div>
                                             </div>
                                             <div class="form-row" style="margin-bottom: 1rem;">
@@ -1238,12 +812,12 @@
                                                 <div class="form-group col-4">
                                                     <label for="reg-vendor-id-number">ID Number (Optional)</label>
                                                     <input type="text" id="reg-vendor-id-number"
-                                                        placeholder="ID Card Number">
+                                                        placeholder="ID Card Number" autocomplete="off">
                                                 </div>
                                                 <div class="form-group col-4">
                                                     <label for="reg-vendor-vehicle">Vehicle Number</label>
                                                     <input type="text" id="reg-vendor-vehicle"
-                                                        placeholder="e.g. KA-51-AB-1234">
+                                                        placeholder="e.g. KA-51-AB-1234" autocomplete="off">
                                                 </div>
                                             </div>
                                             <div class="form-row" style="margin-bottom: 1rem;">
@@ -1251,18 +825,18 @@
                                                     <label for="reg-vendor-host">Whom to Meet *</label>
                                                     <div class="autocomplete-container">
                                                         <input type="text" id="reg-vendor-host"
-                                                            placeholder="Type employee name to search..." required>
+                                                            placeholder="Type employee name to search..." required autocomplete="off">
                                                         <div id="reg-vendor-host-suggestions" class="suggestions-box">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group col-3">
                                                     <label for="reg-vendor-visit-date">Visit Date</label>
-                                                    <input type="date" id="reg-vendor-visit-date" required>
+                                                    <input type="date" id="reg-vendor-visit-date" required autocomplete="off">
                                                 </div>
                                                 <div class="form-group col-3">
                                                     <label for="reg-vendor-expected-exit">Expected Exit Time</label>
-                                                    <input type="time" id="reg-vendor-expected-exit" required>
+                                                    <input type="time" id="reg-vendor-expected-exit" required autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
@@ -1304,7 +878,7 @@
                                                     <label for="visitor-photo-file-vendor" class="file-upload-btn"
                                                         style="cursor: pointer; display: inline-block; padding: 0.4rem 0.8rem; font-size: 0.75rem;">
                                                         <input type="file" id="visitor-photo-file-vendor"
-                                                            class="file-upload-input" accept="image/*">
+                                                            class="file-upload-input" accept="image/*" autocomplete="off">
                                                         <span>Upload Image</span>
                                                     </label>
                                                 </div>
@@ -3514,6 +3088,18 @@
                                     <tr>
                                         <td class="label">Exit</td>
                                         <td class="value" id="badge-exit-time">6:00 PM</td>
+                                    </tr>
+                                    <tr id="badge-row-start-date" class="hidden">
+                                        <td class="label">Start Date</td>
+                                        <td class="value" id="badge-start-date">-</td>
+                                    </tr>
+                                    <tr id="badge-row-end-date" class="hidden">
+                                        <td class="label">End Date</td>
+                                        <td class="value" id="badge-end-date">-</td>
+                                    </tr>
+                                    <tr id="badge-row-validity" class="hidden">
+                                        <td class="label">Validity</td>
+                                        <td class="value" id="badge-validity" style="font-weight: bold; color: var(--accent-primary);">-</td>
                                     </tr>
                                 </tbody>
                             </table>

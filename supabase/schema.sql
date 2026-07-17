@@ -113,6 +113,8 @@ CREATE TABLE IF NOT EXISTS visitors (
     approve_token VARCHAR(255),
     reject_token VARCHAR(255),
     branch VARCHAR(100) REFERENCES branches(name) ON UPDATE CASCADE,
+    start_date DATE,
+    end_date DATE,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
@@ -372,3 +374,24 @@ CREATE OR REPLACE VIEW active_campus_visitors AS
 SELECT * 
 FROM visitors
 WHERE status = 'Checked In';
+
+-- 13. STUDENTS TABLE
+CREATE TABLE IF NOT EXISTS students (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    student_id VARCHAR(50) UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    phone VARCHAR(50) NOT NULL,
+    email VARCHAR(255),
+    college VARCHAR(255),
+    department VARCHAR(255),
+    roll_number VARCHAR(100),
+    photo TEXT,
+    start_date DATE,
+    end_date DATE,
+    created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
+
+CREATE TRIGGER update_students_modtime
+    BEFORE UPDATE ON students
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

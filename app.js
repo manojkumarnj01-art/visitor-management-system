@@ -1227,14 +1227,110 @@ function checkAuthSession() {
         document.getElementById("header-user-avatar").innerText = state.currentUser.name.split(" ").map(n => n[0]).join("");
 
         // Show/Hide navigation links based on role privileges
+        const isGatekeeper = state.currentUser && (state.currentUser.role.toLowerCase() === "gatekeeper" || state.currentUser.role.toLowerCase() === "security gatekeeper");
+
         document.querySelectorAll(".nav-link").forEach(link => {
             const target = link.getAttribute("data-target");
-            if (isViewAuthorized(target)) {
-                link.classList.remove("hidden");
+            
+            if (isGatekeeper) {
+                if (target === "view-registration") {
+                    link.classList.remove("hidden");
+                    const textSpan = link.querySelector("span");
+                    if (textSpan) textSpan.innerText = "Dashboard";
+                    const svg = link.querySelector("svg");
+                    if (svg) {
+                        svg.innerHTML = `
+                            <rect x="3" y="3" width="7" height="7" />
+                            <rect x="14" y="3" width="7" height="7" />
+                            <rect x="14" y="14" width="7" height="7" />
+                            <rect x="3" y="14" width="7" height="7" />
+                        `;
+                    }
+                } else if (target === "view-reports") {
+                    link.classList.remove("hidden");
+                    const textSpan = link.querySelector("span");
+                    if (textSpan) textSpan.innerText = "Report";
+                    const svg = link.querySelector("svg");
+                    if (svg) {
+                        svg.innerHTML = `
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                            <polyline points="10 9 9 9 8 9" />
+                        `;
+                    }
+                } else {
+                    link.classList.add("hidden");
+                }
             } else {
-                link.classList.add("hidden");
+                if (target === "view-registration") {
+                    const textSpan = link.querySelector("span");
+                    if (textSpan) textSpan.innerText = "Register Visitor";
+                    const svg = link.querySelector("svg");
+                    if (svg) {
+                        svg.innerHTML = `
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <line x1="19" y1="8" x2="19" y2="14" />
+                            <line x1="16" y1="11" x2="22" y2="11" />
+                        `;
+                    }
+                } else if (target === "view-reports") {
+                    const textSpan = link.querySelector("span");
+                    if (textSpan) textSpan.innerText = "Reports";
+                    const svg = link.querySelector("svg");
+                    if (svg) {
+                        svg.innerHTML = `
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                            <polyline points="10 9 9 9 8 9" />
+                        `;
+                    }
+                }
+
+                if (isViewAuthorized(target)) {
+                    link.classList.remove("hidden");
+                } else {
+                    link.classList.add("hidden");
+                }
             }
         });
+
+        // Redirect gatekeeper on login
+        if (isGatekeeper) {
+            if (state.activeView !== "view-registration" && state.activeView !== "view-reports") {
+                state.activeView = "view-registration";
+                saveState();
+            }
+            
+            // Hide employee/visitor flow selector and force direct registration cards view
+            const selector = document.querySelector(".entry-type-selector");
+            if (selector) selector.classList.add("hidden");
+            
+            const vWrapper = document.getElementById("visitor-registration-wrapper");
+            if (vWrapper) vWrapper.classList.remove("hidden");
+            
+            const eWrapper = document.getElementById("employee-registration-wrapper");
+            if (eWrapper) eWrapper.classList.add("hidden");
+            
+            const dWrapper = document.getElementById("registration-dashboard-wrapper");
+            if (dWrapper) dWrapper.classList.remove("hidden");
+            
+            const sWrapper = document.getElementById("student-registration-wrapper");
+            if (sWrapper) sWrapper.classList.add("hidden");
+            
+            const cWrapper = document.getElementById("customer-registration-wrapper");
+            if (cWrapper) cWrapper.classList.add("hidden");
+            
+            const vndWrapper = document.getElementById("vendor-registration-wrapper");
+            if (vndWrapper) vndWrapper.classList.add("hidden");
+        } else {
+            const selector = document.querySelector(".entry-type-selector");
+            if (selector) selector.classList.remove("hidden");
+        }
 
         // Welcome subtitle greeting
         document.getElementById("page-subtitle").innerText = getTranslatedText("sub-dashboard", "Welcome, {name}").replace("{name}", state.currentUser.name);
@@ -1252,15 +1348,18 @@ function checkAuthSession() {
 // Role checking helper
 function isViewAuthorized(viewId) {
     if (!state.currentUser) return false;
-    const role = state.currentUser.role;
-    if (role === "Administrator") return true;
-
-    if (role === "Security Gatekeeper") {
-        const allowed = ["view-dashboard", "view-registration", "view-employee-search", "view-checkout", "view-history"];
-        return allowed.includes(viewId);
+    const role = state.currentUser.role.toLowerCase();
+    
+    // Check if user is gatekeeper
+    const isGatekeeper = role === "gatekeeper" || role === "security gatekeeper";
+    if (isGatekeeper) {
+        return ["view-registration", "view-reports"].includes(viewId);
     }
 
-    if (role === "Front Desk Operator") {
+    // Otherwise, standard original checks for other roles
+    if (state.currentUser.role === "Administrator") return true;
+
+    if (state.currentUser.role === "Front Desk Operator") {
         const allowed = ["view-registration", "view-employee-search", "view-checkout", "view-history", "view-purchase-manual", "view-work-permit"];
         return allowed.includes(viewId);
     }
@@ -1277,7 +1376,8 @@ function switchView(viewId) {
         );
         const defaultViews = {
             "Administrator": "view-reports",
-            "Security Gatekeeper": "view-dashboard",
+            "Security Gatekeeper": "view-registration",
+            "gatekeeper": "view-registration",
             "Front Desk Operator": "view-registration"
         };
         const fallback = defaultViews[state.currentUser ? state.currentUser.role : ""] || "view-registration";
@@ -1396,12 +1496,21 @@ function setupEventListeners() {
         });
     });
 
-    // 3. Quick Action Clicks in Dashboard
-    document.getElementById("btn-quick-register").addEventListener("click", () => switchView("view-registration"));
-    document.getElementById("btn-quick-search").addEventListener("click", () => switchView("view-employee-search"));
-    document.getElementById("btn-quick-checkout").addEventListener("click", () => switchView("view-checkout"));
-    document.getElementById("btn-quick-history").addEventListener("click", () => switchView("view-history"));
-    document.getElementById("btn-quick-reports").addEventListener("click", () => switchView("view-reports"));
+    // 3. Quick Action Clicks in Dashboard (Guarded for dashboard simplification)
+    const btnQuickRegister = document.getElementById("btn-quick-register");
+    if (btnQuickRegister) btnQuickRegister.addEventListener("click", () => switchView("view-registration"));
+    
+    const btnQuickSearch = document.getElementById("btn-quick-search");
+    if (btnQuickSearch) btnQuickSearch.addEventListener("click", () => switchView("view-employee-search"));
+    
+    const btnQuickCheckout = document.getElementById("btn-quick-checkout");
+    if (btnQuickCheckout) btnQuickCheckout.addEventListener("click", () => switchView("view-checkout"));
+    
+    const btnQuickHistory = document.getElementById("btn-quick-history");
+    if (btnQuickHistory) btnQuickHistory.addEventListener("click", () => switchView("view-history"));
+    
+    const btnQuickReports = document.getElementById("btn-quick-reports");
+    if (btnQuickReports) btnQuickReports.addEventListener("click", () => switchView("view-reports"));
 
     // 4. Employee Autocomplete setup for Category Forms
     setupAutocompleteInput("reg-student-host", "reg-student-host-suggestions");
@@ -1736,6 +1845,22 @@ function refreshAllDataViews() {
     renderWorkPermits();
     renderPMDashboardStats();
     updateRegistrationDashboardStats();
+    updateTopSummaryBar();
+}
+
+function updateTopSummaryBar() {
+    const todayStr = getLocalDateStr();
+    const registeredToday = state.visitors.filter(v => v.visitDate === todayStr).length;
+    const insideCampus = state.visitors.filter(v => v.status === "Checked In").length;
+    const checkedOutCount = state.visitors.filter(v => v.status === "Checked Out").length;
+
+    const elCheckedOut = document.getElementById("summary-checked-out");
+    const elVisitorsToday = document.getElementById("summary-visitors-today");
+    const elInCampus = document.getElementById("summary-in-campus");
+
+    if (elCheckedOut) elCheckedOut.innerText = checkedOutCount;
+    if (elVisitorsToday) elVisitorsToday.innerText = registeredToday;
+    if (elInCampus) elInCampus.innerText = insideCampus;
 }
 
 // 5. View Renderer: Dashboard Portal
@@ -2320,12 +2445,23 @@ function finalizeVisitorIntake() {
         return;
     }
 
+    // Pre-open target window synchronously to prevent browser popup block
+    let targetWindow = null;
+    const method = state.settings?.waMethod || "url-local";
+    if (method !== "meta" && method !== "sim") {
+        try {
+            targetWindow = window.open("", "_blank");
+        } catch (e) {
+            console.warn("Could not pre-open window:", e);
+        }
+    }
+
     // 2. Close preview modal and proceed directly to host approval flow
     document.getElementById("modal-visitor-preview").classList.remove("active");
-    executeFinalVisitorApprovalFlow();
+    executeFinalVisitorApprovalFlow(targetWindow);
 }
 
-async function executeFinalVisitorApprovalFlow() {
+async function executeFinalVisitorApprovalFlow(preOpenedWindow = null) {
     if (!pendingRegistrationObj) return;
 
     // Fetch latest host details to ensure dynamic email lookup and non-hardcoding
@@ -2386,19 +2522,32 @@ async function executeFinalVisitorApprovalFlow() {
     addAuditLog("Register Visitor", "Security", `Registered visitor details for code: ${pendingRegistrationObj.id}`);
     addAuditLog("Outbound Comm Sent", "Communications", `Dispatched Twilio SMS & Host Email request to: ${pendingRegistrationObj.hostName}`);
 
-    // Clear form inputs
-    document.getElementById("visitor-registration-form").reset();
-    document.getElementById("photo-preview").src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>";
-    document.getElementById("btn-enable-camera").classList.remove("hidden");
-    document.getElementById("btn-capture").classList.add("hidden");
-    document.getElementById("btn-retake").classList.add("hidden");
-    document.getElementById("camera-status").innerText = "Camera Inactive";
-    state.tempVisitorPhoto = "";
-    state.tempVisitorIdDoc = "";
+    // Clear form inputs based on registered visitor category
+    const registeredCategory = (registeredVisitor.purpose || "").toLowerCase();
+    if (registeredCategory === "student") {
+        resetCategoryFormState("student");
+    } else if (registeredCategory === "customer") {
+        resetCategoryFormState("customer");
+    } else if (registeredCategory === "vendor") {
+        resetCategoryFormState("vendor");
+    } else {
+        resetCategoryFormState("visitor");
+    }
 
-    const uploadLabel = document.getElementById("id-doc-upload-label");
-    if (uploadLabel) uploadLabel.innerText = "Upload ID Proof";
-    document.getElementById("visitor-id-doc-file").value = "";
+    // Standard reset for default form just in case
+    try {
+        document.getElementById("visitor-registration-form").reset();
+        document.getElementById("photo-preview").src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>";
+        document.getElementById("btn-enable-camera").classList.remove("hidden");
+        document.getElementById("btn-capture").classList.add("hidden");
+        document.getElementById("btn-retake").classList.add("hidden");
+        document.getElementById("camera-status").innerText = "Camera Inactive";
+        state.tempVisitorPhoto = "";
+        state.tempVisitorIdDoc = "";
+        const uploadLabel = document.getElementById("id-doc-upload-label");
+        if (uploadLabel) uploadLabel.innerText = "Upload ID Proof";
+        document.getElementById("visitor-id-doc-file").value = "";
+    } catch(e) {}
 
     // Render and capture pass image in background at registration
     const registeredVisitor = pendingRegistrationObj;
@@ -2423,7 +2572,7 @@ async function executeFinalVisitorApprovalFlow() {
                     await syncSingleVisitorToCloud(state.visitors[vIdx]);
 
                     // Auto-send pass image to visitor's WhatsApp after generation
-                    autoSendPassToWhatsApp(state.visitors[vIdx], false, null);
+                    autoSendPassToWhatsApp(state.visitors[vIdx], false, preOpenedWindow);
                 }
             }
         } catch (captureErr) {
@@ -2520,6 +2669,28 @@ function renderBadgeData(visitor) {
     document.getElementById("badge-time").innerText = entryDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     document.getElementById("badge-exit-time").innerText = visitor.expectedExit || "06:00 PM";
 
+    // Student validity rows rendering
+    const rowStartDate = document.getElementById("badge-row-start-date");
+    const rowEndDate = document.getElementById("badge-row-end-date");
+    const rowValidity = document.getElementById("badge-row-validity");
+    const valStartDate = document.getElementById("badge-start-date");
+    const valEndDate = document.getElementById("badge-end-date");
+    const valValidity = document.getElementById("badge-validity");
+
+    if (visitor.startDate && visitor.endDate) {
+        if (rowStartDate) rowStartDate.classList.remove("hidden");
+        if (rowEndDate) rowEndDate.classList.remove("hidden");
+        if (rowValidity) rowValidity.classList.remove("hidden");
+
+        if (valStartDate) valStartDate.innerText = visitor.startDate;
+        if (valEndDate) valEndDate.innerText = visitor.endDate;
+        if (valValidity) valValidity.innerText = visitor.startDate + " to " + visitor.endDate;
+    } else {
+        if (rowStartDate) rowStartDate.classList.add("hidden");
+        if (rowEndDate) rowEndDate.classList.add("hidden");
+        if (rowValidity) rowValidity.classList.add("hidden");
+    }
+
     // Visitor Photo setup
     const photoEl = document.getElementById("badge-photo");
     if (photoEl) {
@@ -2535,7 +2706,7 @@ function renderBadgeData(visitor) {
     if (qrContainer) {
         qrContainer.innerHTML = "";
         try {
-            const qrPayload = JSON.stringify({
+            const qrPayloadObj = {
                 id: visitor.id,
                 name: visitor.name,
                 company: visitor.company || "Independent",
@@ -2547,7 +2718,10 @@ function renderBadgeData(visitor) {
                 exit: visitor.expectedExit || "06:00 PM",
                 phone: visitor.phone,
                 valid: "BARANI-VMS-AUTHORIZED"
-            });
+            };
+            if (visitor.startDate) qrPayloadObj.startDate = visitor.startDate;
+            if (visitor.endDate) qrPayloadObj.endDate = visitor.endDate;
+            const qrPayload = JSON.stringify(qrPayloadObj);
             new QRCode(qrContainer, {
                 text: qrPayload,
                 width: 80,
@@ -2912,6 +3086,8 @@ function renderReportsData() {
 
     if (!tableBody) return;
 
+    const isGatekeeper = state.currentUser && (state.currentUser.role.toLowerCase() === "gatekeeper" || state.currentUser.role.toLowerCase() === "security gatekeeper");
+
     const searchVal = (document.getElementById("report-filter-search")?.value || "").trim().toLowerCase();
     const categoryVal = document.getElementById("report-filter-category")?.value || "all";
     const deptVal = document.getElementById("report-filter-dept")?.value || "all";
@@ -2929,14 +3105,24 @@ function renderReportsData() {
         }
 
         let catMatch = true;
-        if (categoryVal !== "all" && window.vmsAi) {
-            const vCat = window.vmsAi.autoCategorizeVisitor(v, state.visitors);
-            if (categoryVal === "Student") catMatch = (v.purpose === "IV" || (v.notes && v.notes.toLowerCase().includes("student")));
-            else if (categoryVal === "Customer") catMatch = vCat === "VIP Business Guest" || v.purpose === "Meeting";
-            else if (categoryVal === "Vendor") catMatch = vCat === "Frequent Vendor / Partner";
-            else if (categoryVal === "Contractor") catMatch = vCat === "Contractor" || v.purpose === "Maintenance";
-            else if (categoryVal === "Delivery") catMatch = vCat === "Delivery Courier" || v.purpose === "Delivery";
-            else catMatch = vCat === "Regular Visitor";
+        if (categoryVal !== "all") {
+            const lowerPurpose = (v.purpose || "").toLowerCase();
+            const lowerMasterId = (v.masterId || "").toLowerCase();
+            const lowerId = (v.id || "").toLowerCase();
+            
+            if (categoryVal === "Student") {
+                catMatch = lowerPurpose === "student" || lowerPurpose === "iv" || lowerMasterId.startsWith("stu") || lowerId.startsWith("stu") || (v.notes && v.notes.toLowerCase().includes("student"));
+            } else if (categoryVal === "Customer") {
+                catMatch = lowerPurpose === "customer" || lowerPurpose === "meeting" || lowerMasterId.startsWith("cust") || lowerId.startsWith("cust");
+            } else if (categoryVal === "Vendor") {
+                catMatch = lowerPurpose === "vendor" || lowerMasterId.startsWith("vnd") || lowerId.startsWith("vnd");
+            } else if (categoryVal === "Contractor") {
+                catMatch = lowerPurpose === "contractor" || lowerMasterId.startsWith("cnt") || lowerId.startsWith("cnt");
+            } else if (categoryVal === "Delivery") {
+                catMatch = lowerPurpose === "delivery" || lowerMasterId.startsWith("dlv") || lowerId.startsWith("dlv");
+            } else {
+                catMatch = !["student", "customer", "vendor", "contractor", "delivery"].includes(lowerPurpose);
+            }
         }
 
         let deptMatch = true;
@@ -2967,20 +3153,56 @@ function renderReportsData() {
     if (activeEl) activeEl.innerText = reportsFilteredData.filter(v => v.status === "Checked In").length;
     if (checkoutEl) checkoutEl.innerText = reportsFilteredData.filter(v => v.status === "Checked Out").length;
 
+    // Toggle reports widgets based on role
+    const repSummary = document.querySelector(".report-summary-boxes");
+    if (repSummary) {
+        if (isGatekeeper) repSummary.classList.add("hidden");
+        else repSummary.classList.remove("hidden");
+    }
+    const repLayout = document.querySelector(".reports-layout");
+    if (repLayout) {
+        if (isGatekeeper) repLayout.classList.add("hidden");
+        else repLayout.classList.remove("hidden");
+    }
+    const insightsCard = document.getElementById("reports-ai-insights")?.closest(".dashboard-card");
+    if (insightsCard) {
+        if (isGatekeeper) insightsCard.classList.add("hidden");
+        else insightsCard.classList.remove("hidden");
+    }
+    const exportHeader = document.querySelector("#view-reports .card-header .flex.gap-2");
+    if (exportHeader) {
+        if (isGatekeeper) exportHeader.classList.add("hidden");
+        else exportHeader.classList.remove("hidden");
+    }
+
     if (tableTitle) tableTitle.innerText = `Audit logs matching queries (${reportsFilteredData.length} records found)`;
     if (tableHead) {
-        tableHead.innerHTML = `
-            <tr>
-                <th>Visitor ID</th>
-                <th>Visitor Name</th>
-                <th>Company</th>
-                <th>Host Employee</th>
-                <th>Visit Date</th>
-                <th>Check-In</th>
-                <th>Check-Out</th>
-                <th>Status</th>
-            </tr>
-        `;
+        if (isGatekeeper) {
+            tableHead.innerHTML = `
+                <tr>
+                    <th>Visitor Name</th>
+                    <th>Visitor Type</th>
+                    <th>Host</th>
+                    <th>Check-In Time</th>
+                    <th>Check-Out Time</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            `;
+        } else {
+            tableHead.innerHTML = `
+                <tr>
+                    <th>Visitor ID</th>
+                    <th>Visitor Name</th>
+                    <th>Company</th>
+                    <th>Host Employee</th>
+                    <th>Visit Date</th>
+                    <th>Check-In</th>
+                    <th>Check-Out</th>
+                    <th>Status</th>
+                </tr>
+            `;
+        }
     }
 
     tableBody.innerHTML = "";
@@ -3005,7 +3227,11 @@ function renderReportsData() {
 
     if (totalRecords === 0) {
         pagEl.innerHTML = `<span>Showing 0 to 0 of 0 entries</span>`;
-        tableBody.innerHTML = `<tr><td colspan="8" class="empty-state" style="text-align:center; padding:2rem;">No visitor audit logs match the current query criteria.</td></tr>`;
+        if (isGatekeeper) {
+            tableBody.innerHTML = `<tr><td colspan="7" class="empty-state" style="text-align:center; padding:2rem;">No visitor audit logs match the current query criteria.</td></tr>`;
+        } else {
+            tableBody.innerHTML = `<tr><td colspan="8" class="empty-state" style="text-align:center; padding:2rem;">No visitor audit logs match the current query criteria.</td></tr>`;
+        }
     } else {
         pagEl.innerHTML = `
             <span>Showing ${startIdx + 1} to ${endIdx} of ${totalRecords} entries</span>
@@ -3030,16 +3256,38 @@ function renderReportsData() {
 
         visibleData.forEach(v => {
             const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td><code>${v.id}</code></td>
-                <td><strong>${v.name}</strong></td>
-                <td>${v.company || "Private Guest"}</td>
-                <td>${v.hostName} (${v.hostDept})</td>
-                <td>${v.visitDate}</td>
-                <td>${v.checkIn ? new Date(v.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '?'}</td>
-                <td>${v.checkOut ? new Date(v.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '?'}</td>
-                <td><span class="badge-status ${v.status.toLowerCase()}">${v.status}</span></td>
-            `;
+            if (isGatekeeper) {
+                let vType = v.purpose || "Regular";
+                if (vType === "IV" || vType === "Student") vType = "Student";
+                else if (vType === "Meeting" || vType === "Customer") vType = "Customer";
+                else if (vType === "Vendor") vType = "Vendor";
+
+                let statusBadgeClass = "pending";
+                if (vType === "Student") statusBadgeClass = "pending";
+                else if (vType === "Customer") statusBadgeClass = "checked-in";
+                else if (vType === "Vendor") statusBadgeClass = "expected";
+
+                tr.innerHTML = `
+                    <td><strong>${v.name}</strong></td>
+                    <td><span class="badge-status ${statusBadgeClass}">${vType}</span></td>
+                    <td>${v.hostName || "-"}</td>
+                    <td>${v.checkIn ? new Date(v.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+                    <td>${v.checkOut ? new Date(v.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
+                    <td><span class="badge-status ${v.status.toLowerCase()}">${v.status}</span></td>
+                    <td>${v.visitDate || "-"}</td>
+                `;
+            } else {
+                tr.innerHTML = `
+                    <td><code>${v.id}</code></td>
+                    <td><strong>${v.name}</strong></td>
+                    <td>${v.company || "Private Guest"}</td>
+                    <td>${v.hostName} (${v.hostDept})</td>
+                    <td>${v.visitDate}</td>
+                    <td>${v.checkIn ? new Date(v.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '?'}</td>
+                    <td>${v.checkOut ? new Date(v.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '?'}</td>
+                    <td><span class="badge-status ${v.status.toLowerCase()}">${v.status}</span></td>
+                `;
+            }
             tableBody.appendChild(tr);
         });
     }
@@ -5033,7 +5281,9 @@ function mapVisitorToDb(v) {
         photo_id_doc: v.photoIdDoc,
         approve_token: v.approveToken,
         reject_token: v.rejectToken,
-        branch: v.branch
+        branch: v.branch,
+        start_date: v.startDate || null,
+        end_date: v.endDate || null
     };
 }
 
@@ -5062,7 +5312,24 @@ function mapVisitorFromDb(row) {
         photoIdDoc: row.photo_id_doc,
         approveToken: row.approve_token,
         rejectToken: row.reject_token,
-        branch: row.branch
+        branch: row.branch,
+        startDate: row.start_date || null,
+        endDate: row.end_date || null
+    };
+}
+
+function mapStudentToDb(s) {
+    return {
+        student_id: s.studentId,
+        name: s.name,
+        phone: s.phone,
+        email: s.email,
+        college: s.college,
+        department: s.department,
+        roll_number: s.rollNumber,
+        photo: s.photo,
+        start_date: s.startDate || null,
+        end_date: s.endDate || null
     };
 }
 
@@ -5511,6 +5778,15 @@ async function pushLocalToSupabase() {
             const dbVisitors = state.visitors.map(mapVisitorToDb);
             const { error: visErr } = await supabaseClient.from('visitors').upsert(dbVisitors, { onConflict: 'visitor_code' });
             if (visErr) throw new Error("Visitors upsert: " + visErr.message);
+        }
+
+        // Upsert students
+        if (state.studentMaster && state.studentMaster.length > 0) {
+            const dbStudents = state.studentMaster.map(mapStudentToDb);
+            const { error: stuErr } = await supabaseClient.from('students').upsert(dbStudents, { onConflict: 'student_id' });
+            if (stuErr) {
+                console.error("Students upsert error:", stuErr);
+            }
         }
 
         // Upsert purchase manuals
@@ -7389,6 +7665,13 @@ function resetCategoryFormState(category) {
         document.getElementById("reg-student-college").readOnly = false;
         document.getElementById("reg-student-dept").readOnly = false;
         document.getElementById("reg-student-rollno").readOnly = false;
+        if (document.getElementById("reg-student-start-date")) {
+            document.getElementById("reg-student-start-date").readOnly = false;
+        }
+        if (document.getElementById("reg-student-end-date")) {
+            document.getElementById("reg-student-end-date").readOnly = false;
+        }
+        document.querySelectorAll(".suggestions-box").forEach(s => { s.innerHTML = ""; s.style.display = "none"; });
         const uploadBtn = document.getElementById("student-id-doc-label");
         if (uploadBtn) uploadBtn.innerText = "Upload College ID";
     } else if (category === "customer") {
@@ -7429,6 +7712,14 @@ window.lookupStudentProfile = function () {
         document.getElementById("reg-student-dept").readOnly = true;
         document.getElementById("reg-student-rollno").value = match.rollNumber;
         document.getElementById("reg-student-rollno").readOnly = true;
+        if (match.startDate) {
+            document.getElementById("reg-student-start-date").value = match.startDate;
+            document.getElementById("reg-student-start-date").readOnly = true;
+        }
+        if (match.endDate) {
+            document.getElementById("reg-student-end-date").value = match.endDate;
+            document.getElementById("reg-student-end-date").readOnly = true;
+        }
 
         if (match.photo) {
             const preview = document.getElementById("photo-preview-student");
@@ -7580,6 +7871,8 @@ window.handleStudentRegistrationSubmit = function (e) {
                 college,
                 department,
                 rollNumber,
+                startDate,
+                endDate,
                 photo: state.tempVisitorPhoto || "",
                 photoIdDoc: state.tempVisitorIdDoc || "",
                 qrCodeData: studentId,
@@ -7605,6 +7898,8 @@ window.handleStudentRegistrationSubmit = function (e) {
         numVisitors: 1,
         idType: "College ID",
         idNumber: rollNumber,
+        startDate,
+        endDate,
         hostId: matchedHost.id,
         hostName: matchedHost.name,
         hostDept: matchedHost.dept,
@@ -8035,53 +8330,64 @@ function renderCategoryRecordsTable() {
     let records = [];
 
     if (currentViewCategory === "student") {
-        headers = ["ID", "Name", "Phone", "College", "Roll No", "Course", "QR Code"];
-        records = state.studentMaster.filter(r =>
-            r.studentId.toLowerCase().includes(searchKeyword) ||
-            r.name.toLowerCase().includes(searchKeyword) ||
-            r.phone.toLowerCase().includes(searchKeyword) ||
-            r.college.toLowerCase().includes(searchKeyword) ||
-            r.rollNumber.toLowerCase().includes(searchKeyword)
+        headers = ["ID", "Student Name", "Company/College", "Phone Number", "Purpose", "Start Date", "End Date", "Check In", "Check Out"];
+        records = state.visitors.filter(r =>
+            (r.purpose === "Student" || (r.masterId && r.masterId.startsWith("STU"))) &&
+            ((r.id && r.id.toLowerCase().includes(searchKeyword)) ||
+             (r.name && r.name.toLowerCase().includes(searchKeyword)) ||
+             (r.phone && r.phone.toLowerCase().includes(searchKeyword)) ||
+             (r.company && r.company.toLowerCase().includes(searchKeyword)))
         ).map(r => ({
-            id: r.studentId,
-            col1: r.name,
-            col2: r.phone,
-            col3: r.college,
-            col4: r.rollNumber,
-            col5: r.department,
-            qr: r.qrCodeData
+            id: r.id,
+            cols: [
+                r.name,
+                r.company,
+                r.phone,
+                r.purpose,
+                r.startDate || "-",
+                r.endDate || "-",
+                r.checkIn ? new Date(r.checkIn).toLocaleString() : "-",
+                r.checkOut ? new Date(r.checkOut).toLocaleString() : (r.checkIn ? "Inside Campus" : "-")
+            ],
+            qr: r.masterId || r.id
         }));
     } else if (currentViewCategory === "customer") {
-        headers = ["ID", "Name", "Phone", "Company", "Email", "QR Code"];
-        records = state.customerMaster.filter(r =>
-            r.customerId.toLowerCase().includes(searchKeyword) ||
-            r.name.toLowerCase().includes(searchKeyword) ||
-            r.phone.toLowerCase().includes(searchKeyword) ||
-            r.company.toLowerCase().includes(searchKeyword)
+        headers = ["ID", "Customer Name", "Company", "Phone Number", "Check In", "Check Out"];
+        records = state.visitors.filter(r =>
+            (r.purpose === "Customer" || (r.masterId && r.masterId.startsWith("CUST"))) &&
+            ((r.id && r.id.toLowerCase().includes(searchKeyword)) ||
+             (r.name && r.name.toLowerCase().includes(searchKeyword)) ||
+             (r.phone && r.phone.toLowerCase().includes(searchKeyword)) ||
+             (r.company && r.company.toLowerCase().includes(searchKeyword)))
         ).map(r => ({
-            id: r.customerId,
-            col1: r.name,
-            col2: r.phone,
-            col3: r.company,
-            col4: r.email,
-            col5: "",
-            qr: r.qrCodeData
+            id: r.id,
+            cols: [
+                r.name,
+                r.company,
+                r.phone,
+                r.checkIn ? new Date(r.checkIn).toLocaleString() : "-",
+                r.checkOut ? new Date(r.checkOut).toLocaleString() : (r.checkIn ? "Inside Campus" : "-")
+            ],
+            qr: r.masterId || r.id
         }));
     } else if (currentViewCategory === "vendor") {
-        headers = ["ID", "Name", "Phone", "Company", "Reg Date"];
-        records = state.vendorMaster.filter(r =>
-            r.vendorId.toLowerCase().includes(searchKeyword) ||
-            r.name.toLowerCase().includes(searchKeyword) ||
-            r.phone.toLowerCase().includes(searchKeyword) ||
-            r.company.toLowerCase().includes(searchKeyword)
+        headers = ["ID", "Vendor Name", "Company", "Phone Number", "Check In", "Check Out"];
+        records = state.visitors.filter(r =>
+            (r.purpose === "Vendor" || (r.masterId && r.masterId.startsWith("VND"))) &&
+            ((r.id && r.id.toLowerCase().includes(searchKeyword)) ||
+             (r.name && r.name.toLowerCase().includes(searchKeyword)) ||
+             (r.phone && r.phone.toLowerCase().includes(searchKeyword)) ||
+             (r.company && r.company.toLowerCase().includes(searchKeyword)))
         ).map(r => ({
-            id: r.vendorId,
-            col1: r.name,
-            col2: r.phone,
-            col3: r.company,
-            col4: r.dateRegistered,
-            col5: "",
-            qr: ""
+            id: r.id,
+            cols: [
+                r.name,
+                r.company,
+                r.phone,
+                r.checkIn ? new Date(r.checkIn).toLocaleString() : "-",
+                r.checkOut ? new Date(r.checkOut).toLocaleString() : (r.checkIn ? "Inside Campus" : "-")
+            ],
+            qr: r.masterId || r.id
         }));
     } else if (currentViewCategory === "contractor") {
         headers = ["ID", "Name", "Phone", "Agency", "Reg Date"];
@@ -8092,11 +8398,7 @@ function renderCategoryRecordsTable() {
             r.company.toLowerCase().includes(searchKeyword)
         ).map(r => ({
             id: r.contractorId,
-            col1: r.name,
-            col2: r.phone,
-            col3: r.company,
-            col4: r.dateRegistered,
-            col5: "",
+            cols: [r.name, r.phone, r.company, r.dateRegistered],
             qr: ""
         }));
     } else if (currentViewCategory === "delivery") {
@@ -8108,11 +8410,7 @@ function renderCategoryRecordsTable() {
             r.agency.toLowerCase().includes(searchKeyword)
         ).map(r => ({
             id: r.deliveryId,
-            col1: r.name,
-            col2: r.phone,
-            col3: r.agency,
-            col4: r.dateRegistered,
-            col5: "",
+            cols: [r.name, r.phone, r.agency, r.dateRegistered],
             qr: ""
         }));
     } else if (currentViewCategory === "service-engineer") {
@@ -8124,11 +8422,7 @@ function renderCategoryRecordsTable() {
             r.company.toLowerCase().includes(searchKeyword)
         ).map(r => ({
             id: r.engineerId,
-            col1: r.name,
-            col2: r.phone,
-            col3: r.company,
-            col4: r.dateRegistered,
-            col5: "",
+            cols: [r.name, r.phone, r.company, r.dateRegistered],
             qr: ""
         }));
     }
