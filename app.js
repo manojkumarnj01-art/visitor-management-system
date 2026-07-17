@@ -883,6 +883,8 @@ const DEFAULT_WORK_PERMITS = [
     }
 ];
 
+window.lastMatchedVisitor = { student: null, customer: null, vendor: null };
+
 // App State Store
 let state = {
     employees: [],
@@ -1241,9 +1243,9 @@ function checkAuthSession() {
         const isGatekeeper = role === "gatekeeper" || role === "security gatekeeper";
         const isReception = role === "reception" || role === "front desk operator";
 
-        // Redirect gatekeeper on login
-        if (isGatekeeper) {
-            if (state.activeView !== "view-dashboard" && state.activeView !== "view-reports") {
+        // Redirect on login
+        if (isAdmin || isGatekeeper || isReception) {
+            if (!state.activeView || state.activeView === "view-reports" || state.activeView === "view-registration") {
                 state.activeView = "view-dashboard";
                 saveState();
             }
@@ -1339,12 +1341,12 @@ function switchView(viewId) {
             "danger"
         );
         const defaultViews = {
-            "Administrator": "view-reports",
-            "Security Gatekeeper": "view-registration",
-            "gatekeeper": "view-registration",
-            "Front Desk Operator": "view-registration"
+            "Administrator": "view-dashboard",
+            "Security Gatekeeper": "view-dashboard",
+            "gatekeeper": "view-dashboard",
+            "Front Desk Operator": "view-dashboard"
         };
-        const fallback = defaultViews[state.currentUser ? state.currentUser.role : ""] || "view-registration";
+        const fallback = defaultViews[state.currentUser ? state.currentUser.role : ""] || "view-dashboard";
         state.activeView = fallback;
         switchView(fallback);
         return;
@@ -1475,6 +1477,9 @@ function setupEventListeners() {
             } else if (target === "reg-vendor") {
                 switchView("view-dashboard");
                 window.openCategoryForm("vendor");
+            } else if (target === "view-dashboard") {
+                switchView("view-dashboard");
+                window.showRegistrationDashboard();
             } else if (target === "check-in") {
                 switchView("view-registration");
                 const btn = document.getElementById("btn-select-visitor-flow");
@@ -1742,6 +1747,7 @@ function setupEventListeners() {
 
     // Wire up Employee Entry and ID Proof Document Upload handlers
     setupEmployeeEntryAndDocUpload();
+    bindAutoSearchListeners();
 }
 
 // 3. User Authentication Submit Controller
@@ -7463,8 +7469,8 @@ window.showRegistrationDashboard = function () {
 };
 
 window.openCategoryForm = function (category) {
-    // Hide dashboard and all other wrappers
-    document.getElementById("registration-dashboard-wrapper").classList.add("hidden");
+    // Keep dashboard cards visible, hide other forms and records viewer
+    document.getElementById("registration-dashboard-wrapper").classList.remove("hidden");
     document.getElementById("student-registration-wrapper").classList.add("hidden");
     document.getElementById("customer-registration-wrapper").classList.add("hidden");
     document.getElementById("vendor-registration-wrapper").classList.add("hidden");
@@ -7608,6 +7614,50 @@ window.captureCategoryPhoto = function (category) {
     canvas.width = video.videoWidth || 640;
     canvas.height = video.videoHeight || 480;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+
+
+    let studentId = "";
+    const existing = state.studentMaster.find(s => s.phone === phone || s.rollNumber === rollNumber);
+
+    if (existing) {
+        studentId = existing.studentId;
+        // Update changed master details
+        existing.name = name;
+        existing.email = email || existing.email;
+        existing.college = college;
+        existing.department = department;
+        existing.rollNumber = rollNumber;
+        existing.startDate = startDate;
+        existing.endDate = endDate;
+        if (state.tempVisitorPhoto) {
+            existing.photo = state.tempVisitorPhoto;
+        }
+        saveState();
+        showToast("Returning Student", `Profile updated and visit created for ${existing.name}.`, "info");
+    } else {
+        // Genuinely new student — create master record
+        studentId = "STU" + (state.studentMaster.length + 10001);
+
+        const newStudent = {
+            studentId,
+            name,
+            phone,
+            email: email || `${name.toLowerCase().replace(/ /g, "")}@college.edu`,
+            college,
+            department,
+            rollNumber,
+            startDate,
+            endDate,
+            photo: state.tempVisitorPhoto || "",
+            photoIdDoc: state.tempVisitorIdDoc || "",
+            qrCodeData: studentId,
+            dateRegistered: getLocalDateStr()
+        };
+
+        state.studentMaster.push(newStudent);
+        saveState();
+    }
 
     const dataUrl = canvas.toDataURL("image/jpeg");
     state.tempVisitorPhoto = dataUrl; // save in state
@@ -7869,58 +7919,42 @@ window.handleStudentRegistrationSubmit = function (e) {
         return;
     }
 
-    const isLocked = document.getElementById("reg-student-name").readOnly;
     let studentId = "";
+    const existing = state.studentMaster.find(s => s.phone === phone || s.rollNumber === rollNumber);
 
-    if (isLocked) {
-        // Fields are locked — user searched first, just reuse the master record
-        const existing = state.studentMaster.find(s => s.phone === phone || s.rollNumber === rollNumber);
-        if (existing) {
-            studentId = existing.studentId;
-            // Refresh photo from master if not captured fresh
-            if (existing.photo && !state.tempVisitorPhoto) {
-                state.tempVisitorPhoto = existing.photo;
-            } else if (state.tempVisitorPhoto && state.tempVisitorPhoto !== existing.photo) {
-                existing.photo = state.tempVisitorPhoto;
-                saveState();
-            }
+    if (existing) {
+        studentId = existing.studentId;
+        existing.name = name;
+        existing.email = email || existing.email;
+        existing.college = college;
+        existing.department = department;
+        existing.rollNumber = rollNumber;
+        existing.startDate = startDate;
+        existing.endDate = endDate;
+        if (state.tempVisitorPhoto) {
+            existing.photo = state.tempVisitorPhoto;
         }
+        saveState();
+        showToast("Returning Student", `Profile updated and visit created for ${existing.name}.`, "info");
     } else {
-        // New manual entry — check for an existing profile by phone OR roll number
-        const existing = state.studentMaster.find(s => s.phone === phone || s.rollNumber === rollNumber);
-        if (existing) {
-            // Auto-load the existing profile instead of blocking
-            studentId = existing.studentId;
-            if (existing.photo && !state.tempVisitorPhoto) {
-                state.tempVisitorPhoto = existing.photo;
-            } else if (state.tempVisitorPhoto && state.tempVisitorPhoto !== existing.photo) {
-                existing.photo = state.tempVisitorPhoto;
-                saveState();
-            }
-            showToast("Returning Student", `Existing profile for ${existing.name} loaded automatically. Creating new visit.`, "info");
-        } else {
-            // Genuinely new student — create master record
-            studentId = "STU" + (state.studentMaster.length + 10001);
-
-            const newStudent = {
-                studentId,
-                name,
-                phone,
-                email: email || `${name.toLowerCase().replace(/ /g, "")}@college.edu`,
-                college,
-                department,
-                rollNumber,
-                startDate,
-                endDate,
-                photo: state.tempVisitorPhoto || "",
-                photoIdDoc: state.tempVisitorIdDoc || "",
-                qrCodeData: studentId,
-                dateRegistered: getLocalDateStr()
-            };
-
-            state.studentMaster.push(newStudent);
-            saveState();
-        }
+        studentId = "STU" + (state.studentMaster.length + 10001);
+        const newStudent = {
+            studentId,
+            name,
+            phone,
+            email: email || `${name.toLowerCase().replace(/ /g, "")}@college.edu`,
+            college,
+            department,
+            rollNumber,
+            startDate,
+            endDate,
+            photo: state.tempVisitorPhoto || "",
+            photoIdDoc: state.tempVisitorIdDoc || "",
+            qrCodeData: studentId,
+            dateRegistered: getLocalDateStr()
+        };
+        state.studentMaster.push(newStudent);
+        saveState();
     }
 
     const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
@@ -7977,51 +8011,33 @@ window.handleCustomerRegistrationSubmit = function (e) {
         return;
     }
 
-    const isLocked = document.getElementById("reg-customer-name").readOnly;
-    let customerId = customerIdInput;
+    let customerId = "";
+    const existing = state.customerMaster.find(c => c.phone === phone || (customerIdInput && c.customerId === customerIdInput));
 
-    if (isLocked) {
-        // Fields are locked — user used Search Profile, reuse existing master record
-        const existing = state.customerMaster.find(c => c.phone === phone);
-        if (existing) {
-            customerId = existing.customerId;
-            if (existing.photo && !state.tempVisitorPhoto) {
-                state.tempVisitorPhoto = existing.photo;
-            } else if (state.tempVisitorPhoto && state.tempVisitorPhoto !== existing.photo) {
-                existing.photo = state.tempVisitorPhoto;
-                saveState();
-            }
+    if (existing) {
+        customerId = existing.customerId;
+        existing.name = name;
+        existing.email = email || existing.email;
+        existing.company = company;
+        if (state.tempVisitorPhoto) {
+            existing.photo = state.tempVisitorPhoto;
         }
+        saveState();
+        showToast("Returning Customer", `Profile updated and visit created for ${existing.name}.`, "info");
     } else {
-        // Manual entry — check if a customer with same phone or ID already exists
-        const existing = state.customerMaster.find(c => c.phone === phone || (customerId && c.customerId === customerId));
-        if (existing) {
-            // Auto-load instead of blocking
-            customerId = existing.customerId;
-            if (existing.photo && !state.tempVisitorPhoto) {
-                state.tempVisitorPhoto = existing.photo;
-            } else if (state.tempVisitorPhoto && state.tempVisitorPhoto !== existing.photo) {
-                existing.photo = state.tempVisitorPhoto;
-                saveState();
-            }
-            showToast("Returning Customer", `Existing profile for ${existing.name} loaded automatically. Creating new visit.`, "info");
-        } else {
-            // Genuinely new customer — create master record
-            if (!customerId) customerId = "CUST" + (state.customerMaster.length + 10001);
-            const newCustomer = {
-                customerId,
-                name,
-                phone,
-                email: email || `${name.toLowerCase().replace(/ /g, "")}@example.com`,
-                company,
-                photo: state.tempVisitorPhoto || "",
-                qrCodeData: customerId,
-                dateRegistered: getLocalDateStr()
-            };
-
-            state.customerMaster.push(newCustomer);
-            saveState();
-        }
+        customerId = customerIdInput || "CUST" + (state.customerMaster.length + 10001);
+        const newCustomer = {
+            customerId,
+            name,
+            phone,
+            email: email || `${name.toLowerCase().replace(/ /g, "")}@example.com`,
+            company,
+            photo: state.tempVisitorPhoto || "",
+            qrCodeData: customerId,
+            dateRegistered: getLocalDateStr()
+        };
+        state.customerMaster.push(newCustomer);
+        saveState();
     }
 
     const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
@@ -8076,14 +8092,16 @@ window.handleVendorRegistrationSubmit = function (e) {
 
     let vendorId = "";
     const existing = state.vendorMaster.find(v => v.phone === phone);
+
     if (existing) {
         vendorId = existing.vendorId;
-        if (existing.photo && !state.tempVisitorPhoto) {
-            state.tempVisitorPhoto = existing.photo;
-        } else if (state.tempVisitorPhoto && state.tempVisitorPhoto !== existing.photo) {
+        existing.name = name;
+        existing.company = company;
+        if (state.tempVisitorPhoto) {
             existing.photo = state.tempVisitorPhoto;
-            saveState();
         }
+        saveState();
+        showToast("Returning Vendor", `Profile updated and visit created for ${existing.name}.`, "info");
     } else {
         vendorId = "VND" + (state.vendorMaster.length + 10001);
         const newVendor = {
@@ -9674,18 +9692,14 @@ window.setupPhotoChoiceListeners = function(category) {
             btnExisting.className = "btn btn-success btn-xs";
             if (btnNew) btnNew.className = "btn btn-secondary btn-xs";
 
-            const results = window.lastSearchResults[category];
-            if (results && results.size > 0) {
-                const firstKey = Array.from(results.keys())[0];
-                const visitor = results.get(firstKey);
-                if (visitor && visitor.raw.photo) {
-                    const preview = document.getElementById(`photo-preview-${category}`);
-                    if (preview) preview.src = visitor.raw.photo;
-                    state.tempVisitorPhoto = visitor.raw.photo;
-                    
-                    const status = document.getElementById(`camera-status-${category}`);
-                    if (status) status.textContent = "Using Existing Photo";
-                }
+            const visitor = window.lastMatchedVisitor && window.lastMatchedVisitor[category];
+            if (visitor && visitor.photo) {
+                const preview = document.getElementById(`photo-preview-${category}`);
+                if (preview) preview.src = visitor.photo;
+                state.tempVisitorPhoto = visitor.photo;
+                
+                const status = document.getElementById(`camera-status-${category}`);
+                if (status) status.textContent = "Using Existing Photo";
             }
 
             if (state.cameraStream) {
@@ -9712,4 +9726,256 @@ window.setupPhotoChoiceListeners = function(category) {
             initCategoryCamera(category);
         });
     }
+};
+
+window.bindAutoSearchListeners = function() {
+    const categories = ["student", "customer", "vendor"];
+    categories.forEach(cat => {
+        const input = document.getElementById(`search-visitor-${cat}`);
+        if (input) {
+            input.addEventListener("input", async (e) => {
+                const val = e.target.value.trim();
+                await handleInstantVisitorSearch(cat, val);
+            });
+        }
+    });
+};
+
+async function handleInstantVisitorSearch(category, queryVal) {
+    const statusBadge = document.getElementById(`search-status-badge-${category}`);
+    if (!queryVal || queryVal.length < 3) {
+        if (statusBadge) {
+            statusBadge.style.display = "none";
+        }
+        unlockCategoryFormFields(category);
+        clearCategoryFormFields(category);
+        return;
+    }
+
+    let match = null;
+
+    // Search local master arrays
+    const qLower = queryVal.toLowerCase();
+    if (category === "student") {
+        match = state.studentMaster.find(s =>
+            (s.phone && s.phone.includes(queryVal)) ||
+            (s.rollNumber && s.rollNumber.toLowerCase().includes(qLower)) ||
+            (s.studentId && s.studentId.toLowerCase().includes(qLower))
+        );
+    } else if (category === "customer") {
+        match = state.customerMaster.find(c =>
+            (c.phone && c.phone.includes(queryVal)) ||
+            (c.customerId && c.customerId.toLowerCase().includes(qLower))
+        );
+    } else if (category === "vendor") {
+        match = state.vendorMaster.find(v =>
+            (v.phone && v.phone.includes(queryVal)) ||
+            (v.vendorId && v.vendorId.toLowerCase().includes(qLower))
+        );
+    }
+
+    // Search state.visitors (local log list) if not found in master
+    if (!match && state.visitors) {
+        match = state.visitors.find(v =>
+            (v.phone && v.phone.includes(queryVal)) ||
+            (v.idNumber && v.idNumber.toLowerCase().includes(qLower)) ||
+            (v.id && v.id.toLowerCase().includes(qLower))
+        );
+    }
+
+    // Search Supabase instantly
+    if (!match && supabaseClient) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('visitors')
+                .select('*')
+                .or(`phone.eq.${queryVal},id_number.eq.${queryVal},visitor_code.eq.${queryVal}`)
+                .limit(1);
+            if (!error && data && data.length > 0) {
+                match = mapVisitorFromDb(data[0]);
+            }
+        } catch (err) {
+            console.error("Supabase search error:", err);
+        }
+    }
+
+    if (match) {
+        window.lastMatchedVisitor[category] = match;
+        // Automatically fill the fields
+        autoFillVisitorFields(category, match);
+
+        if (statusBadge) {
+            statusBadge.style.display = "block";
+            statusBadge.style.backgroundColor = "rgba(22, 163, 74, 0.1)";
+            statusBadge.style.color = "var(--accent-success)";
+            statusBadge.innerHTML = `✅ Existing Visitor Found<br><span style="font-size: 0.75rem; font-weight: normal; color: var(--text-secondary);">Information loaded successfully.</span>`;
+        }
+
+        // Allow Replace Photo button if needed
+        const photoOptions = document.getElementById(`photo-options-${category}`);
+        if (photoOptions) {
+            photoOptions.classList.remove("hidden");
+        }
+    } else {
+        // No match found
+        unlockCategoryFormFields(category);
+        if (statusBadge) {
+            statusBadge.style.display = "block";
+            statusBadge.style.backgroundColor = "rgba(37, 99, 235, 0.1)";
+            statusBadge.style.color = "var(--accent-primary)";
+            statusBadge.innerHTML = `🆕 New Visitor<br><span style="font-size: 0.75rem; font-weight: normal; color: var(--text-secondary);">Complete the remaining details.</span>`;
+        }
+    }
+}
+
+function autoFillVisitorFields(category, v) {
+    if (category === "student") {
+        document.getElementById("reg-student-name").value = v.name || "";
+        document.getElementById("reg-student-phone").value = v.phone || "";
+        document.getElementById("reg-student-email").value = v.email || "";
+        document.getElementById("reg-student-college").value = v.company || v.college || "";
+        document.getElementById("reg-student-dept").value = v.hostDept || v.department || "";
+        document.getElementById("reg-student-rollno").value = v.idNumber || v.rollNumber || "";
+        if (v.purpose) document.getElementById("reg-student-purpose").value = v.purpose;
+        document.getElementById("reg-student-host").value = v.hostName || "";
+        
+        if (v.photo) {
+            const preview = document.getElementById("photo-preview-student");
+            if (preview) preview.src = v.photo;
+            state.tempVisitorPhoto = v.photo;
+            const status = document.getElementById("camera-status-student");
+            if (status) status.textContent = "Profile Photo Loaded";
+        }
+    } else if (category === "customer") {
+        document.getElementById("reg-customer-name").value = v.name || "";
+        document.getElementById("reg-customer-phone").value = v.phone || "";
+        document.getElementById("reg-customer-email").value = v.email || "";
+        document.getElementById("reg-customer-company").value = v.company || "";
+        document.getElementById("reg-customer-id").value = v.masterId || v.customerId || "";
+        if (v.purpose) document.getElementById("reg-customer-purpose").value = v.purpose;
+        if (v.idType) document.getElementById("reg-customer-id-type").value = v.idType;
+        document.getElementById("reg-customer-id-number").value = v.idNumber || "";
+        document.getElementById("reg-customer-vehicle").value = v.vehicle || "";
+        document.getElementById("reg-customer-host").value = v.hostName || "";
+
+        if (v.photo) {
+            const preview = document.getElementById("photo-preview-customer");
+            if (preview) preview.src = v.photo;
+            state.tempVisitorPhoto = v.photo;
+            const status = document.getElementById("camera-status-customer");
+            if (status) status.textContent = "Profile Photo Loaded";
+        }
+    } else if (category === "vendor") {
+        document.getElementById("reg-vendor-name").value = v.name || "";
+        document.getElementById("reg-vendor-phone").value = v.phone || "";
+        document.getElementById("reg-vendor-company").value = v.company || "";
+        document.getElementById("reg-vendor-invoice").value = v.address || v.invoice || "";
+        if (v.idType) document.getElementById("reg-vendor-id-type").value = v.idType;
+        document.getElementById("reg-vendor-id-number").value = v.idNumber || "";
+        document.getElementById("reg-vendor-vehicle").value = v.vehicle || "";
+        document.getElementById("reg-vendor-host").value = v.hostName || "";
+
+        if (v.photo) {
+            const preview = document.getElementById("photo-preview-vendor");
+            if (preview) preview.src = v.photo;
+            state.tempVisitorPhoto = v.photo;
+            const status = document.getElementById("camera-status-vendor");
+            if (status) status.textContent = "Profile Photo Loaded";
+        }
+    }
+
+    // Call history display function for this category & visitor
+    window.displayPreviousVisitHistory(category, v);
+}
+
+function clearCategoryFormFields(category) {
+    const fields = {
+        student: ["reg-student-name", "reg-student-phone", "reg-student-email", "reg-student-college", "reg-student-dept", "reg-student-rollno", "reg-student-purpose", "reg-student-host"],
+        customer: ["reg-customer-name", "reg-customer-phone", "reg-customer-email", "reg-customer-company", "reg-customer-id", "reg-customer-purpose", "reg-customer-id-type", "reg-customer-id-number", "reg-customer-vehicle", "reg-customer-host"],
+        vendor: ["reg-vendor-name", "reg-vendor-phone", "reg-vendor-company", "reg-vendor-invoice", "reg-vendor-id-type", "reg-vendor-id-number", "reg-vendor-vehicle", "reg-vendor-host"]
+    };
+
+    fields[category].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+    });
+
+    const preview = document.getElementById(`photo-preview-${category}`);
+    if (preview) {
+        preview.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>";
+    }
+    state.tempVisitorPhoto = "";
+    const status = document.getElementById(`camera-status-${category}`);
+    if (status) status.textContent = "Camera Inactive";
+
+    const historyWrapper = document.getElementById(`visit-history-${category}-wrapper`);
+    if (historyWrapper) historyWrapper.classList.add("hidden");
+}
+
+function unlockCategoryFormFields(category) {
+    const fields = {
+        student: ["reg-student-name", "reg-student-phone", "reg-student-email", "reg-student-college", "reg-student-dept", "reg-student-rollno"],
+        customer: ["reg-customer-name", "reg-customer-phone", "reg-customer-email", "reg-customer-company", "reg-customer-id"],
+        vendor: ["reg-vendor-name", "reg-vendor-phone", "reg-vendor-company", "reg-vendor-invoice"]
+    };
+
+    fields[category].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.readOnly = false;
+    });
+}
+
+window.displayPreviousVisitHistory = function(category, matchedVisitor) {
+    const phone = matchedVisitor.phone;
+    const masterId = matchedVisitor.masterId || matchedVisitor.studentId || matchedVisitor.customerId || matchedVisitor.vendorId || matchedVisitor.visitor_code || matchedVisitor.id;
+
+    if (!state.visitors) return;
+
+    const history = state.visitors.filter(v => 
+        (v.phone && v.phone === phone) || 
+        (v.masterId && v.masterId === masterId)
+    );
+
+    // Compute stats
+    const totalVisits = history.length;
+
+    // Find last check-in / check-out times
+    const checkIns = history.map(h => h.checkIn).filter(Boolean).sort((a,b) => b.localeCompare(a));
+    const checkOuts = history.map(h => h.checkOut).filter(Boolean).sort((a,b) => b.localeCompare(a));
+
+    const lastCheckIn = checkIns[0] ? new Date(checkIns[0]).toLocaleString() : "-";
+    const lastCheckOut = checkOuts[0] ? new Date(checkOuts[0]).toLocaleString() : "-";
+
+    const tbody = document.getElementById(`visit-history-${category}-list`);
+    const container = document.getElementById(`visit-history-${category}-wrapper`);
+
+    if (!tbody || !container) return;
+
+    tbody.innerHTML = "";
+    if (history.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;" class="text-secondary">No previous visit history found.</td></tr>`;
+    } else {
+        history.forEach(h => {
+            const tr = document.createElement("tr");
+            const photoSrc = h.photo || matchedVisitor.photo || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>";
+            const visitDate = h.visitDate || "-";
+            const statusLabel = h.status || "Pending";
+
+            tr.innerHTML = `
+                <td><img src="${photoSrc}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;"></td>
+                <td><strong>${h.name}</strong></td>
+                <td>${h.phone}</td>
+                <td>${h.company || h.college || "-"}</td>
+                <td>${h.hostName || "-"}</td>
+                <td><span class="text-xs">${visitDate}</span></td>
+                <td><span class="badge-status ${statusLabel.toLowerCase().replace(/ /g, "-")}">${statusLabel}</span></td>
+                <td>${totalVisits}</td>
+                <td><span class="text-xs">${lastCheckIn}</span></td>
+                <td><span class="text-xs">${lastCheckOut}</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    container.classList.remove("hidden");
 };

@@ -2188,6 +2188,17 @@ input:focus, select:focus, textarea:focus {
 .summary-value.visitors-today { color: var(--accent-info, #0ea5e9); }
 .summary-value.in-campus { color: var(--accent-success, #10b981); }
 
+@media (max-width: 1024px) {
+    .registration-dashboard-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+@media (max-width: 640px) {
+    .registration-dashboard-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
 
 
 
