@@ -1233,7 +1233,7 @@ function checkAuthSession() {
             const target = link.getAttribute("data-target");
             
             if (isGatekeeper) {
-                if (target === "view-registration") {
+                if (target === "view-dashboard") {
                     link.classList.remove("hidden");
                     const textSpan = link.querySelector("span");
                     if (textSpan) textSpan.innerText = "Dashboard";
@@ -1249,7 +1249,7 @@ function checkAuthSession() {
                 } else if (target === "view-reports") {
                     link.classList.remove("hidden");
                     const textSpan = link.querySelector("span");
-                    if (textSpan) textSpan.innerText = "Report";
+                    if (textSpan) textSpan.innerText = "Reports";
                     const svg = link.querySelector("svg");
                     if (svg) {
                         svg.innerHTML = `
@@ -1301,8 +1301,8 @@ function checkAuthSession() {
 
         // Redirect gatekeeper on login
         if (isGatekeeper) {
-            if (state.activeView !== "view-registration" && state.activeView !== "view-reports") {
-                state.activeView = "view-registration";
+            if (state.activeView !== "view-dashboard" && state.activeView !== "view-reports") {
+                state.activeView = "view-dashboard";
                 saveState();
             }
             
@@ -1330,6 +1330,19 @@ function checkAuthSession() {
         } else {
             const selector = document.querySelector(".entry-type-selector");
             if (selector) selector.classList.remove("hidden");
+            
+            // Ensure Employee Flow is default active in view-registration for other roles
+            const btnSelectVisitor = document.getElementById("btn-select-visitor-flow");
+            const btnSelectEmployee = document.getElementById("btn-select-employee-flow");
+            const employeeWrapper = document.getElementById("employee-entry-wrapper");
+            const visitorWrapper = document.getElementById("visitor-registration-wrapper");
+            
+            if (btnSelectEmployee && btnSelectVisitor) {
+                btnSelectEmployee.className = "btn btn-primary";
+                btnSelectVisitor.className = "btn btn-secondary";
+            }
+            if (employeeWrapper) employeeWrapper.classList.remove("hidden");
+            if (visitorWrapper) visitorWrapper.classList.add("hidden");
         }
 
         // Welcome subtitle greeting
@@ -1353,7 +1366,7 @@ function isViewAuthorized(viewId) {
     // Check if user is gatekeeper
     const isGatekeeper = role === "gatekeeper" || role === "security gatekeeper";
     if (isGatekeeper) {
-        return ["view-registration", "view-reports"].includes(viewId);
+        return ["view-dashboard", "view-reports"].includes(viewId);
     }
 
     // Otherwise, standard original checks for other roles
@@ -4140,17 +4153,14 @@ function setupEmployeeEntryAndDocUpload() {
 
     if (btnSelectVisitor && btnSelectEmployee) {
         btnSelectVisitor.addEventListener("click", () => {
-            btnSelectVisitor.className = "btn btn-primary";
-            btnSelectEmployee.className = "btn btn-secondary";
-            visitorWrapper.classList.remove("hidden");
-            employeeWrapper.classList.add("hidden");
+            switchView("view-dashboard");
         });
 
         btnSelectEmployee.addEventListener("click", () => {
             btnSelectEmployee.className = "btn btn-primary";
             btnSelectVisitor.className = "btn btn-secondary";
             employeeWrapper.classList.remove("hidden");
-            visitorWrapper.classList.add("hidden");
+            if (visitorWrapper) visitorWrapper.classList.add("hidden");
 
             // Populate the employee mock QR dropdown list
             populateEmployeeMockQRDropdown();
@@ -5239,6 +5249,15 @@ function initializeNewFeatures() {
     if (formWp) {
         formWp.addEventListener("submit", handleWorkPermitSubmit);
     }
+
+    // Initialize Smart Search and Auto Fill Features
+    setupFormSearchListeners("student");
+    setupFormSearchListeners("customer");
+    setupFormSearchListeners("vendor");
+
+    setupPhotoChoiceListeners("student");
+    setupPhotoChoiceListeners("customer");
+    setupPhotoChoiceListeners("vendor");
 
     // Initialize VMS Upgrades: Dashboard sensors, AI training, Reports Console & Session Tracker
     setupInteractiveDashboard();
@@ -7829,6 +7848,8 @@ window.handleStudentRegistrationSubmit = function (e) {
     const hostNameVal = document.getElementById("reg-student-host").value.trim();
     const visitDate = document.getElementById("reg-student-visit-date").value;
     const expectedExit = document.getElementById("reg-student-expected-exit").value;
+    const startDate = document.getElementById("reg-student-start-date").value;
+    const endDate = document.getElementById("reg-student-end-date").value;
 
     const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
     if (!matchedHost) {
@@ -7847,6 +7868,9 @@ window.handleStudentRegistrationSubmit = function (e) {
             // Refresh photo from master if not captured fresh
             if (existing.photo && !state.tempVisitorPhoto) {
                 state.tempVisitorPhoto = existing.photo;
+            } else if (state.tempVisitorPhoto && state.tempVisitorPhoto !== existing.photo) {
+                existing.photo = state.tempVisitorPhoto;
+                saveState();
             }
         }
     } else {
@@ -7857,6 +7881,9 @@ window.handleStudentRegistrationSubmit = function (e) {
             studentId = existing.studentId;
             if (existing.photo && !state.tempVisitorPhoto) {
                 state.tempVisitorPhoto = existing.photo;
+            } else if (state.tempVisitorPhoto && state.tempVisitorPhoto !== existing.photo) {
+                existing.photo = state.tempVisitorPhoto;
+                saveState();
             }
             showToast("Returning Student", `Existing profile for ${existing.name} loaded automatically. Creating new visit.`, "info");
         } else {
@@ -7948,6 +7975,9 @@ window.handleCustomerRegistrationSubmit = function (e) {
             customerId = existing.customerId;
             if (existing.photo && !state.tempVisitorPhoto) {
                 state.tempVisitorPhoto = existing.photo;
+            } else if (state.tempVisitorPhoto && state.tempVisitorPhoto !== existing.photo) {
+                existing.photo = state.tempVisitorPhoto;
+                saveState();
             }
         }
     } else {
@@ -7958,6 +7988,9 @@ window.handleCustomerRegistrationSubmit = function (e) {
             customerId = existing.customerId;
             if (existing.photo && !state.tempVisitorPhoto) {
                 state.tempVisitorPhoto = existing.photo;
+            } else if (state.tempVisitorPhoto && state.tempVisitorPhoto !== existing.photo) {
+                existing.photo = state.tempVisitorPhoto;
+                saveState();
             }
             showToast("Returning Customer", `Existing profile for ${existing.name} loaded automatically. Creating new visit.`, "info");
         } else {
@@ -8033,6 +8066,12 @@ window.handleVendorRegistrationSubmit = function (e) {
     const existing = state.vendorMaster.find(v => v.phone === phone);
     if (existing) {
         vendorId = existing.vendorId;
+        if (existing.photo && !state.tempVisitorPhoto) {
+            state.tempVisitorPhoto = existing.photo;
+        } else if (state.tempVisitorPhoto && state.tempVisitorPhoto !== existing.photo) {
+            existing.photo = state.tempVisitorPhoto;
+            saveState();
+        }
     } else {
         vendorId = "VND" + (state.vendorMaster.length + 10001);
         const newVendor = {
@@ -8040,6 +8079,7 @@ window.handleVendorRegistrationSubmit = function (e) {
             name,
             phone,
             company,
+            photo: state.tempVisitorPhoto || "",
             dateRegistered: getLocalDateStr()
         };
         state.vendorMaster.push(newVendor);
@@ -9301,3 +9341,354 @@ function initSessionTimeoutTracker() {
         showToast('WhatsApp Opened ↗', 'Redirecting to chat...', 'success');
     };
 }
+
+// ==========================================================================
+// Smart Existing Visitor Search & Auto-Fill Upgrades
+// ==========================================================================
+
+window.lastSearchResults = { student: new Map(), customer: new Map(), vendor: new Map() };
+
+function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+window.setupFormSearchListeners = function(category) {
+    const fields = [];
+    if (category === "student") {
+        fields.push("reg-student-name", "reg-student-phone", "reg-student-email", "reg-student-rollno");
+    } else if (category === "customer") {
+        fields.push("reg-customer-name", "reg-customer-phone", "reg-customer-email", "reg-customer-company", "reg-customer-id", "reg-customer-id-number");
+    } else if (category === "vendor") {
+        fields.push("reg-vendor-name", "reg-vendor-phone", "reg-vendor-company", "reg-vendor-id-number");
+    }
+
+    const onInput = debounce((e) => {
+        const val = e.target.value.trim();
+        const q = val.toLowerCase();
+        
+        if (q.length < 3) {
+            const container = document.getElementById(`search-results-${category}-wrapper`);
+            if (container) container.classList.add("hidden");
+            return;
+        }
+
+        const uniqueMatches = new Map();
+        
+        let masterList = [];
+        if (category === "student") masterList = state.studentMaster || [];
+        else if (category === "customer") masterList = state.customerMaster || [];
+        else if (category === "vendor") masterList = state.vendorMaster || [];
+
+        function isMatch(v) {
+            if (!v) return false;
+            const phone = (v.phone || "").toLowerCase();
+            const name = (v.name || "").toLowerCase();
+            const email = (v.email || "").toLowerCase();
+            const idNumber = (v.idNumber || v.rollNumber || "").toLowerCase();
+            const id = (v.id || v.masterId || v.studentId || v.customerId || v.vendorId || "").toLowerCase();
+            
+            return phone.includes(q) || name.includes(q) || email.includes(q) || idNumber.includes(q) || id.includes(q);
+        }
+
+        masterList.forEach(m => {
+            if (isMatch(m)) {
+                const key = m.phone || m.studentId || m.customerId || m.vendorId;
+                uniqueMatches.set(key, {
+                    name: m.name,
+                    phone: m.phone,
+                    email: m.email || "",
+                    category: category.charAt(0).toUpperCase() + category.slice(1),
+                    company: m.company || m.college || "",
+                    lastVisit: "Registered",
+                    status: "Master Profile",
+                    photo: m.photo || "",
+                    idNumber: m.idNumber || m.rollNumber || "",
+                    idType: m.idType || (category === "student" ? "College ID" : ""),
+                    raw: m
+                });
+            }
+        });
+
+        if (state.visitors) {
+            state.visitors.forEach(v => {
+                const isCategory = (category === "student" && (v.purpose === "Student" || (v.masterId && v.masterId.startsWith("STU")))) ||
+                                   (category === "customer" && (v.purpose === "Customer" || (v.masterId && v.masterId.startsWith("CUST")))) ||
+                                   (category === "vendor" && (v.purpose === "Vendor" || (v.masterId && v.masterId.startsWith("VND"))));
+                
+                if (isCategory && isMatch(v)) {
+                    const key = v.phone || v.masterId || v.id;
+                    const lastVisitDate = v.visitDate || (v.checkIn ? v.checkIn.substring(0, 10) : "");
+                    
+                    if (uniqueMatches.has(key)) {
+                        const existing = uniqueMatches.get(key);
+                        if (existing.lastVisit === "Registered" || new Date(lastVisitDate) > new Date(existing.lastVisit)) {
+                            existing.lastVisit = lastVisitDate;
+                            existing.status = v.status;
+                            if (v.photo && !existing.photo) {
+                                existing.photo = v.photo;
+                            }
+                            existing.raw = { ...existing.raw, ...v };
+                        }
+                    } else {
+                        uniqueMatches.set(key, {
+                            name: v.name,
+                            phone: v.phone,
+                            email: v.email || "",
+                            category: category.charAt(0).toUpperCase() + category.slice(1),
+                            company: v.company || "",
+                            lastVisit: lastVisitDate || "N/A",
+                            status: v.status || "N/A",
+                            photo: v.photo || "",
+                            idNumber: v.idNumber || "",
+                            idType: v.idType || "",
+                            raw: v
+                        });
+                    }
+                }
+            });
+        }
+
+        window.lastSearchResults[category] = uniqueMatches;
+
+        const tbody = document.getElementById(`search-results-${category}-list`);
+        const container = document.getElementById(`search-results-${category}-wrapper`);
+
+        if (!tbody || !container) return;
+
+        if (uniqueMatches.size === 0) {
+            container.classList.add("hidden");
+            return;
+        }
+
+        tbody.innerHTML = "";
+        uniqueMatches.forEach((visitor, key) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><strong>${visitor.name}</strong></td>
+                <td>${visitor.phone}</td>
+                <td><span class="badge-status active" style="font-size:0.65rem;">${visitor.category}</span></td>
+                <td>${visitor.company}</td>
+                <td>${visitor.lastVisit}</td>
+                <td><span class="badge-status ${visitor.status.toLowerCase().replace(/ /g, "-")}">${visitor.status}</span></td>
+                <td style="text-align: center;">
+                    <div style="display: flex; gap: 4px; justify-content: center;">
+                        <button type="button" class="btn btn-primary btn-xs" onclick="useExistingVisitorData('${category}', '${key}')" style="padding: 2px 6px; font-size: 0.7rem; margin:0;">Use Data</button>
+                        <button type="button" class="btn btn-secondary btn-xs" onclick="viewVisitorHistory('${category}', '${key}')" style="padding: 2px 6px; font-size: 0.7rem; margin:0;">History</button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+        container.classList.remove("hidden");
+
+    }, 300);
+
+    fields.forEach(fieldId => {
+        const el = document.getElementById(fieldId);
+        if (el) {
+            el.addEventListener("input", onInput);
+        }
+    });
+};
+
+window.useExistingVisitorData = function(category, key) {
+    const results = window.lastSearchResults[category];
+    if (!results) return;
+    const visitor = results.get(key);
+    if (!visitor) return;
+
+    const data = visitor.raw;
+
+    if (category === "student") {
+        document.getElementById("reg-student-name").value = data.name || "";
+        document.getElementById("reg-student-phone").value = data.phone || "";
+        document.getElementById("reg-student-email").value = data.email || "";
+        document.getElementById("reg-student-college").value = data.company || data.college || "";
+        document.getElementById("reg-student-dept").value = data.department || "";
+        document.getElementById("reg-student-rollno").value = data.rollNumber || data.idNumber || "";
+        document.getElementById("reg-student-purpose").value = data.purpose || "Student";
+        if (data.hostName) document.getElementById("reg-student-host").value = data.hostName;
+        if (data.startDate) document.getElementById("reg-student-start-date").value = data.startDate;
+        if (data.endDate) document.getElementById("reg-student-end-date").value = data.endDate;
+
+        document.getElementById("reg-student-name").readOnly = true;
+        document.getElementById("reg-student-phone").readOnly = true;
+        document.getElementById("reg-student-email").readOnly = true;
+        document.getElementById("reg-student-college").readOnly = true;
+        document.getElementById("reg-student-dept").readOnly = true;
+        document.getElementById("reg-student-rollno").readOnly = true;
+        document.getElementById("reg-student-start-date").readOnly = true;
+        document.getElementById("reg-student-end-date").readOnly = true;
+
+        const alertBadge = document.getElementById("student-badge-alert");
+        if (alertBadge) alertBadge.classList.remove("hidden");
+
+    } else if (category === "customer") {
+        document.getElementById("reg-customer-name").value = data.name || "";
+        document.getElementById("reg-customer-phone").value = data.phone || "";
+        document.getElementById("reg-customer-email").value = data.email || "";
+        document.getElementById("reg-customer-company").value = data.company || "";
+        document.getElementById("reg-customer-id").value = data.masterId || data.customerId || "";
+        document.getElementById("reg-customer-purpose").value = data.purpose || "";
+        document.getElementById("reg-customer-id-type").value = data.idType || "";
+        document.getElementById("reg-customer-id-number").value = data.idNumber || "";
+        document.getElementById("reg-customer-vehicle").value = data.vehicle || "";
+        if (data.hostName) document.getElementById("reg-customer-host").value = data.hostName;
+
+        document.getElementById("reg-customer-name").readOnly = true;
+        document.getElementById("reg-customer-phone").readOnly = true;
+        document.getElementById("reg-customer-email").readOnly = true;
+        document.getElementById("reg-customer-company").readOnly = true;
+        document.getElementById("reg-customer-id").readOnly = true;
+
+        const alertBadge = document.getElementById("customer-badge-alert");
+        if (alertBadge) alertBadge.classList.remove("hidden");
+
+    } else if (category === "vendor") {
+        document.getElementById("reg-vendor-name").value = data.name || "";
+        document.getElementById("reg-vendor-phone").value = data.phone || "";
+        document.getElementById("reg-vendor-company").value = data.company || "";
+        document.getElementById("reg-vendor-invoice").value = data.address && data.address.startsWith("Delivery Invoice:") ? data.address.replace("Delivery Invoice: ", "") : "";
+        document.getElementById("reg-vendor-id-type").value = data.idType || "";
+        document.getElementById("reg-vendor-id-number").value = data.idNumber || "";
+        document.getElementById("reg-vendor-vehicle").value = data.vehicle || "";
+        if (data.hostName) document.getElementById("reg-vendor-host").value = data.hostName;
+
+        document.getElementById("reg-vendor-name").readOnly = true;
+        document.getElementById("reg-vendor-phone").readOnly = true;
+        document.getElementById("reg-vendor-company").readOnly = true;
+
+        const alertBadge = document.getElementById("vendor-badge-alert");
+        if (alertBadge) alertBadge.classList.remove("hidden");
+    }
+
+    if (data.photo) {
+        const preview = document.getElementById(`photo-preview-${category}`);
+        if (preview) preview.src = data.photo;
+        state.tempVisitorPhoto = data.photo;
+        
+        const status = document.getElementById(`camera-status-${category}`);
+        if (status) status.textContent = "Existing Photo Loaded";
+
+        const optionsDiv = document.getElementById(`photo-options-${category}`);
+        if (optionsDiv) {
+            optionsDiv.classList.remove("hidden");
+            const btnExisting = document.getElementById(`btn-existing-photo-${category}`);
+            const btnNew = document.getElementById(`btn-new-photo-${category}`);
+            if (btnExisting && btnNew) {
+                btnExisting.className = "btn btn-success btn-xs";
+                btnNew.className = "btn btn-secondary btn-xs";
+            }
+        }
+    }
+
+    window.viewVisitorHistory(category, key);
+
+    showToast("Profile Loaded", `Welcome back, ${data.name}! Data auto-filled.`, "success");
+};
+
+window.viewVisitorHistory = function(category, key) {
+    const results = window.lastSearchResults[category];
+    if (!results) return;
+    const visitor = results.get(key);
+    if (!visitor) return;
+
+    const phone = visitor.phone;
+    const masterId = visitor.raw.masterId || visitor.raw.studentId || visitor.raw.customerId || visitor.raw.vendorId;
+
+    if (!state.visitors) return;
+
+    const history = state.visitors.filter(v => 
+        (v.phone && v.phone === phone) || 
+        (v.masterId && v.masterId === masterId)
+    );
+
+    history.sort((a, b) => {
+        const dateA = a.checkIn || a.visitDate || "";
+        const dateB = b.checkIn || b.visitDate || "";
+        return dateB.localeCompare(dateA);
+    });
+
+    const tbody = document.getElementById(`visit-history-${category}-list`);
+    const container = document.getElementById(`visit-history-${category}-wrapper`);
+
+    if (!tbody || !container) return;
+
+    tbody.innerHTML = "";
+    if (history.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;" class="text-secondary">No previous visit history found.</td></tr>`;
+    } else {
+        history.forEach(h => {
+            const tr = document.createElement("tr");
+            const checkInTime = h.checkIn ? new Date(h.checkIn).toLocaleString() : "-";
+            const checkOutTime = h.checkOut ? new Date(h.checkOut).toLocaleString() : "-";
+            tr.innerHTML = `
+                <td><strong>${h.name}</strong></td>
+                <td>${h.phone}</td>
+                <td><span class="badge-status active" style="font-size:0.65rem;">${h.purpose}</span></td>
+                <td>${h.company || "-"}</td>
+                <td>${h.hostName || "-"}</td>
+                <td><span class="text-xs">${checkInTime}</span></td>
+                <td><span class="text-xs">${checkOutTime}</span></td>
+                <td><span class="badge-status ${h.status.toLowerCase().replace(/ /g, "-")}">${h.status}</span></td>
+                <td>${h.visitDate || "-"}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    container.classList.remove("hidden");
+};
+
+window.setupPhotoChoiceListeners = function(category) {
+    const btnExisting = document.getElementById(`btn-existing-photo-${category}`);
+    const btnNew = document.getElementById(`btn-new-photo-${category}`);
+
+    if (btnExisting) {
+        btnExisting.addEventListener("click", () => {
+            btnExisting.className = "btn btn-success btn-xs";
+            if (btnNew) btnNew.className = "btn btn-secondary btn-xs";
+
+            const results = window.lastSearchResults[category];
+            if (results && results.size > 0) {
+                const firstKey = Array.from(results.keys())[0];
+                const visitor = results.get(firstKey);
+                if (visitor && visitor.raw.photo) {
+                    const preview = document.getElementById(`photo-preview-${category}`);
+                    if (preview) preview.src = visitor.raw.photo;
+                    state.tempVisitorPhoto = visitor.raw.photo;
+                    
+                    const status = document.getElementById(`camera-status-${category}`);
+                    if (status) status.textContent = "Using Existing Photo";
+                }
+            }
+
+            if (state.cameraStream) {
+                state.cameraStream.getTracks().forEach(track => track.stop());
+                state.cameraStream = null;
+            }
+            const video = document.getElementById(`camera-stream-${category}`);
+            if (video) video.classList.add("hidden");
+        });
+    }
+
+    if (btnNew) {
+        btnNew.addEventListener("click", () => {
+            btnNew.className = "btn btn-success btn-xs";
+            if (btnExisting) btnExisting.className = "btn btn-secondary btn-xs";
+
+            state.tempVisitorPhoto = "";
+            const preview = document.getElementById(`photo-preview-${category}`);
+            if (preview) preview.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>";
+
+            const status = document.getElementById(`camera-status-${category}`);
+            if (status) status.textContent = "Camera Ready";
+
+            initCategoryCamera(category);
+        });
+    }
+};

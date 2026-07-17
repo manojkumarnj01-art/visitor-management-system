@@ -298,46 +298,7 @@
             <div class="content-body">
 
                 <!-- VIEW 1: DASHBOARD -->
-                <section id="view-dashboard" class="page-view">
-                    <div class="dashboard-card" style="padding: 2.5rem; text-align: center; max-width: 600px; margin: 2rem auto;">
-                        <div style="font-size: 3.5rem; margin-bottom: 1rem;">🏢</div>
-                        <h2 style="font-size: 1.5rem; color: var(--accent-primary); margin-bottom: 0.5rem;">Barani Visitor Management</h2>
-                        <p class="text-secondary" style="font-size: 0.9rem; margin-bottom: 1.5rem;">
-                            Welcome to the security control console. Use the sidebar navigation to register new visitors, search employees, or check out visitors.
-                        </p>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">
-                            Gatekeeper System Active • Press Ctrl+P to print passes
-                        </div>
-                    </div>
-                </section>
-
-                <!-- VIEW 2: NEW VISITOR REGISTRATION -->
-                <section id="view-registration" class="page-view">
-                    <!-- Entry Flow Toggle -->
-                    <div class="entry-type-selector no-print"
-                        style="display: flex; gap: 1rem; margin-bottom: 1.5rem; background: var(--bg-card); padding: 0.75rem 1rem; border-radius: var(--border-radius-lg); border: 1px solid var(--border-color); justify-content: center; width: 100%;">
-                        <button type="button" class="btn btn-primary" id="btn-select-visitor-flow"
-                            style="flex: 1; max-width: 300px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                class="btn-icon">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                                <circle cx="9" cy="7" r="4" />
-                            </svg>
-                            <span data-i18n="visitor-flow-btn">Visitor Entry Flow</span>
-                        </button>
-                        <button type="button" class="btn btn-secondary" id="btn-select-employee-flow"
-                            style="flex: 1; max-width: 300px;">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                class="btn-icon">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                <circle cx="12" cy="7" r="4" />
-                            </svg>
-                            <span data-i18n="emp-flow-btn">Employee Entry Flow</span>
-                        </button>
-                    </div>
-
-                    <!-- Flow 1: Visitor Registration Redesign -->
-                    <div id="visitor-registration-wrapper">
+<div id="visitor-registration-wrapper">
                         <!-- Redesigned Registration Dashboard Grid -->
                         <div id="registration-dashboard-wrapper" class="w-full">
                             <div class="card-header" style="margin-bottom: 1.5rem; text-align: center; display: block;">
@@ -351,7 +312,7 @@
                                 <!-- 1. Students Card -->
                                 <div class="registration-card">
                                     <div class="card-icon-wrapper">🎓</div>
-                                    <h3 class="card-title">Students</h3>
+                                    <h3 class="card-title">Student Registration</h3>
                                     <p class="card-description">Industrial Visit / College Students</p>
                                     <div class="card-stats">
                                         <div class="stat-item">
@@ -374,7 +335,7 @@
                                 <!-- 2. Customers Card -->
                                 <div class="registration-card">
                                     <div class="card-icon-wrapper">🏢</div>
-                                    <h3 class="card-title">Customers</h3>
+                                    <h3 class="card-title">Customer Registration</h3>
                                     <p class="card-description">Customers & Business Visitors</p>
                                     <div class="card-stats">
                                         <div class="stat-item">
@@ -397,7 +358,7 @@
                                 <!-- 3. Vendors Card -->
                                 <div class="registration-card">
                                     <div class="card-icon-wrapper">🚚</div>
-                                    <h3 class="card-title">Vendors</h3>
+                                    <h3 class="card-title">Vendor Registration</h3>
                                     <p class="card-description">Suppliers & Vendors</p>
                                     <div class="card-stats">
                                         <div class="stat-item">
@@ -554,6 +515,10 @@
                                                         alt="Captured Photo Preview">
                                                     <div class="camera-overlay-info" id="camera-status-student">Camera
                                                         Inactive</div>
+                                                    <div class="photo-options-container hidden" id="photo-options-student">
+                                                        <button type="button" class="btn btn-success btn-xs" id="btn-existing-photo-student">✅ Use Existing Photo</button>
+                                                        <button type="button" class="btn btn-secondary btn-xs" id="btn-new-photo-student">📷 Capture New Photo</button>
+                                                    </div>
                                                 </div>
                                                 <div class="camera-controls"
                                                     style="margin-top: 0.5rem; display: flex; gap: 0.5rem; justify-content: center;">
@@ -590,7 +555,57 @@
                                     </div>
                                 </form>
                             </div>
-                        </div>
+                        
+                            <!-- Smart Search Results Table -->
+                            <div class="dashboard-card hidden" id="search-results-student-wrapper" style="margin-top: 1rem;">
+                                <div class="card-header">
+                                    <h2>🔍 Matching Existing Visitors</h2>
+                                </div>
+                                <div class="table-container" style="max-height: 200px; overflow-y: auto;">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Visitor</th>
+                                                <th>Phone</th>
+                                                <th>Category</th>
+                                                <th>Company/College</th>
+                                                <th>Last Visit</th>
+                                                <th>Status</th>
+                                                <th style="text-align: center;">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="search-results-student-list">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Previous Visit History Table -->
+                            <div class="dashboard-card hidden" id="visit-history-student-wrapper" style="margin-top: 1rem;">
+                                <div class="card-header">
+                                    <h2>📅 Previous Visit History</h2>
+                                </div>
+                                <div class="table-container" style="max-height: 250px; overflow-y: auto;">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Visitor Name</th>
+                                                <th>Mobile Number</th>
+                                                <th>Category</th>
+                                                <th>Company/College</th>
+                                                <th>Host</th>
+                                                <th>Check-In</th>
+                                                <th>Check-Out</th>
+                                                <th>Status</th>
+                                                <th>Visit Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="visit-history-student-list">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+</div>
 
                         <!-- 2. Customer Registration Form Wrapper -->
                         <div id="customer-registration-wrapper" class="hidden">
@@ -721,6 +736,10 @@
                                                         alt="Captured Photo Preview">
                                                     <div class="camera-overlay-info" id="camera-status-customer">Camera
                                                         Inactive</div>
+                                                    <div class="photo-options-container hidden" id="photo-options-customer">
+                                                        <button type="button" class="btn btn-success btn-xs" id="btn-existing-photo-customer">✅ Use Existing Photo</button>
+                                                        <button type="button" class="btn btn-secondary btn-xs" id="btn-new-photo-customer">📷 Capture New Photo</button>
+                                                    </div>
                                                 </div>
                                                 <div class="camera-controls"
                                                     style="margin-top: 0.5rem; display: flex; gap: 0.5rem; justify-content: center;">
@@ -757,7 +776,57 @@
                                     </div>
                                 </form>
                             </div>
-                        </div>
+                        
+                            <!-- Smart Search Results Table -->
+                            <div class="dashboard-card hidden" id="search-results-customer-wrapper" style="margin-top: 1rem;">
+                                <div class="card-header">
+                                    <h2>🔍 Matching Existing Visitors</h2>
+                                </div>
+                                <div class="table-container" style="max-height: 200px; overflow-y: auto;">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Visitor</th>
+                                                <th>Phone</th>
+                                                <th>Category</th>
+                                                <th>Company/College</th>
+                                                <th>Last Visit</th>
+                                                <th>Status</th>
+                                                <th style="text-align: center;">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="search-results-customer-list">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Previous Visit History Table -->
+                            <div class="dashboard-card hidden" id="visit-history-customer-wrapper" style="margin-top: 1rem;">
+                                <div class="card-header">
+                                    <h2>📅 Previous Visit History</h2>
+                                </div>
+                                <div class="table-container" style="max-height: 250px; overflow-y: auto;">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Visitor Name</th>
+                                                <th>Mobile Number</th>
+                                                <th>Category</th>
+                                                <th>Company/College</th>
+                                                <th>Host</th>
+                                                <th>Check-In</th>
+                                                <th>Check-Out</th>
+                                                <th>Status</th>
+                                                <th>Visit Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="visit-history-customer-list">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+</div>
 
                         <!-- 3. Vendor Registration Form Wrapper -->
                         <div id="vendor-registration-wrapper" class="hidden">
@@ -857,6 +926,10 @@
                                                         alt="Captured Photo Preview">
                                                     <div class="camera-overlay-info" id="camera-status-vendor">Camera
                                                         Inactive</div>
+                                                    <div class="photo-options-container hidden" id="photo-options-vendor">
+                                                        <button type="button" class="btn btn-success btn-xs" id="btn-existing-photo-vendor">✅ Use Existing Photo</button>
+                                                        <button type="button" class="btn btn-secondary btn-xs" id="btn-new-photo-vendor">📷 Capture New Photo</button>
+                                                    </div>
                                                 </div>
                                                 <div class="camera-controls"
                                                     style="margin-top: 0.5rem; display: flex; gap: 0.5rem; justify-content: center;">
@@ -893,7 +966,57 @@
                                     </div>
                                 </form>
                             </div>
-                        </div>
+                        
+                            <!-- Smart Search Results Table -->
+                            <div class="dashboard-card hidden" id="search-results-vendor-wrapper" style="margin-top: 1rem;">
+                                <div class="card-header">
+                                    <h2>🔍 Matching Existing Visitors</h2>
+                                </div>
+                                <div class="table-container" style="max-height: 200px; overflow-y: auto;">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Visitor</th>
+                                                <th>Phone</th>
+                                                <th>Category</th>
+                                                <th>Company/College</th>
+                                                <th>Last Visit</th>
+                                                <th>Status</th>
+                                                <th style="text-align: center;">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="search-results-vendor-list">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Previous Visit History Table -->
+                            <div class="dashboard-card hidden" id="visit-history-vendor-wrapper" style="margin-top: 1rem;">
+                                <div class="card-header">
+                                    <h2>📅 Previous Visit History</h2>
+                                </div>
+                                <div class="table-container" style="max-height: 250px; overflow-y: auto;">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Visitor Name</th>
+                                                <th>Mobile Number</th>
+                                                <th>Category</th>
+                                                <th>Company/College</th>
+                                                <th>Host</th>
+                                                <th>Check-In</th>
+                                                <th>Check-Out</th>
+                                                <th>Status</th>
+                                                <th>Visit Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="visit-history-vendor-list">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+</div>
 
                         <!-- 4. Contractor Registration Form Wrapper -->
                         <div id="contractor-registration-wrapper" class="hidden">
@@ -1354,6 +1477,35 @@
                             </div>
                         </div>
                     </div>
+</section>
+
+                <!-- VIEW 2: NEW VISITOR REGISTRATION -->
+                <section id="view-registration" class="page-view">
+                    <!-- Entry Flow Toggle -->
+                    <div class="entry-type-selector no-print"
+                        style="display: flex; gap: 1rem; margin-bottom: 1.5rem; background: var(--bg-card); padding: 0.75rem 1rem; border-radius: var(--border-radius-lg); border: 1px solid var(--border-color); justify-content: center; width: 100%;">
+                        <button type="button" class="btn btn-primary" id="btn-select-visitor-flow"
+                            style="flex: 1; max-width: 300px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                class="btn-icon">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                            </svg>
+                            <span data-i18n="visitor-flow-btn">Visitor Entry Flow</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="btn-select-employee-flow"
+                            style="flex: 1; max-width: 300px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                class="btn-icon">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            <span data-i18n="emp-flow-btn">Employee Entry Flow</span>
+                        </button>
+                    </div>
+
+                    <!-- Flow 1: Visitor Registration Redesign -->
+                    
                     <!-- Flow 2: Employee Gate Attendance -->
                     <div id="employee-entry-wrapper" class="hidden">
                         <div class="dashboard-card">

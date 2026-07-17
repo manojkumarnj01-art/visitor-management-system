@@ -542,8 +542,10 @@ a:hover {
 /* Page Scroll Body */
 .content-body {
     flex-grow: 1;
-    padding: 2rem;
-    overflow-y: auto;
+    padding: 1.5rem 2rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .page-view {
@@ -553,7 +555,50 @@ a:hover {
 
 .page-view.active {
     display: block;
+    height: 100%;
+    overflow-y: auto;
 }
+
+/* Dashboard specific height constraints */
+#view-dashboard.active {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+#visitor-registration-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#registration-dashboard-wrapper {
+    overflow-y: auto;
+}
+
+#student-registration-wrapper,
+#customer-registration-wrapper,
+#vendor-registration-wrapper {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.photo-options-container {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.photo-options-container .btn {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    margin: 0;
+}
+
 
 /* 5. FORM CONTROLS & CARDS */
 .dashboard-card {
