@@ -9385,13 +9385,22 @@ window.setupFormSearchListeners = function(category) {
 
         function isMatch(v) {
             if (!v) return false;
+            
+            const cleanQ = q.replace(/[\s\-\(\)\+]/g, "");
             const phone = (v.phone || "").toLowerCase();
+            const cleanPhone = phone.replace(/[\s\-\(\)\+]/g, "");
             const name = (v.name || "").toLowerCase();
             const email = (v.email || "").toLowerCase();
             const idNumber = (v.idNumber || v.rollNumber || "").toLowerCase();
+            const cleanIdNumber = idNumber.replace(/[\s\-\(\)\+]/g, "");
             const id = (v.id || v.masterId || v.studentId || v.customerId || v.vendorId || "").toLowerCase();
+            const cleanId = id.replace(/[\s\-\(\)\+]/g, "");
             
-            return phone.includes(q) || name.includes(q) || email.includes(q) || idNumber.includes(q) || id.includes(q);
+            return phone.includes(q) || (cleanQ.length > 0 && cleanPhone.includes(cleanQ)) ||
+                   name.includes(q) ||
+                   email.includes(q) ||
+                   idNumber.includes(q) || (cleanQ.length > 0 && cleanIdNumber.includes(cleanQ)) ||
+                   id.includes(q) || (cleanQ.length > 0 && cleanId.includes(cleanQ));
         }
 
         masterList.forEach(m => {
