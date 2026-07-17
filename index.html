@@ -87,16 +87,7 @@
             </div>
 
             <nav class="sidebar-nav">
-                <div class="nav-link active" data-target="view-reports">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                        <polyline points="14 2 14 8 20 8" />
-                        <line x1="16" y1="13" x2="8" y2="13" />
-                        <line x1="16" y1="17" x2="8" y2="17" />
-                        <polyline points="10 9 9 9 8 9" />
-                    </svg>
-                    <span data-i18n="nav-reports">Reports</span>
-                </div>
+                <!-- 1. Dashboard -->
                 <div class="nav-link" data-target="view-dashboard">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
                         <rect x="3" y="3" width="7" height="7" />
@@ -106,6 +97,7 @@
                     </svg>
                     <span data-i18n="nav-dashboard">Dashboard</span>
                 </div>
+                <!-- 2. Register Visitor -->
                 <div class="nav-link" data-target="view-registration">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -115,6 +107,33 @@
                     </svg>
                     <span data-i18n="nav-register">Register Visitor</span>
                 </div>
+                <!-- 3. Student Registration -->
+                <div class="nav-link" data-target="reg-student">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                        <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
+                    </svg>
+                    <span>Student Registration</span>
+                </div>
+                <!-- 4. Customer Registration -->
+                <div class="nav-link" data-target="reg-customer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <span>Customer Registration</span>
+                </div>
+                <!-- 5. Vendor Registration -->
+                <div class="nav-link" data-target="reg-vendor">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
+                        <rect x="1" y="3" width="15" height="13" />
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                        <circle cx="5.5" cy="18.5" r="2.5" />
+                        <circle cx="18.5" cy="18.5" r="2.5" />
+                    </svg>
+                    <span>Vendor Registration</span>
+                </div>
+                <!-- 6. Employee Search -->
                 <div class="nav-link" data-target="view-employee-search">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
                         <circle cx="11" cy="11" r="8" />
@@ -122,12 +141,22 @@
                     </svg>
                     <span data-i18n="nav-emp-search">Employee Search</span>
                 </div>
+                <!-- 7. Check-In -->
+                <div class="nav-link" data-target="check-in">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                    <span>Check-In</span>
+                </div>
+                <!-- 8. Check-Out -->
                 <div class="nav-link" data-target="view-checkout">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
                     </svg>
                     <span data-i18n="nav-checkout">Check-Out</span>
                 </div>
+                <!-- 9. Visitor History -->
                 <div class="nav-link" data-target="view-history">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
                         <circle cx="12" cy="12" r="10" />
@@ -135,19 +164,28 @@
                     </svg>
                     <span data-i18n="nav-history">Visitor History</span>
                 </div>
-                <div class="nav-link" data-target="view-purchase-manual">
+                <!-- 10. Reports -->
+                <div class="nav-link" data-target="view-reports">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
                     </svg>
-                    <span data-i18n="nav-purchase-manual">Purchase Manual</span>
+                    <span data-i18n="nav-reports">Reports</span>
                 </div>
-                <div class="nav-link disabled" id="nav-work-permit" data-target="view-work-permit">
+                <!-- 11. User Management -->
+                <div class="nav-link" data-target="user-management">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
-                    <span data-i18n="nav-work-permit">Work Permit</span>
+                    <span>User Management</span>
                 </div>
+                <!-- 12. Settings -->
                 <div class="nav-link" data-target="view-settings">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
                         <circle cx="12" cy="12" r="3" />

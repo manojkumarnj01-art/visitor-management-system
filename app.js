@@ -1227,77 +1227,19 @@ function checkAuthSession() {
         document.getElementById("header-user-avatar").innerText = state.currentUser.name.split(" ").map(n => n[0]).join("");
 
         // Show/Hide navigation links based on role privileges
-        const isGatekeeper = state.currentUser && (state.currentUser.role.toLowerCase() === "gatekeeper" || state.currentUser.role.toLowerCase() === "security gatekeeper");
-
         document.querySelectorAll(".nav-link").forEach(link => {
             const target = link.getAttribute("data-target");
-            
-            if (isGatekeeper) {
-                if (target === "view-dashboard") {
-                    link.classList.remove("hidden");
-                    const textSpan = link.querySelector("span");
-                    if (textSpan) textSpan.innerText = "Dashboard";
-                    const svg = link.querySelector("svg");
-                    if (svg) {
-                        svg.innerHTML = `
-                            <rect x="3" y="3" width="7" height="7" />
-                            <rect x="14" y="3" width="7" height="7" />
-                            <rect x="14" y="14" width="7" height="7" />
-                            <rect x="3" y="14" width="7" height="7" />
-                        `;
-                    }
-                } else if (target === "view-reports") {
-                    link.classList.remove("hidden");
-                    const textSpan = link.querySelector("span");
-                    if (textSpan) textSpan.innerText = "Reports";
-                    const svg = link.querySelector("svg");
-                    if (svg) {
-                        svg.innerHTML = `
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                            <polyline points="14 2 14 8 20 8" />
-                            <line x1="16" y1="13" x2="8" y2="13" />
-                            <line x1="16" y1="17" x2="8" y2="17" />
-                            <polyline points="10 9 9 9 8 9" />
-                        `;
-                    }
-                } else {
-                    link.classList.add("hidden");
-                }
+            if (isViewAuthorized(target)) {
+                link.classList.remove("hidden");
             } else {
-                if (target === "view-registration") {
-                    const textSpan = link.querySelector("span");
-                    if (textSpan) textSpan.innerText = "Register Visitor";
-                    const svg = link.querySelector("svg");
-                    if (svg) {
-                        svg.innerHTML = `
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                            <circle cx="9" cy="7" r="4" />
-                            <line x1="19" y1="8" x2="19" y2="14" />
-                            <line x1="16" y1="11" x2="22" y2="11" />
-                        `;
-                    }
-                } else if (target === "view-reports") {
-                    const textSpan = link.querySelector("span");
-                    if (textSpan) textSpan.innerText = "Reports";
-                    const svg = link.querySelector("svg");
-                    if (svg) {
-                        svg.innerHTML = `
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                            <polyline points="14 2 14 8 20 8" />
-                            <line x1="16" y1="13" x2="8" y2="13" />
-                            <line x1="16" y1="17" x2="8" y2="17" />
-                            <polyline points="10 9 9 9 8 9" />
-                        `;
-                    }
-                }
-
-                if (isViewAuthorized(target)) {
-                    link.classList.remove("hidden");
-                } else {
-                    link.classList.add("hidden");
-                }
+                link.classList.add("hidden");
             }
         });
+
+        const role = state.currentUser.role.toLowerCase();
+        const isAdmin = role === "admin" || role === "administrator";
+        const isGatekeeper = role === "gatekeeper" || role === "security gatekeeper";
+        const isReception = role === "reception" || role === "front desk operator";
 
         // Redirect gatekeeper on login
         if (isGatekeeper) {
@@ -1305,19 +1247,25 @@ function checkAuthSession() {
                 state.activeView = "view-dashboard";
                 saveState();
             }
-            
-            // Hide employee/visitor flow selector and force direct registration cards view
-            const selector = document.querySelector(".entry-type-selector");
-            if (selector) selector.classList.add("hidden");
-            
+        }
+
+        // Hide/Show flow selector
+        const selector = document.querySelector(".entry-type-selector");
+        if (selector) {
+            if (isGatekeeper) selector.classList.add("hidden");
+            else selector.classList.remove("hidden");
+        }
+
+        // Initialize wrappers
+        if (isAdmin || isGatekeeper || isReception) {
             const vWrapper = document.getElementById("visitor-registration-wrapper");
             if (vWrapper) vWrapper.classList.remove("hidden");
             
-            const eWrapper = document.getElementById("employee-registration-wrapper");
-            if (eWrapper) eWrapper.classList.add("hidden");
-            
             const dWrapper = document.getElementById("registration-dashboard-wrapper");
             if (dWrapper) dWrapper.classList.remove("hidden");
+            
+            const eWrapper = document.getElementById("employee-registration-wrapper");
+            if (eWrapper) eWrapper.classList.add("hidden");
             
             const sWrapper = document.getElementById("student-registration-wrapper");
             if (sWrapper) sWrapper.classList.add("hidden");
@@ -1328,20 +1276,9 @@ function checkAuthSession() {
             const vndWrapper = document.getElementById("vendor-registration-wrapper");
             if (vndWrapper) vndWrapper.classList.add("hidden");
         } else {
-            const selector = document.querySelector(".entry-type-selector");
-            if (selector) selector.classList.remove("hidden");
-            
-            // Ensure Employee Flow is default active in view-registration for other roles
-            const btnSelectVisitor = document.getElementById("btn-select-visitor-flow");
-            const btnSelectEmployee = document.getElementById("btn-select-employee-flow");
             const employeeWrapper = document.getElementById("employee-entry-wrapper");
             const visitorWrapper = document.getElementById("visitor-registration-wrapper");
-            
-            if (btnSelectEmployee && btnSelectVisitor) {
-                btnSelectEmployee.className = "btn btn-primary";
-                btnSelectVisitor.className = "btn btn-secondary";
-            }
-            if (employeeWrapper) employeeWrapper.classList.remove("hidden");
+            if (employeeWrapper) employeeWrapper.classList.add("hidden");
             if (visitorWrapper) visitorWrapper.classList.add("hidden");
         }
 
@@ -1363,19 +1300,33 @@ function isViewAuthorized(viewId) {
     if (!state.currentUser) return false;
     const role = state.currentUser.role.toLowerCase();
     
-    // Check if user is gatekeeper
-    const isGatekeeper = role === "gatekeeper" || role === "security gatekeeper";
-    if (isGatekeeper) {
-        return ["view-dashboard", "view-reports"].includes(viewId);
-    }
+    // Admin bypasses all restrictions
+    if (role === "admin" || role === "administrator") return true;
 
-    // Otherwise, standard original checks for other roles
-    if (state.currentUser.role === "Administrator") return true;
-
-    if (state.currentUser.role === "Front Desk Operator") {
-        const allowed = ["view-registration", "view-employee-search", "view-checkout", "view-history", "view-purchase-manual", "view-work-permit"];
+    // Reception -> Registration only
+    if (role === "reception" || role === "front desk operator") {
+        const allowed = ["view-registration", "view-dashboard", "check-in", "reg-student", "reg-customer", "reg-vendor"];
         return allowed.includes(viewId);
     }
+
+    // Gatekeeper -> Check-In, Check-Out, Today's Visitors
+    if (role === "gatekeeper" || role === "security gatekeeper") {
+        const allowed = ["view-dashboard", "check-in", "reg-student", "reg-customer", "reg-vendor", "view-checkout", "view-reports", "view-history"];
+        return allowed.includes(viewId);
+    }
+
+    // Security -> View visitors only
+    if (role === "security" || role === "security officer") {
+        const allowed = ["view-history", "view-reports"];
+        return allowed.includes(viewId);
+    }
+
+    // Employee -> My Visitors only
+    if (role === "employee") {
+        const allowed = ["view-history", "view-reports"];
+        return allowed.includes(viewId);
+    }
+
     return false;
 }
 
@@ -1414,8 +1365,15 @@ function switchView(viewId) {
     // Toggle active link styles
     document.querySelectorAll(".nav-link").forEach(link => {
         link.classList.remove("active");
-        if (link.getAttribute("data-target") === viewId) {
-            link.classList.add("active");
+        const linkTarget = link.getAttribute("data-target");
+        if (state.activeSidebarTarget) {
+            if (linkTarget === state.activeSidebarTarget) {
+                link.classList.add("active");
+            }
+        } else {
+            if (linkTarget === viewId) {
+                link.classList.add("active");
+            }
         }
     });
 
@@ -1505,7 +1463,29 @@ function setupEventListeners() {
                 );
                 return;
             }
-            switchView(target);
+
+            state.activeSidebarTarget = target;
+
+            if (target === "reg-student") {
+                switchView("view-dashboard");
+                window.openCategoryForm("student");
+            } else if (target === "reg-customer") {
+                switchView("view-dashboard");
+                window.openCategoryForm("customer");
+            } else if (target === "reg-vendor") {
+                switchView("view-dashboard");
+                window.openCategoryForm("vendor");
+            } else if (target === "check-in") {
+                switchView("view-registration");
+                const btn = document.getElementById("btn-select-visitor-flow");
+                if (btn) btn.click();
+            } else if (target === "user-management") {
+                switchView("view-settings");
+                const usersBtn = document.querySelector('.admin-tab-btn[data-tab="admin-tab-users"]');
+                if (usersBtn) usersBtn.click();
+            } else {
+                switchView(target);
+            }
         });
     });
 
@@ -1786,7 +1766,8 @@ async function handleLoginSubmit(e) {
 
             if (error) {
                 console.error("Supabase Auth error:", error);
-                showToast("Access Denied", error.message || "Invalid credentials.", "danger");
+                console.log("Attempting offline login fallback...");
+                performOfflineLogin(userVal, passVal);
                 return;
             }
 
@@ -1831,14 +1812,29 @@ async function handleLoginSubmit(e) {
 
 function performOfflineLogin(userVal, passVal) {
     const matchedUser = state.securityUsers.find(u => u.username === userVal);
+    const matchedEmp = state.employees ? state.employees.find(e => (e.id && e.id.toLowerCase() === userVal) || (e.email && e.email.toLowerCase() === userVal)) : null;
+
     if (matchedUser && passVal !== "") {
         state.currentUser = matchedUser;
         saveState();
         showToast("Access Granted", getTranslatedText("logged-in-as", "Logged in as {name}").replace("{name}", matchedUser.name), "success");
         document.getElementById("login-form").reset();
         checkAuthSession();
+    } else if (matchedEmp && passVal !== "") {
+        state.currentUser = {
+            username: matchedEmp.id.toLowerCase(),
+            name: matchedEmp.name,
+            role: "Employee",
+            employeeCode: matchedEmp.id,
+            phone: matchedEmp.phone,
+            shift: "Regular"
+        };
+        saveState();
+        showToast("Access Granted", getTranslatedText("logged-in-as", "Logged in as {name}").replace("{name}", matchedEmp.name), "success");
+        document.getElementById("login-form").reset();
+        checkAuthSession();
     } else {
-        showToast("Access Denied", "Invalid credentials. Use admin, security or receptionist.", "danger");
+        showToast("Access Denied", "Invalid credentials. Use admin, security, receptionist, or an employee code.", "danger");
     }
 }
 
@@ -2908,6 +2904,14 @@ function renderHistoryView() {
     tableBody.innerHTML = "";
 
     const filtered = state.visitors.filter(v => {
+        if (state.currentUser && state.currentUser.role.toLowerCase() === "employee") {
+            const empCode = state.currentUser.employeeCode || state.currentUser.username || "";
+            const empName = state.currentUser.name || "";
+            const hostIdMatch = v.hostId && empCode && v.hostId.toLowerCase() === empCode.toLowerCase();
+            const hostNameMatch = v.hostName && empName && v.hostName.toLowerCase() === empName.toLowerCase();
+            if (!hostIdMatch && !hostNameMatch) return false;
+        }
+
         const matchesKeyword = v.id.toLowerCase().includes(keyword) ||
             (v.name && v.name.toLowerCase().includes(keyword)) ||
             (v.company && v.company.toLowerCase().includes(keyword)) ||
@@ -3109,6 +3113,14 @@ function renderReportsData() {
     const endVal = document.getElementById("report-filter-end-date")?.value || "";
 
     reportsFilteredData = state.visitors.filter(v => {
+        if (state.currentUser && state.currentUser.role.toLowerCase() === "employee") {
+            const empCode = state.currentUser.employeeCode || state.currentUser.username || "";
+            const empName = state.currentUser.name || "";
+            const hostIdMatch = v.hostId && empCode && v.hostId.toLowerCase() === empCode.toLowerCase();
+            const hostNameMatch = v.hostName && empName && v.hostName.toLowerCase() === empName.toLowerCase();
+            if (!hostIdMatch && !hostNameMatch) return false;
+        }
+
         let textMatch = true;
         if (searchVal !== "") {
             textMatch = (v.name && v.name.toLowerCase().includes(searchVal)) ||
