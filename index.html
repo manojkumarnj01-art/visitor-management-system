@@ -133,6 +133,17 @@
                     </svg>
                     <span data-i18n="nav-reports">Reports</span>
                 </div>
+                <!-- 5b. Data Management -->
+                <div class="nav-link" data-target="view-data-management">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
+                        <path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <path d="M14 18H8" />
+                        <path d="M14 14H8" />
+                        <circle cx="6" cy="18" r="2" />
+                    </svg>
+                    <span>Data Management</span>
+                </div>
                 <!-- 6. Employee Search -->
                 <div class="nav-link" data-target="view-employee-search">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
@@ -332,7 +343,7 @@
                                     </div>
                                     <div class="card-actions" style="margin-top: auto; width: 100%;">
                                         <button type="button" class="btn btn-primary btn-block"
-                                            onclick="openCategoryForm('student')">Register Student</button>
+                                            onclick="navigateTo('/student-registration')">Register Student</button>
                                     </div>
                                 </div>
 
@@ -345,7 +356,7 @@
                                     </div>
                                     <div class="card-actions" style="margin-top: auto; width: 100%;">
                                         <button type="button" class="btn btn-primary btn-block"
-                                            onclick="openCategoryForm('customer')">Register Customer</button>
+                                            onclick="navigateTo('/customer-registration')">Register Customer</button>
                                     </div>
                                 </div>
 
@@ -358,14 +369,16 @@
                                     </div>
                                     <div class="card-actions" style="margin-top: auto; width: 100%;">
                                         <button type="button" class="btn btn-primary btn-block"
-                                            onclick="openCategoryForm('vendor')">Register Vendor</button>
+                                            onclick="navigateTo('/vendor-registration')">Register Vendor</button>
                                     </div>
                                 </div>
                             </div>
-                        </div>                    </div>
+                        </div>
                     </div>
+                </section>
 
-                    <!-- 1. Student Registration Form Wrapper -->
+                <!-- VIEW 1a: STUDENT REGISTRATION -->
+                <section id="view-student-registration" class="page-view">
                     <div id="student-registration-wrapper" class="hidden">
                         <button type="button" class="btn btn-secondary btn-sm mb-4"
                             onclick="showRegistrationDashboard()">← Back to Dashboard</button>
@@ -417,13 +430,44 @@
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
+                                                <label for="reg-student-company">Company (Optional)</label>
+                                                <input type="text" id="reg-student-company" placeholder="e.g. Self or Sponsor"
+                                                    autocomplete="off">
+                                            </div>
+                                            <div class="form-group col-6">
                                                 <label for="reg-student-dept">Department / Course *</label>
                                                 <input type="text" id="reg-student-dept"
                                                     placeholder="e.g. BE Mechanical" required autocomplete="off">
                                             </div>
+                                        </div>
+                                        <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
                                                 <label for="reg-student-rollno">Roll Number / Student ID *</label>
                                                 <input type="text" id="reg-student-rollno" placeholder="Roll Number"
+                                                    required autocomplete="off">
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="reg-student-visitor-id">Visitor ID (System-Generated)</label>
+                                                <input type="text" id="reg-student-visitor-id" placeholder="Will be auto-generated"
+                                                    readonly autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="form-row" style="margin-bottom: 1rem;">
+                                            <div class="form-group col-6">
+                                                <label for="reg-student-aadhaar">Aadhaar Number *</label>
+                                                <input type="text" id="reg-student-aadhaar" placeholder="12-digit Aadhaar Number"
+                                                    required autocomplete="off">
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="reg-student-category">Visitor Category</label>
+                                                <input type="text" id="reg-student-category" value="Student"
+                                                    readonly autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="form-row" style="margin-bottom: 1rem;">
+                                            <div class="form-group col-12">
+                                                <label for="reg-student-address">Address *</label>
+                                                <input type="text" id="reg-student-address" placeholder="Residential / College Hostel Address"
                                                     required autocomplete="off">
                                             </div>
                                         </div>
@@ -442,10 +486,8 @@
                                                 <select id="reg-student-purpose" required>
                                                     <option value="">— Select Purpose —</option>
                                                     <option value="Industrial Visit">Industrial Visit</option>
-                                                    <option value="College Student Project">College Student Project
-                                                    </option>
-                                                    <option value="Internship / Training">Internship / Training
-                                                    </option>
+                                                    <option value="College Student Project">College Student Project</option>
+                                                    <option value="Internship / Training">Internship / Training</option>
                                                     <option value="Interview">Interview</option>
                                                     <option value="Other">Other</option>
                                                 </select>
@@ -598,8 +640,10 @@
                             </div>
                         </div>
                     </div>
+                </section>
 
-                    <!-- 2. Customer Registration Form Wrapper -->
+                <!-- VIEW 1b: CUSTOMER REGISTRATION -->
+                <section id="view-customer-registration" class="page-view">
                     <div id="customer-registration-wrapper" class="hidden">
                         <button type="button" class="btn btn-secondary btn-sm mb-4"
                             onclick="showRegistrationDashboard()">← Back to Dashboard</button>
@@ -651,8 +695,19 @@
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-id">Customer ID (Auto-Generated or
-                                                    Manual)</label>
+                                                <label for="reg-customer-college">College (for Students - Optional)</label>
+                                                <input type="text" id="reg-customer-college" placeholder="N/A"
+                                                    autocomplete="off">
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="reg-customer-dept">Department *</label>
+                                                <input type="text" id="reg-customer-dept" placeholder="e.g. Business Development"
+                                                    required autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="form-row" style="margin-bottom: 1rem;">
+                                            <div class="form-group col-6">
+                                                <label for="reg-customer-id">Customer ID (Auto-Generated or Manual)</label>
                                                 <input type="text" id="reg-customer-id" placeholder="CUST10001"
                                                     autocomplete="off">
                                             </div>
@@ -662,10 +717,28 @@
                                                     <option value="">— Select Purpose —</option>
                                                     <option value="Business Meeting">Business Meeting</option>
                                                     <option value="Product Inspection">Product Inspection</option>
-                                                    <option value="Purchase / Sales discussion">Purchase / Sales
-                                                        Discussion</option>
+                                                    <option value="Purchase / Sales discussion">Purchase / Sales Discussion</option>
                                                     <option value="Other">Other</option>
                                                 </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row" style="margin-bottom: 1rem;">
+                                            <div class="form-group col-6">
+                                                <label for="reg-customer-aadhaar">Aadhaar Number *</label>
+                                                <input type="text" id="reg-customer-aadhaar" placeholder="12-digit Aadhaar Number"
+                                                    required autocomplete="off">
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="reg-customer-category">Visitor Category</label>
+                                                <input type="text" id="reg-customer-category" value="Customer"
+                                                    readonly autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="form-row" style="margin-bottom: 1rem;">
+                                            <div class="form-group col-12">
+                                                <label for="reg-customer-address">Address *</label>
+                                                <input type="text" id="reg-customer-address" placeholder="Corporate / Business Address"
+                                                    required autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
@@ -826,8 +899,10 @@
                             </div>
                         </div>
                     </div>
+                </section>
 
-                    <!-- 3. Vendor Registration Form Wrapper -->
+                <!-- VIEW 1c: VENDOR REGISTRATION -->
+                <section id="view-vendor-registration" class="page-view">
                     <div id="vendor-registration-wrapper" class="hidden">
                         <button type="button" class="btn btn-secondary btn-sm mb-4"
                             onclick="showRegistrationDashboard()">← Back to Dashboard</button>
@@ -863,16 +938,57 @@
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-company">Vendor / Supplier Company Name
-                                                    *</label>
+                                                <label for="reg-vendor-email">Email Address</label>
+                                                <input type="email" id="reg-vendor-email"
+                                                    placeholder="name@vendor.com" autocomplete="off">
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="reg-vendor-company">Vendor / Supplier Company Name *</label>
                                                 <input type="text" id="reg-vendor-company" placeholder="e.g. Tata Steel"
                                                     required autocomplete="off">
                                             </div>
+                                        </div>
+                                        <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-invoice">Goods Delivery Details / Invoice
-                                                    Number</label>
+                                                <label for="reg-vendor-college">College (for Students - Optional)</label>
+                                                <input type="text" id="reg-vendor-college" placeholder="N/A"
+                                                    autocomplete="off">
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="reg-vendor-dept">Department *</label>
+                                                <input type="text" id="reg-vendor-dept" placeholder="e.g. Purchase / Inventory"
+                                                    required autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="form-row" style="margin-bottom: 1rem;">
+                                            <div class="form-group col-6">
+                                                <label for="reg-vendor-visitor-id">Vendor ID (System-Generated)</label>
+                                                <input type="text" id="reg-vendor-visitor-id" placeholder="Will be auto-generated"
+                                                    readonly autocomplete="off">
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="reg-vendor-invoice">Goods Delivery Details / Invoice Number</label>
                                                 <input type="text" id="reg-vendor-invoice"
                                                     placeholder="Invoice / Delivery Challan Number" autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="form-row" style="margin-bottom: 1rem;">
+                                            <div class="form-group col-6">
+                                                <label for="reg-vendor-aadhaar">Aadhaar Number *</label>
+                                                <input type="text" id="reg-vendor-aadhaar" placeholder="12-digit Aadhaar Number"
+                                                    required autocomplete="off">
+                                            </div>
+                                            <div class="form-group col-6">
+                                                <label for="reg-vendor-category">Visitor Category</label>
+                                                <input type="text" id="reg-vendor-category" value="Vendor"
+                                                    readonly autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="form-row" style="margin-bottom: 1rem;">
+                                            <div class="form-group col-12">
+                                                <label for="reg-vendor-address">Address *</label>
+                                                <input type="text" id="reg-vendor-address" placeholder="Vendor Corporate / Site Office Address"
+                                                    required autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
@@ -1032,8 +1148,10 @@
                             </div>
                         </div>
                     </div>
+                </section>
 
-                    <!-- 4. Contractor Registration Form Wrapper -->
+                <!-- VIEW 1d: CONTRACTOR REGISTRATION -->
+                <section id="view-contractor-registration" class="page-view">
                     <div id="contractor-registration-wrapper" class="hidden">
                         <button type="button" class="btn btn-secondary btn-sm mb-4"
                             onclick="showRegistrationDashboard()">← Back to Dashboard</button>
@@ -1180,8 +1298,10 @@
                             </form>
                         </div>
                     </div>
+                </section>
 
-                    <!-- 5. Delivery Registration Form Wrapper -->
+                <!-- VIEW 1e: DELIVERY REGISTRATION -->
+                <section id="view-delivery-registration" class="page-view">
                     <div id="delivery-registration-wrapper" class="hidden">
                         <button type="button" class="btn btn-secondary btn-sm mb-4"
                             onclick="showRegistrationDashboard()">← Back to Dashboard</button>
@@ -1314,8 +1434,10 @@
                             </form>
                         </div>
                     </div>
+                </section>
 
-                    <!-- 6. Service Engineer Registration Form Wrapper -->
+                <!-- VIEW 1f: SERVICE ENGINEER REGISTRATION -->
+                <section id="view-service-engineer-registration" class="page-view">
                     <div id="service-engineer-registration-wrapper" class="hidden">
                         <button type="button" class="btn btn-secondary btn-sm mb-4"
                             onclick="showRegistrationDashboard()">← Back to Dashboard</button>
@@ -1464,8 +1586,10 @@
                             </form>
                         </div>
                     </div>
+                </section>
 
-                    <!-- 7. Category Records Viewer Wrapper -->
+                <!-- VIEW 1g: CATEGORY RECORDS -->
+                <section id="view-category-records" class="page-view">
                     <div id="view-category-records-wrapper" class="hidden">
                         <button type="button" class="btn btn-secondary btn-sm mb-4"
                             onclick="showRegistrationDashboard()">← Back to Dashboard</button>
@@ -1488,7 +1612,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
                 </section>
 
                 <!-- VIEW 2: NEW VISITOR REGISTRATION -->
@@ -1861,7 +1984,7 @@
                                 </div>
                                 <div class="card-actions" style="margin-top: auto; width: 100%;">
                                     <button type="button" class="btn btn-primary btn-block"
-                                        onclick="openCategoryForm('student')">Register Student</button>
+                                        onclick="navigateTo('/student-registration')">Register Student</button>
                                 </div>
                             </div>
 
@@ -1874,7 +1997,7 @@
                                 </div>
                                 <div class="card-actions" style="margin-top: auto; width: 100%;">
                                     <button type="button" class="btn btn-primary btn-block"
-                                        onclick="openCategoryForm('customer')">Register Customer</button>
+                                        onclick="navigateTo('/customer-registration')">Register Customer</button>
                                 </div>
                             </div>
 
@@ -1887,8 +2010,72 @@
                                 </div>
                                 <div class="card-actions" style="margin-top: auto; width: 100%;">
                                     <button type="button" class="btn btn-primary btn-block"
-                                        onclick="openCategoryForm('vendor')">Register Vendor</button>
+                                        onclick="navigateTo('/vendor-registration')">Register Vendor</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: DATA MANAGEMENT (ADMINISTRATOR ONLY) -->
+                <section id="view-data-management" class="page-view">
+                    <div class="dashboard-card">
+                        <div class="card-header justify-between no-print" style="margin-bottom: 1.5rem;">
+                            <h2>🗂 Data Management Console</h2>
+                            <div class="flex gap-2" style="display: flex; gap: 0.5rem;">
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="exportDataManagement('csv')">CSV</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="exportDataManagement('excel')">Excel</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="exportDataManagement('pdf')">PDF</button>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="printDataManagement()">Print</button>
+                            </div>
+                        </div>
+
+                        <!-- Tabs Header -->
+                        <div class="admin-tabs no-print" style="display: flex; border-bottom: 2px solid var(--border-color); margin-bottom: 1.5rem; gap: 1rem; padding: 0 1rem; width: 100%;">
+                            <button type="button" class="admin-tab-btn active" data-dm-tab="dm-tab-students" onclick="switchDataManagementTab('dm-tab-students')" style="background: none; border: none; padding: 0.75rem 0.5rem; font-family: inherit; font-size: 0.9rem; font-weight: 600; color: var(--accent-primary); border-bottom: 2px solid var(--accent-primary); cursor: pointer; transition: all 0.2s;">Students</button>
+                            <button type="button" class="admin-tab-btn" data-dm-tab="dm-tab-customers" onclick="switchDataManagementTab('dm-tab-customers')" style="background: none; border: none; padding: 0.75rem 0.5rem; font-family: inherit; font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Customers</button>
+                            <button type="button" class="admin-tab-btn" data-dm-tab="dm-tab-vendors" onclick="switchDataManagementTab('dm-tab-vendors')" style="background: none; border: none; padding: 0.75rem 0.5rem; font-family: inherit; font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Vendors</button>
+                            <button type="button" class="admin-tab-btn" data-dm-tab="dm-tab-workpermits" onclick="switchDataManagementTab('dm-tab-workpermits')" style="background: none; border: none; padding: 0.75rem 0.5rem; font-family: inherit; font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Work Permits</button>
+                            <button type="button" class="admin-tab-btn" data-dm-tab="dm-tab-purchasemanuals" onclick="switchDataManagementTab('dm-tab-purchasemanuals')" style="background: none; border: none; padding: 0.75rem 0.5rem; font-family: inherit; font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s;">Purchase Manuals</button>
+                        </div>
+
+                        <!-- Search and Filter Bar -->
+                        <div class="search-filter-bar no-print" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem; padding: 0 1rem; flex-wrap: wrap; width: 100%;">
+                            <input type="text" id="dm-search-input" placeholder="Search records..." oninput="filterDataManagementTable()" style="flex: 1; min-width: 200px; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); font-size: 0.85rem; outline: none; margin-bottom: 0;">
+                            
+                            <select id="dm-filter-status" onchange="filterDataManagementTable()" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); font-size: 0.85rem; background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                <option value="all">All Statuses</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Pending">Pending / Submitted</option>
+                                <option value="Checked In">Checked In</option>
+                                <option value="Checked Out">Checked Out</option>
+                            </select>
+
+                            <select id="dm-page-size" onchange="changeDataManagementPageSize()" style="padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-md); font-size: 0.85rem; background: var(--bg-card); color: var(--text-primary); outline: none;">
+                                <option value="10">10 per page</option>
+                                <option value="25">25 per page</option>
+                                <option value="50">50 per page</option>
+                                <option value="100">100 per page</option>
+                            </select>
+                        </div>
+
+                        <!-- Table Container -->
+                        <div class="table-container" style="width: 100%; overflow-x: auto;">
+                            <table class="data-table" id="dm-data-table" style="width: 100%;">
+                                <thead id="dm-table-head">
+                                    <!-- Headers generated dynamically -->
+                                </thead>
+                                <tbody id="dm-table-body">
+                                    <!-- Rows generated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination Footer -->
+                        <div class="pagination-footer no-print" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-top: 1px solid var(--border-color); margin-top: 1rem;">
+                            <span id="dm-pagination-info" style="font-size: 0.8rem; color: var(--text-secondary);">Showing 0 to 0 of 0 entries</span>
+                            <div style="display: flex; gap: 0.5rem;" id="dm-pagination-controls">
+                                <!-- Pagination buttons dynamically loaded -->
                             </div>
                         </div>
                     </div>
