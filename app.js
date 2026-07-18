@@ -1431,7 +1431,7 @@ function renderEmployeeDashboard() {
                 card.style.alignItems = "center";
                 card.style.gap = "10px";
                 card.style.marginBottom = "0.5rem";
-                
+
                 card.innerHTML = `
                     <div style="flex-grow: 1;">
                         <div style="font-weight: 700; color: var(--text-primary);">${v.name}</div>
@@ -1463,7 +1463,7 @@ function renderEmployeeDashboard() {
             historyLogs.forEach(v => {
                 const tr = document.createElement("tr");
                 tr.style.borderBottom = "1px solid var(--border-color)";
-                
+
                 const checkInFormatted = v.checkIn ? new Date(v.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "-";
                 const checkOutFormatted = v.checkOut ? new Date(v.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "-";
                 const statusClass = v.status.toLowerCase().replace(/ /g, "-");
@@ -1487,7 +1487,7 @@ function renderEmployeeDashboard() {
 }
 
 // Handle approvals/rejections directly inside the Employee Dashboard
-window.handleEmployeeClearance = async function(visitorId, action) {
+window.handleEmployeeClearance = async function (visitorId, action) {
     if (action === 'Approve') {
         await window.approvePendingVisitor(visitorId);
     } else {
@@ -1505,7 +1505,7 @@ window.handleEmployeeClearance = async function(visitorId, action) {
 function isViewAuthorized(viewId) {
     if (!state.currentUser) return false;
     const role = state.currentUser.role.toLowerCase();
-    
+
     // Admin bypasses all restrictions
     if (role === "admin" || role === "administrator") return true;
 
@@ -1610,7 +1610,7 @@ function switchView(viewId) {
                 link.classList.add("active");
             }
         } else {
-            if (linkTarget === viewId || 
+            if (linkTarget === viewId ||
                 (viewId === "view-student-registration" && linkTarget === "reg-student") ||
                 (viewId === "view-customer-registration" && linkTarget === "reg-customer") ||
                 (viewId === "view-vendor-registration" && linkTarget === "reg-vendor")) {
@@ -1785,16 +1785,16 @@ function setupEventListeners() {
     // 3. Quick Action Clicks in Dashboard (Guarded for dashboard simplification)
     const btnQuickRegister = document.getElementById("btn-quick-register");
     if (btnQuickRegister) btnQuickRegister.addEventListener("click", () => switchView("view-registration"));
-    
+
     const btnQuickSearch = document.getElementById("btn-quick-search");
     if (btnQuickSearch) btnQuickSearch.addEventListener("click", () => switchView("view-employee-search"));
-    
+
     const btnQuickCheckout = document.getElementById("btn-quick-checkout");
     if (btnQuickCheckout) btnQuickCheckout.addEventListener("click", () => switchView("view-checkout"));
-    
+
     const btnQuickHistory = document.getElementById("btn-quick-history");
     if (btnQuickHistory) btnQuickHistory.addEventListener("click", () => switchView("view-history"));
-    
+
     const btnQuickReports = document.getElementById("btn-quick-reports");
     if (btnQuickReports) btnQuickReports.addEventListener("click", () => switchView("view-reports"));
 
@@ -2076,9 +2076,9 @@ async function handleLoginSubmit(e) {
 
             if (data && data.user) {
                 if (loadingText) loadingText.innerText = "Loading user profile...";
-                
+
                 const profile = await fetchUserProfileAndRole(data.user);
-                
+
                 if (!profile) {
                     console.warn("[Login] Custom profile not found in database. Falling back to default metadata.");
                     state.currentUser = {
@@ -2865,7 +2865,7 @@ async function executeFinalVisitorApprovalFlow(preOpenedWindow = null) {
         const uploadLabel = document.getElementById("id-doc-upload-label");
         if (uploadLabel) uploadLabel.innerText = "Upload ID Proof";
         document.getElementById("visitor-id-doc-file").value = "";
-    } catch(e) {}
+    } catch (e) { }
 
     // Render and capture pass image in background at registration
     const registeredVisitor = pendingRegistrationObj;
@@ -3443,7 +3443,7 @@ function renderReportsData() {
             const lowerPurpose = (v.purpose || "").toLowerCase();
             const lowerMasterId = (v.masterId || "").toLowerCase();
             const lowerId = (v.id || "").toLowerCase();
-            
+
             if (categoryVal === "Student") {
                 catMatch = lowerPurpose === "student" || lowerPurpose === "iv" || lowerMasterId.startsWith("stu") || lowerId.startsWith("stu") || (v.notes && v.notes.toLowerCase().includes("student"));
             } else if (categoryVal === "Customer") {
@@ -6281,7 +6281,7 @@ let dmFilteredData = [];
 window.switchDataManagementTab = function (tabId) {
     state.activeDMTab = tabId;
     state.dmCurrentPage = 1;
-    
+
     document.querySelectorAll(".admin-tab-btn").forEach(btn => {
         const btnTab = btn.getAttribute("data-dm-tab");
         if (btnTab === tabId) {
@@ -6324,7 +6324,7 @@ window.editMasterRecord = function (category, id) {
     if (category === "student") match = state.studentMaster.find(s => s.studentId === id);
     else if (category === "customer") match = state.customerMaster.find(c => c.customerId === id);
     else if (category === "vendor") match = state.vendorMaster.find(v => v.vendorId === id);
-    
+
     if (match) {
         window.navigateTo(`/${category}-registration`);
         setTimeout(() => {
@@ -6530,7 +6530,7 @@ function renderDataManagementTab(tabId) {
         filtered.sort((a, b) => {
             let valA = a[dmSortColumn];
             let valB = b[dmSortColumn];
-            
+
             if (typeof valA === "number" && typeof valB === "number") {
                 return dmSortOrder === "asc" ? valA - valB : valB - valA;
             }
@@ -6751,12 +6751,12 @@ window.exportDataManagement = function (type) {
         // 1. Draw Company Header Block
         doc.setFillColor(...primaryColor);
         doc.rect(0, 0, 297, 25, "F");
-        
+
         doc.setTextColor(...headerTextColor);
         doc.setFont("helvetica", "bold");
         doc.setFontSize(16);
         doc.text("BHARANI HYDRAULICS VMS", 15, 10);
-        
+
         doc.setFont("helvetica", "normal");
         doc.setFontSize(10);
         doc.text(title, 15, 18);
@@ -6817,7 +6817,7 @@ window.exportDataManagement = function (type) {
             // Page Break Check
             if (currentY > 185 && rIdx < rows.length - 1) {
                 doc.addPage();
-                
+
                 // Redraw Company title
                 doc.setFillColor(...primaryColor);
                 doc.rect(0, 0, 297, 20, "F");
@@ -7033,13 +7033,13 @@ window.printDataManagement = function () {
                             <tr>
                                 <td>${i + 1}</td>
                                 ${headers.map(h => {
-                                    const val = r[h.key];
-                                    if (h.key === "status") {
-                                        const badgeClass = String(val).toLowerCase().replace(/ /g, "-");
-                                        return `<td><span class="badge-status ${badgeClass}">${val}</span></td>`;
-                                    }
-                                    return `<td>${val === undefined || val === null ? "-" : val}</td>`;
-                                }).join("")}
+        const val = r[h.key];
+        if (h.key === "status") {
+            const badgeClass = String(val).toLowerCase().replace(/ /g, "-");
+            return `<td><span class="badge-status ${badgeClass}">${val}</span></td>`;
+        }
+        return `<td>${val === undefined || val === null ? "-" : val}</td>`;
+    }).join("")}
                             </tr>
                         `).join("")}
                     </tbody>
@@ -9110,7 +9110,7 @@ window.handleStudentRegistrationSubmit = function (e) {
         status: "Pending",
         photo: state.tempVisitorPhoto || "",
         photoIdDoc: state.tempVisitorIdDoc || "",
-        
+
         // New fields
         college,
         studentCompany: company,
@@ -9211,7 +9211,7 @@ window.handleCustomerRegistrationSubmit = function (e) {
         status: "Pending",
         photo: state.tempVisitorPhoto || "",
         photoIdDoc: "",
-        
+
         // New fields
         college,
         department,
@@ -9312,7 +9312,7 @@ window.handleVendorRegistrationSubmit = function (e) {
         status: "Pending",
         photo: state.tempVisitorPhoto || "",
         photoIdDoc: "",
-        
+
         // New fields
         college,
         department,
@@ -9324,11 +9324,6 @@ window.handleVendorRegistrationSubmit = function (e) {
     pendingRegistrationObj = visitObj;
     openVisitorPreview(pendingRegistrationObj);
 };
-
-    pendingRegistrationObj = visitObj;
-    openVisitorPreview(pendingRegistrationObj);
-};
-
 window.handleContractorRegistrationSubmit = function (e) {
     e.preventDefault();
 
@@ -9587,9 +9582,9 @@ function renderCategoryRecordsTable() {
         records = state.visitors.filter(r =>
             (r.purpose === "Student" || (r.masterId && r.masterId.startsWith("STU"))) &&
             ((r.id && r.id.toLowerCase().includes(searchKeyword)) ||
-             (r.name && r.name.toLowerCase().includes(searchKeyword)) ||
-             (r.phone && r.phone.toLowerCase().includes(searchKeyword)) ||
-             (r.company && r.company.toLowerCase().includes(searchKeyword)))
+                (r.name && r.name.toLowerCase().includes(searchKeyword)) ||
+                (r.phone && r.phone.toLowerCase().includes(searchKeyword)) ||
+                (r.company && r.company.toLowerCase().includes(searchKeyword)))
         ).map(r => ({
             id: r.id,
             cols: [
@@ -9609,9 +9604,9 @@ function renderCategoryRecordsTable() {
         records = state.visitors.filter(r =>
             (r.purpose === "Customer" || (r.masterId && r.masterId.startsWith("CUST"))) &&
             ((r.id && r.id.toLowerCase().includes(searchKeyword)) ||
-             (r.name && r.name.toLowerCase().includes(searchKeyword)) ||
-             (r.phone && r.phone.toLowerCase().includes(searchKeyword)) ||
-             (r.company && r.company.toLowerCase().includes(searchKeyword)))
+                (r.name && r.name.toLowerCase().includes(searchKeyword)) ||
+                (r.phone && r.phone.toLowerCase().includes(searchKeyword)) ||
+                (r.company && r.company.toLowerCase().includes(searchKeyword)))
         ).map(r => ({
             id: r.id,
             cols: [
@@ -9628,9 +9623,9 @@ function renderCategoryRecordsTable() {
         records = state.visitors.filter(r =>
             (r.purpose === "Vendor" || (r.masterId && r.masterId.startsWith("VND"))) &&
             ((r.id && r.id.toLowerCase().includes(searchKeyword)) ||
-             (r.name && r.name.toLowerCase().includes(searchKeyword)) ||
-             (r.phone && r.phone.toLowerCase().includes(searchKeyword)) ||
-             (r.company && r.company.toLowerCase().includes(searchKeyword)))
+                (r.name && r.name.toLowerCase().includes(searchKeyword)) ||
+                (r.phone && r.phone.toLowerCase().includes(searchKeyword)) ||
+                (r.company && r.company.toLowerCase().includes(searchKeyword)))
         ).map(r => ({
             id: r.id,
             cols: [
@@ -10563,13 +10558,13 @@ window.lastSearchResults = { student: new Map(), customer: new Map(), vendor: ne
 
 function debounce(func, delay) {
     let timeout;
-    return function(...args) {
+    return function (...args) {
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(this, args), delay);
     };
 }
 
-window.setupFormSearchListeners = function(category) {
+window.setupFormSearchListeners = function (category) {
     const fields = [];
     if (category === "student") {
         fields.push("reg-student-name", "reg-student-phone", "reg-student-email", "reg-student-rollno");
@@ -10582,7 +10577,7 @@ window.setupFormSearchListeners = function(category) {
     const onInput = debounce((e) => {
         const val = e.target.value.trim();
         const q = val.toLowerCase();
-        
+
         if (q.length < 3) {
             const container = document.getElementById(`search-results-${category}-wrapper`);
             if (container) container.classList.add("hidden");
@@ -10590,7 +10585,7 @@ window.setupFormSearchListeners = function(category) {
         }
 
         const uniqueMatches = new Map();
-        
+
         let masterList = [];
         if (category === "student") masterList = state.studentMaster || [];
         else if (category === "customer") masterList = state.customerMaster || [];
@@ -10598,7 +10593,7 @@ window.setupFormSearchListeners = function(category) {
 
         function isMatch(v) {
             if (!v) return false;
-            
+
             const cleanQ = q.replace(/[\s\-\(\)\+]/g, "");
             const phone = (v.phone || "").toLowerCase();
             const cleanPhone = phone.replace(/[\s\-\(\)\+]/g, "");
@@ -10608,12 +10603,12 @@ window.setupFormSearchListeners = function(category) {
             const cleanIdNumber = idNumber.replace(/[\s\-\(\)\+]/g, "");
             const id = (v.id || v.masterId || v.studentId || v.customerId || v.vendorId || "").toLowerCase();
             const cleanId = id.replace(/[\s\-\(\)\+]/g, "");
-            
+
             return phone.includes(q) || (cleanQ.length > 0 && cleanPhone.includes(cleanQ)) ||
-                   name.includes(q) ||
-                   email.includes(q) ||
-                   idNumber.includes(q) || (cleanQ.length > 0 && cleanIdNumber.includes(cleanQ)) ||
-                   id.includes(q) || (cleanQ.length > 0 && cleanId.includes(cleanQ));
+                name.includes(q) ||
+                email.includes(q) ||
+                idNumber.includes(q) || (cleanQ.length > 0 && cleanIdNumber.includes(cleanQ)) ||
+                id.includes(q) || (cleanQ.length > 0 && cleanId.includes(cleanQ));
         }
 
         masterList.forEach(m => {
@@ -10638,13 +10633,13 @@ window.setupFormSearchListeners = function(category) {
         if (state.visitors) {
             state.visitors.forEach(v => {
                 const isCategory = (category === "student" && (v.purpose === "Student" || (v.masterId && v.masterId.startsWith("STU")))) ||
-                                   (category === "customer" && (v.purpose === "Customer" || (v.masterId && v.masterId.startsWith("CUST")))) ||
-                                   (category === "vendor" && (v.purpose === "Vendor" || (v.masterId && v.masterId.startsWith("VND"))));
-                
+                    (category === "customer" && (v.purpose === "Customer" || (v.masterId && v.masterId.startsWith("CUST")))) ||
+                    (category === "vendor" && (v.purpose === "Vendor" || (v.masterId && v.masterId.startsWith("VND"))));
+
                 if (isCategory && isMatch(v)) {
                     const key = v.phone || v.masterId || v.id;
                     const lastVisitDate = v.visitDate || (v.checkIn ? v.checkIn.substring(0, 10) : "");
-                    
+
                     if (uniqueMatches.has(key)) {
                         const existing = uniqueMatches.get(key);
                         if (existing.lastVisit === "Registered" || new Date(lastVisitDate) > new Date(existing.lastVisit)) {
@@ -10717,7 +10712,7 @@ window.setupFormSearchListeners = function(category) {
     });
 };
 
-window.useExistingVisitorData = function(category, key) {
+window.useExistingVisitorData = function (category, key) {
     const results = window.lastSearchResults[category];
     if (!results) return;
     const visitor = results.get(key);
@@ -10792,7 +10787,7 @@ window.useExistingVisitorData = function(category, key) {
         const preview = document.getElementById(`photo-preview-${category}`);
         if (preview) preview.src = data.photo;
         state.tempVisitorPhoto = data.photo;
-        
+
         const status = document.getElementById(`camera-status-${category}`);
         if (status) status.textContent = "Existing Photo Loaded";
 
@@ -10813,7 +10808,7 @@ window.useExistingVisitorData = function(category, key) {
     showToast("Profile Loaded", `Welcome back, ${data.name}! Data auto-filled.`, "success");
 };
 
-window.viewVisitorHistory = function(category, key) {
+window.viewVisitorHistory = function (category, key) {
     const results = window.lastSearchResults[category];
     if (!results) return;
     const visitor = results.get(key);
@@ -10824,8 +10819,8 @@ window.viewVisitorHistory = function(category, key) {
 
     if (!state.visitors) return;
 
-    const history = state.visitors.filter(v => 
-        (v.phone && v.phone === phone) || 
+    const history = state.visitors.filter(v =>
+        (v.phone && v.phone === phone) ||
         (v.masterId && v.masterId === masterId)
     );
 
@@ -10866,7 +10861,7 @@ window.viewVisitorHistory = function(category, key) {
     container.classList.remove("hidden");
 };
 
-window.setupPhotoChoiceListeners = function(category) {
+window.setupPhotoChoiceListeners = function (category) {
     const btnExisting = document.getElementById(`btn-existing-photo-${category}`);
     const btnNew = document.getElementById(`btn-new-photo-${category}`);
 
@@ -10880,7 +10875,7 @@ window.setupPhotoChoiceListeners = function(category) {
                 const preview = document.getElementById(`photo-preview-${category}`);
                 if (preview) preview.src = visitor.photo;
                 state.tempVisitorPhoto = visitor.photo;
-                
+
                 const status = document.getElementById(`camera-status-${category}`);
                 if (status) status.textContent = "Using Existing Photo";
             }
@@ -10911,7 +10906,7 @@ window.setupPhotoChoiceListeners = function(category) {
     }
 };
 
-window.bindAutoSearchListeners = function() {
+window.bindAutoSearchListeners = function () {
     const categories = ["student", "customer", "vendor"];
     categories.forEach(cat => {
         const input = document.getElementById(`search-visitor-${cat}`);
@@ -11035,14 +11030,14 @@ function autoFillVisitorFields(category, v) {
         document.getElementById("reg-student-address").value = v.address || "";
         if (v.purpose) document.getElementById("reg-student-purpose").value = v.purpose;
         document.getElementById("reg-student-host").value = v.hostName || "";
-        
+
         if (v.photo) {
             const preview = document.getElementById("photo-preview-student");
             if (preview) {
                 preview.src = v.photo;
                 preview.style.cursor = "pointer";
                 preview.title = "Loaded Stored Photo (Click to update/retake)";
-                preview.onclick = function() {
+                preview.onclick = function () {
                     const status = document.getElementById("camera-status-student");
                     if (status) status.textContent = "Taking new photo...";
                     initCategoryCamera("student");
@@ -11074,7 +11069,7 @@ function autoFillVisitorFields(category, v) {
                 preview.src = v.photo;
                 preview.style.cursor = "pointer";
                 preview.title = "Loaded Stored Photo (Click to update/retake)";
-                preview.onclick = function() {
+                preview.onclick = function () {
                     const status = document.getElementById("camera-status-customer");
                     if (status) status.textContent = "Taking new photo...";
                     initCategoryCamera("customer");
@@ -11106,7 +11101,7 @@ function autoFillVisitorFields(category, v) {
                 preview.src = v.photo;
                 preview.style.cursor = "pointer";
                 preview.title = "Loaded Stored Photo (Click to update/retake)";
-                preview.onclick = function() {
+                preview.onclick = function () {
                     const status = document.getElementById("camera-status-vendor");
                     if (status) status.textContent = "Taking new photo...";
                     initCategoryCamera("vendor");
@@ -11161,14 +11156,14 @@ function unlockCategoryFormFields(category) {
     });
 }
 
-window.displayPreviousVisitHistory = function(category, matchedVisitor) {
+window.displayPreviousVisitHistory = function (category, matchedVisitor) {
     const phone = matchedVisitor.phone;
     const masterId = matchedVisitor.masterId || matchedVisitor.studentId || matchedVisitor.customerId || matchedVisitor.vendorId || matchedVisitor.visitor_code || matchedVisitor.id;
 
     if (!state.visitors) return;
 
-    const history = state.visitors.filter(v => 
-        (v.phone && v.phone === phone) || 
+    const history = state.visitors.filter(v =>
+        (v.phone && v.phone === phone) ||
         (v.masterId && v.masterId === masterId)
     );
 
@@ -11176,8 +11171,8 @@ window.displayPreviousVisitHistory = function(category, matchedVisitor) {
     const totalVisits = history.length;
 
     // Find last check-in / check-out times
-    const checkIns = history.map(h => h.checkIn).filter(Boolean).sort((a,b) => b.localeCompare(a));
-    const checkOuts = history.map(h => h.checkOut).filter(Boolean).sort((a,b) => b.localeCompare(a));
+    const checkIns = history.map(h => h.checkIn).filter(Boolean).sort((a, b) => b.localeCompare(a));
+    const checkOuts = history.map(h => h.checkOut).filter(Boolean).sort((a, b) => b.localeCompare(a));
 
     const lastCheckIn = checkIns[0] ? new Date(checkIns[0]).toLocaleString() : "-";
     const lastCheckOut = checkOuts[0] ? new Date(checkOuts[0]).toLocaleString() : "-";
