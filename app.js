@@ -11210,3 +11210,588 @@ window.displayPreviousVisitHistory = function (category, matchedVisitor) {
 
     container.classList.remove("hidden");
 };
+
+// ==========================================================================
+// ENTERPRISE REDESIGN EXTENSIONS
+// ==========================================================================
+
+window.checkoutVisitorFromList = function (visitorId) {
+    window.checkoutVisitorById(visitorId, false);
+};
+
+window.renderLiveRegistrationTable = function (category) {
+    const tbodyId = `live-registration-${category}-list`;
+    const tbody = document.getElementById(tbodyId);
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+    
+    const filtered = (state.visitors || []).filter(v => {
+        const vCat = (v.visitorCategory || "").toLowerCase() || (v.purpose === "Student" ? "student" : v.purpose === "Customer" ? "customer" : v.purpose === "Vendor" ? "vendor" : "");
+        return vCat === category;
+    });
+
+    filtered.sort((a, b) => {
+        const dateA = a.checkIn || a.visitDate || "";
+        const dateB = b.checkIn || b.visitDate || "";
+        return dateB.localeCompare(dateA);
+    });
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No active ${category} registrations today.</td></tr>`;
+        return;
+    }
+
+    filtered.forEach(v => {
+        const tr = document.createElement("tr");
+        tr.style.borderBottom = "1px solid var(--border-color)";
+
+        const photoSrc = v.photo || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><circle cx='12' cy='8' r='4'/><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/></svg>";
+        const checkInFormatted = v.checkIn ? new Date(v.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "-";
+        const checkOutFormatted = v.checkOut ? new Date(v.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "-";
+        const statusClass = v.status.toLowerCase().replace(/ /g, "-");
+        const vCat = v.visitorCategory || category.charAt(0).toUpperCase() + category.slice(1);
+
+        let actionBtn = "";
+        if (v.status === "Checked In") {
+            actionBtn = `<button type="button" class="btn btn-danger btn-xs" onclick="checkoutVisitorFromList('${v.id}')">Check-Out</button>`;
+        } else {
+            actionBtn = `<button type="button" class="btn btn-secondary btn-xs" disabled style="opacity: 0.5; cursor: not-allowed;">Already Checked Out</button>`;
+        }
+
+        tr.innerHTML = `
+            <td style="padding: 8px 10px;"><img src="${photoSrc}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;"></td>
+            <td style="padding: 8px 10px;"><code>${v.id}</code></td>
+            <td style="padding: 8px 10px; font-weight: 600;">${v.name}</td>
+            <td style="padding: 8px 10px;">${v.phone || "-"}</td>
+            <td style="padding: 8px 10px;"><span class="badge-status ${category}">${vCat}</span></td>
+            <td style="padding: 8px 10px;">${v.company || v.college || "-"}</td>
+            <td style="padding: 8px 10px;">${v.hostName || "-"}</td>
+            <td style="padding: 8px 10px;">${checkInFormatted}</td>
+            <td style="padding: 8px 10px;">${checkOutFormatted}</td>
+            <td style="padding: 8px 10px;"><span class="badge-status ${statusClass}">${v.status}</span></td>
+            <td style="padding: 8px 10px;">${actionBtn}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+};
+
+window.reportsFilterChanged = function () {
+    state.reportsCurrentPage = 1;
+    renderReportsView();
+};
+
+window.clearReportsFilters = function () {
+    const fields = [
+        "report-filter-name",
+        "report-filter-mobile",
+        "report-filter-aadhaar",
+        "report-filter-type",
+        "report-filter-host",
+        "report-filter-dept",
+        "report-filter-start-date",
+        "report-filter-end-date",
+        "report-filter-status"
+    ];
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+    });
+    reportsFilterChanged();
+};
+
+window.renderReportsView = function () {
+    const allV = state.visitors || [];
+    const total = allV.length;
+    const checkedIn = allV.filter(v => v.status === "Checked In").length;
+    const checkedOut = allV.filter(v => v.status === "Checked Out").length;
+    const students = allV.filter(v => {
+        const cat = (v.visitorCategory || "").toLowerCase() || (v.purpose === "Student" ? "student" : "");
+        return cat === "student";
+    }).length;
+    const customers = allV.filter(v => {
+        const cat = (v.visitorCategory || "").toLowerCase() || (v.purpose === "Customer" ? "customer" : "");
+        return cat === "customer";
+    }).length;
+    const vendors = allV.filter(v => {
+        const cat = (v.visitorCategory || "").toLowerCase() || (v.purpose === "Vendor" ? "vendor" : "");
+        return cat === "vendor";
+    }).length;
+
+    const todayLocal = getLocalDateStr();
+    const todays = allV.filter(v => v.visitDate && v.visitDate.startsWith(todayLocal)).length;
+    const active = checkedIn;
+
+    if (document.getElementById("reports-stat-total")) document.getElementById("reports-stat-total").innerText = total;
+    if (document.getElementById("reports-stat-checkedin")) document.getElementById("reports-stat-checkedin").innerText = checkedIn;
+    if (document.getElementById("reports-stat-checkedout")) document.getElementById("reports-stat-checkedout").innerText = checkedOut;
+    if (document.getElementById("reports-stat-students")) document.getElementById("reports-stat-students").innerText = students;
+    if (document.getElementById("reports-stat-customers")) document.getElementById("reports-stat-customers").innerText = customers;
+    if (document.getElementById("reports-stat-vendors")) document.getElementById("reports-stat-vendors").innerText = vendors;
+    if (document.getElementById("reports-stat-today")) document.getElementById("reports-stat-today").innerText = todays;
+    if (document.getElementById("reports-stat-active")) document.getElementById("reports-stat-active").innerText = active;
+
+    // Filters
+    const nameVal = (document.getElementById("report-filter-name")?.value || "").trim().toLowerCase();
+    const mobileVal = (document.getElementById("report-filter-mobile")?.value || "").trim().toLowerCase();
+    const aadhaarVal = (document.getElementById("report-filter-aadhaar")?.value || "").trim().toLowerCase();
+    const typeVal = document.getElementById("report-filter-type")?.value || "";
+    const hostVal = (document.getElementById("report-filter-host")?.value || "").trim().toLowerCase();
+    const deptVal = (document.getElementById("report-filter-dept")?.value || "").trim().toLowerCase();
+    const startVal = document.getElementById("report-filter-start-date")?.value || "";
+    const endVal = document.getElementById("report-filter-end-date")?.value || "";
+    const statusVal = document.getElementById("report-filter-status")?.value || "";
+
+    let filtered = allV.filter(v => {
+        if (nameVal && !(v.name && v.name.toLowerCase().includes(nameVal))) return false;
+        if (mobileVal && !(v.phone && v.phone.toLowerCase().includes(mobileVal))) return false;
+        if (aadhaarVal && !( (v.idNumber && v.idNumber.toLowerCase().includes(aadhaarVal)) || (v.aadhaar && v.aadhaar.toLowerCase().includes(aadhaarVal)) )) return false;
+        
+        const cat = (v.visitorCategory || "").toLowerCase() || (v.purpose === "Student" ? "student" : v.purpose === "Customer" ? "customer" : v.purpose === "Vendor" ? "vendor" : "");
+        if (typeVal && cat !== typeVal.toLowerCase()) return false;
+        
+        if (hostVal && !(v.hostName && v.hostName.toLowerCase().includes(hostVal))) return false;
+        if (deptVal && !(v.hostDept && v.hostDept.toLowerCase().includes(deptVal))) return false;
+        
+        if (startVal && v.visitDate < startVal) return false;
+        if (endVal && v.visitDate > endVal) return false;
+        
+        if (statusVal && v.status !== statusVal) return false;
+        
+        return true;
+    });
+
+    // Sorting
+    if (state.reportsSortColumn) {
+        filtered.sort((a, b) => {
+            let valA = a[state.reportsSortColumn] || "";
+            let valB = b[state.reportsSortColumn] || "";
+            
+            if (typeof valA === "string") valA = valA.toLowerCase();
+            if (typeof valB === "string") valB = valB.toLowerCase();
+            
+            if (valA < valB) return state.reportsSortOrder === "asc" ? -1 : 1;
+            if (valA > valB) return state.reportsSortOrder === "asc" ? 1 : -1;
+            return 0;
+        });
+    } else {
+        filtered.sort((a, b) => {
+            const dateA = a.checkIn || a.visitDate || "";
+            const dateB = b.checkIn || b.visitDate || "";
+            return dateB.localeCompare(dateA);
+        });
+    }
+
+    reportsFilteredData = filtered;
+
+    // Pagination
+    if (!state.reportsPageSize) state.reportsPageSize = 10;
+    if (!state.reportsCurrentPage) state.reportsCurrentPage = 1;
+
+    const totalRecords = filtered.length;
+    const totalPages = Math.ceil(totalRecords / state.reportsPageSize) || 1;
+    if (state.reportsCurrentPage > totalPages) state.reportsCurrentPage = totalPages;
+
+    const startIndex = (state.reportsCurrentPage - 1) * state.reportsPageSize;
+    const endIndex = Math.min(startIndex + state.reportsPageSize, totalRecords);
+    const paginated = filtered.slice(startIndex, endIndex);
+
+    const tbody = document.getElementById("reports-table-body");
+    if (tbody) {
+        tbody.innerHTML = "";
+        if (paginated.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="15" style="text-align: center; padding: 2rem; color: var(--text-muted);">No reports found matching filters.</td></tr>`;
+        } else {
+            paginated.forEach(v => {
+                const tr = document.createElement("tr");
+                tr.style.borderBottom = "1px solid var(--border-color)";
+                
+                const photoSrc = v.photo || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><circle cx='12' cy='8' r='4'/><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/></svg>";
+                const checkInFormatted = v.checkIn ? new Date(v.checkIn).toLocaleString() : "-";
+                const checkOutFormatted = v.checkOut ? new Date(v.checkOut).toLocaleString() : "-";
+                const statusClass = v.status.toLowerCase().replace(/ /g, "-");
+                const cat = v.visitorCategory || (v.purpose === "Student" ? "Student" : v.purpose === "Customer" ? "Customer" : v.purpose === "Vendor" ? "Vendor" : "Visitor");
+                
+                let actionBtn = "";
+                if (v.status === "Checked In") {
+                    actionBtn = `
+                        <button type="button" class="btn btn-secondary btn-xs no-print" onclick="viewPrintPassModal('${v.id}')">Pass</button>
+                        <button type="button" class="btn btn-danger btn-xs no-print" onclick="checkoutVisitorById('${v.id}')">Check-Out</button>
+                    `;
+                } else {
+                    actionBtn = `
+                        <button type="button" class="btn btn-secondary btn-xs no-print" onclick="viewPrintPassModal('${v.id}')">Pass</button>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td style="padding: 10px 8px;"><img src="${photoSrc}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;"></td>
+                    <td style="padding: 10px 8px;"><code>${v.id}</code></td>
+                    <td style="padding: 10px 8px; font-weight: 600;">${v.name}</td>
+                    <td style="padding: 10px 8px;">${v.phone || "-"}</td>
+                    <td style="padding: 10px 8px;">${v.idNumber || v.aadhaar || "-"}</td>
+                    <td style="padding: 10px 8px;"><span class="badge-status ${cat.toLowerCase()}">${cat}</span></td>
+                    <td style="padding: 10px 8px;">${v.company || v.college || "-"}</td>
+                    <td style="padding: 10px 8px;">${v.hostName || "-"}</td>
+                    <td style="padding: 10px 8px;">${v.hostDept || "-"}</td>
+                    <td style="padding: 10px 8px;">${v.purpose || "-"}</td>
+                    <td style="padding: 10px 8px;">${checkInFormatted}</td>
+                    <td style="padding: 10px 8px;">${checkOutFormatted}</td>
+                    <td style="padding: 10px 8px;"><span class="badge-status ${statusClass}">${v.status}</span></td>
+                    <td style="padding: 10px 8px;">${v.visitDate || "-"}</td>
+                    <td style="padding: 10px 8px;" class="no-print">${actionBtn}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    }
+
+    const footer = document.getElementById("reports-pagination");
+    if (footer) {
+        footer.innerHTML = "";
+        const displayStart = totalRecords === 0 ? 0 : startIndex + 1;
+        
+        footer.innerHTML = `
+            <span>Showing ${displayStart} to ${endIndex} of ${totalRecords} entries</span>
+            <div style="display: flex; gap: 0.5rem;">
+                <button type="button" class="btn btn-secondary btn-xs ${state.reportsCurrentPage === 1 ? "disabled" : ""}" id="btn-rep-prev">Previous</button>
+                <button type="button" class="btn btn-secondary btn-xs ${state.reportsCurrentPage === totalPages ? "disabled" : ""}" id="btn-rep-next">Next</button>
+            </div>
+        `;
+
+        document.getElementById("btn-rep-prev").onclick = () => {
+            if (state.reportsCurrentPage > 1) {
+                state.reportsCurrentPage--;
+                renderReportsView();
+            }
+        };
+        document.getElementById("btn-rep-next").onclick = () => {
+            if (state.reportsCurrentPage < totalPages) {
+                state.reportsCurrentPage++;
+                renderReportsView();
+            }
+        };
+    }
+};
+
+window.exportReports = function (type) {
+    if (type === "csv") {
+        exportReportsCSV();
+    } else if (type === "excel") {
+        exportReportsXLS();
+    } else if (type === "pdf") {
+        exportReportsPDF();
+    }
+};
+
+window.exportReportsPDF = function () {
+    const rows = reportsFilteredData || [];
+    if (rows.length === 0) {
+        showToast("No data", "No records found to export PDF.", "warning");
+        return;
+    }
+    if (typeof window.jspdf === 'undefined') {
+        showToast("PDF Export Error", "jsPDF library is not loaded.", "danger");
+        return;
+    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+
+    doc.setFont("Helvetica", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(13, 40, 24);
+    doc.text("Visitor Reports Analytical Log", 14, 15);
+
+    doc.setFont("Helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(100, 116, 139);
+    const printedOn = new Date().toLocaleString();
+    doc.text(`Printed On: ${printedOn} | Total Records: ${rows.length}`, 14, 21);
+
+    const headers = [["Visitor ID", "Name", "Mobile", "Type", "Company/College", "Host Employee", "Dept", "Check-In", "Check-Out", "Status"]];
+    const data = rows.map(r => [
+        r.id || "",
+        r.name || "",
+        r.phone || "",
+        r.visitorCategory || (r.purpose === "Student" ? "Student" : r.purpose === "Customer" ? "Customer" : r.purpose === "Vendor" ? "Vendor" : "Visitor"),
+        r.company || r.college || "-",
+        r.hostName || "",
+        r.hostDept || "",
+        r.checkIn ? new Date(r.checkIn).toLocaleString() : "-",
+        r.checkOut ? new Date(r.checkOut).toLocaleString() : "-",
+        r.status || ""
+    ]);
+
+    if (typeof doc.autoTable === 'function') {
+        doc.autoTable({
+            head: headers,
+            body: data,
+            startY: 25,
+            theme: 'grid',
+            headStyles: { fillColor: [13, 40, 24], textColor: [240, 250, 244] },
+            styles: { fontSize: 8 }
+        });
+    } else {
+        let y = 30;
+        doc.setFont("Helvetica", "bold");
+        doc.text("ID       Name                 Mobile       Type       Host                Status", 14, y);
+        doc.line(14, y + 1, 280, y + 1);
+        y += 6;
+        doc.setFont("Helvetica", "normal");
+        rows.slice(0, 20).forEach(r => {
+            if (y > 190) { doc.addPage(); y = 20; }
+            doc.text(`${(r.id || "").padEnd(10)} ${(r.name || "").slice(0, 18).padEnd(20)} ${(r.phone || "").padEnd(12)} ${(r.visitorCategory || "Visitor").padEnd(10)} ${(r.hostName || "").slice(0, 18).padEnd(20)} ${r.status}`, 14, y);
+            y += 6;
+        });
+    }
+
+    doc.save(`vms_visitor_reports_${getLocalDateStr()}.pdf`);
+    showToast("PDF Exported", "Analytical report PDF saved successfully.", "success");
+};
+
+window.printReports = function () {
+    const rows = reportsFilteredData || [];
+    if (rows.length === 0) {
+        showToast("No data", "No reports records to print.", "warning");
+        return;
+    }
+    const branchName = state.settings?.terminalGate || "Barani Security Gate";
+    const printedBy = state.currentUser ? state.currentUser.name : "System Operator";
+    const printedOn = new Date().toLocaleString();
+
+    const iframe = document.createElement("iframe");
+    iframe.style.position = "fixed";
+    iframe.style.right = "0";
+    iframe.style.bottom = "0";
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+    iframe.style.border = "0";
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+        <html>
+            <head>
+                <title>Visitor Reports Log</title>
+                <style>
+                    @page {
+                        size: landscape;
+                        margin: 15mm;
+                    }
+                    body {
+                        font-family: Arial, sans-serif;
+                        color: #0f172a;
+                        margin: 0;
+                        padding: 0;
+                        font-size: 9px;
+                    }
+                    .header-container {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        border-bottom: 2px solid #16a34a;
+                        padding-bottom: 10px;
+                        margin-bottom: 15px;
+                    }
+                    .title-block h1 {
+                        margin: 0 0 5px 0;
+                        font-size: 16px;
+                        font-weight: 800;
+                        color: #0d2818;
+                    }
+                    .meta-block {
+                        text-align: right;
+                        font-size: 9px;
+                        color: #64748b;
+                        line-height: 1.4;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 10px;
+                    }
+                    th {
+                        background: #0d2818;
+                        color: #f0faf4;
+                        text-align: left;
+                        padding: 6px;
+                        font-weight: 700;
+                        border: 1px solid #0d2818;
+                    }
+                    td {
+                        padding: 5px;
+                        border: 1px solid #e2e8f0;
+                    }
+                    tr:nth-child(even) {
+                        background: #f8fafc;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header-container">
+                    <div class="title-block">
+                        <h1>📊 Visitor Reports Log</h1>
+                        <div>Branch: ${branchName} | Total Records: ${rows.length}</div>
+                    </div>
+                    <div class="meta-block">
+                        <div>Printed By: ${printedBy}</div>
+                        <div>Printed On: ${printedOn}</div>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Visitor ID</th>
+                            <th>Name</th>
+                            <th>Mobile</th>
+                            <th>Type</th>
+                            <th>Company/College</th>
+                            <th>Host Employee</th>
+                            <th>Dept</th>
+                            <th>Purpose</th>
+                            <th>Check-In</th>
+                            <th>Check-Out</th>
+                            <th>Status</th>
+                            <th>Visit Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows.map(r => `
+                            <tr>
+                                <td><code>${r.id}</code></td>
+                                <td><strong>${r.name}</strong></td>
+                                <td>${r.phone || "-"}</td>
+                                <td>${r.visitorCategory || (r.purpose === "Student" ? "Student" : r.purpose === "Customer" ? "Customer" : r.purpose === "Vendor" ? "Vendor" : "Visitor")}</td>
+                                <td>${r.company || r.college || "-"}</td>
+                                <td>${r.hostName || "-"}</td>
+                                <td>${r.hostDept || "-"}</td>
+                                <td>${r.purpose || "-"}</td>
+                                <td>${r.checkIn ? new Date(r.checkIn).toLocaleString() : "-"}</td>
+                                <td>${r.checkOut ? new Date(r.checkOut).toLocaleString() : "-"}</td>
+                                <td>${r.status}</td>
+                                <td>${r.visitDate || "-"}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </body>
+        </html>
+    `);
+    doc.close();
+
+    setTimeout(() => {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+        setTimeout(() => {
+            document.body.removeChild(iframe);
+        }, 500);
+    }, 500);
+};
+
+window.deleteVisitorRecord = function (visitorId) {
+    if (confirm("Are you sure you want to delete this visitor record?")) {
+        state.visitors = state.visitors.filter(v => v.id !== visitorId);
+        saveState();
+        refreshAllDataViews();
+        showToast("Record Deleted", "Successfully removed visitor record.", "success");
+    }
+};
+
+window.handleLogoutClick = async function () {
+    if (window.supabase) {
+        try {
+            await window.supabase.auth.signOut();
+        } catch (e) {
+            console.error("Supabase signOut error:", e);
+        }
+    }
+
+    const settings = localStorage.getItem("gk_settings");
+    const lang = localStorage.getItem("vms_lang");
+    
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    if (settings) localStorage.setItem("gk_settings", settings);
+    if (lang) localStorage.setItem("vms_lang", lang);
+
+    state.currentUser = null;
+    showToast("Logged Out Successfully", "Logged out successfully.", "success");
+    
+    window.history.pushState(null, "", window.location.href);
+    window.onpopstate = function () {
+        window.history.pushState(null, "", window.location.href);
+    };
+
+    checkAuthSession();
+};
+
+window.checkoutVisitorById = async function (visitorId, bypassConfirm = false) {
+    const idx = state.visitors.findIndex(v => v.id === visitorId);
+    if (idx === -1) return;
+
+    if (!bypassConfirm) {
+        const confirmCheckout = confirm(`Are you sure you want to check out ${state.visitors[idx].name}?`);
+        if (!confirmCheckout) return;
+    }
+
+    const hostEmp = await resolveLatestHost(state.visitors[idx].hostId);
+    if (hostEmp) {
+        state.visitors[idx].hostName = hostEmp.name;
+        state.visitors[idx].hostDept = hostEmp.dept;
+    }
+
+    state.visitors[idx].status = "Checked Out";
+    state.visitors[idx].checkOut = new Date().toISOString();
+    saveState();
+    syncSingleVisitorToCloud(state.visitors[idx]);
+    
+    // Redraw live registration tables if visible
+    renderLiveRegistrationTable("student");
+    renderLiveRegistrationTable("customer");
+    renderLiveRegistrationTable("vendor");
+    
+    refreshAllDataViews();
+
+    showToast("Checked Out Completed", `${state.visitors[idx].name} cleared at gate.`, "info");
+    addNotificationAlert("Visitor Checked-Out", `${state.visitors[idx].name} has exited campus boundaries.`, "info");
+
+    const host = state.employees.find(e => e.id === state.visitors[idx].hostId);
+    if (host) {
+        logNotificationSimulator(
+            "Checked-Out",
+            "Email/SMS",
+            host.email,
+            `Hello ${host.name}, your visitor ${state.visitors[idx].name} has officially checked out at the exit gate.`
+        );
+    }
+};
+
+window.refreshAllDataViews = function () {
+    renderDashboardView();
+    renderHistoryView();
+    renderNotificationsDrawer();
+    renderPurchaseManuals();
+    renderWorkPermits();
+    renderPMDashboardStats();
+    updateRegistrationDashboardStats();
+    
+    // Redraw live registration tables
+    renderLiveRegistrationTable("student");
+    renderLiveRegistrationTable("customer");
+    renderLiveRegistrationTable("vendor");
+    
+    // Redraw reports if active
+    if (state.activeView === "view-reports") {
+        renderReportsView();
+    }
+};
+
+const originalOpenCategoryForm = window.openCategoryForm;
+window.openCategoryForm = function (category) {
+    if (originalOpenCategoryForm) {
+        originalOpenCategoryForm(category);
+    }
+    renderLiveRegistrationTable(category);
+};
