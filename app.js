@@ -1215,9 +1215,30 @@ function setupClock() {
 }
 
 // Authentication Session State Check
-function checkAuthSession() {
+async function checkAuthSession() {
     const loginContainer = document.getElementById("login-container");
     const mainAppContainer = document.getElementById("main-app-container");
+    const loginLoadingOverlay = document.getElementById("login-loading-overlay");
+
+    // Hide any login loading overlays if present
+    if (loginLoadingOverlay) loginLoadingOverlay.classList.add("hidden");
+
+    // Restore active Supabase session on startup / page refresh
+    if (supabaseClient && !state.currentUser) {
+        try {
+            const { data, error } = await supabaseClient.auth.getSession();
+            if (data && data.session && data.session.user) {
+                const profile = await fetchUserProfileAndRole(data.session.user);
+                if (profile) {
+                    state.currentUser = profile;
+                    saveState();
+                    showToast("Session Restored", getTranslatedText("logged-in-as", "Logged in as {name}").replace("{name}", state.currentUser.name), "success");
+                }
+            }
+        } catch (e) {
+            console.error("[checkAuthSession] Session restoration failed:", e);
+        }
+    }
 
     if (state.currentUser) {
         loginContainer.classList.add("hidden");
@@ -1230,23 +1251,31 @@ function checkAuthSession() {
 
         const role = state.currentUser.role.toLowerCase();
         const isAdmin = role === "admin" || role === "administrator";
+        const isGatekeeper = role === "gatekeeper" || role === "security gatekeeper";
+        const isReception = role === "receptionist" || role === "front desk operator";
+        const isSecurity = isGatekeeper || isReception || role === "security";
+        const isEmployee = role === "employee";
 
         // Show/Hide sidebar navigation links based on role privileges
         document.querySelectorAll(".nav-link").forEach(link => {
             const target = link.getAttribute("data-target");
             if (isAdmin) {
-                // Administrator has access to all primary views
                 const adminViews = ["view-dashboard", "view-reports", "view-data-management", "view-work-permit", "view-purchase-manual", "view-settings"];
                 if (adminViews.includes(target)) {
                     link.classList.remove("hidden");
                 } else {
                     link.classList.add("hidden");
                 }
-            } else {
-                // Security User (e.g. Security Gatekeeper, Front Desk Operator, Reception, Security Officer)
-                // Security users should ONLY have access to: Dashboard, Reports, Logout
+            } else if (isSecurity) {
                 const securityViews = ["view-dashboard", "view-reports"];
                 if (securityViews.includes(target)) {
+                    link.classList.remove("hidden");
+                } else {
+                    link.classList.add("hidden");
+                }
+            } else if (isEmployee) {
+                const employeeViews = ["view-dashboard", "view-reports"];
+                if (employeeViews.includes(target)) {
                     link.classList.remove("hidden");
                 } else {
                     link.classList.add("hidden");
@@ -1254,42 +1283,28 @@ function checkAuthSession() {
             }
         });
 
+        // Toggle Dashboard wrappers based on Administrator/Security vs Employee portal
+        const visitorWrapper = document.getElementById("visitor-registration-wrapper");
+        const empDashboardWrapper = document.getElementById("employee-dashboard-wrapper");
+
+        if (isAdmin || isSecurity) {
+            if (visitorWrapper) visitorWrapper.classList.remove("hidden");
+            if (empDashboardWrapper) empDashboardWrapper.classList.add("hidden");
+
+            const selector = document.querySelector(".entry-type-selector");
+            if (selector) {
+                if (isGatekeeper) selector.classList.add("hidden");
+                else selector.classList.remove("hidden");
+            }
+        } else if (isEmployee) {
+            if (visitorWrapper) visitorWrapper.classList.add("hidden");
+            if (empDashboardWrapper) empDashboardWrapper.classList.remove("hidden");
+            renderEmployeeDashboard();
+        }
+
         // Parse initial URL path for routing
         const initialPath = window.location.pathname || "/";
         window.navigateTo(initialPath, false);
-
-        // Hide/Show flow selector
-        const selector = document.querySelector(".entry-type-selector");
-        if (selector) {
-            if (isGatekeeper) selector.classList.add("hidden");
-            else selector.classList.remove("hidden");
-        }
-
-        // Initialize wrappers
-        if (isAdmin || isGatekeeper || isReception) {
-            const vWrapper = document.getElementById("visitor-registration-wrapper");
-            if (vWrapper) vWrapper.classList.remove("hidden");
-            
-            const dWrapper = document.getElementById("registration-dashboard-wrapper");
-            if (dWrapper) dWrapper.classList.remove("hidden");
-            
-            const eWrapper = document.getElementById("employee-registration-wrapper");
-            if (eWrapper) eWrapper.classList.add("hidden");
-            
-            const sWrapper = document.getElementById("student-registration-wrapper");
-            if (sWrapper) sWrapper.classList.add("hidden");
-            
-            const cWrapper = document.getElementById("customer-registration-wrapper");
-            if (cWrapper) cWrapper.classList.add("hidden");
-            
-            const vndWrapper = document.getElementById("vendor-registration-wrapper");
-            if (vndWrapper) vndWrapper.classList.add("hidden");
-        } else {
-            const employeeWrapper = document.getElementById("employee-entry-wrapper");
-            const visitorWrapper = document.getElementById("visitor-registration-wrapper");
-            if (employeeWrapper) employeeWrapper.classList.add("hidden");
-            if (visitorWrapper) visitorWrapper.classList.add("hidden");
-        }
 
         // Welcome subtitle greeting
         document.getElementById("page-subtitle").innerText = getTranslatedText("sub-dashboard", "Welcome, {name}").replace("{name}", state.currentUser.name);
@@ -1304,6 +1319,188 @@ function checkAuthSession() {
     }
 }
 
+// Dynamically fetch role from security_users or employees Supabase tables
+async function fetchUserProfileAndRole(user) {
+    if (!supabaseClient) return null;
+    try {
+        // Query security_users table
+        const { data: profile, error: profileErr } = await supabaseClient
+            .from('security_users')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+
+        if (!profileErr && profile) {
+            return {
+                username: profile.username,
+                name: profile.name,
+                role: profile.role,
+                phone: profile.phone,
+                shift: profile.shift
+            };
+        }
+
+        // Query employees table by email fallback (for host/employee accounts)
+        if (user.email) {
+            const { data: emp, error: empErr } = await supabaseClient
+                .from('employees')
+                .select('*')
+                .eq('email', user.email)
+                .single();
+
+            if (!empErr && emp) {
+                return {
+                    username: emp.employee_code.toLowerCase(),
+                    name: emp.name,
+                    role: "Employee",
+                    employeeCode: emp.employee_code,
+                    phone: emp.phone,
+                    shift: "Regular",
+                    dept: emp.dept,
+                    designation: emp.designation,
+                    cabin: emp.cabin
+                };
+            }
+        }
+    } catch (e) {
+        console.error("[fetchUserProfileAndRole] Profiles table role retrieval error:", e);
+    }
+    return null;
+}
+
+// Render Host Employee Dashboard portal logs and clearances
+function renderEmployeeDashboard() {
+    if (!state.currentUser || state.currentUser.role.toLowerCase() !== "employee") return;
+
+    const name = state.currentUser.name || "";
+    const code = state.currentUser.employeeCode || state.currentUser.username || "";
+    const dept = state.currentUser.dept || "Engineering";
+    const designation = state.currentUser.designation || "Staff Member";
+    const phone = state.currentUser.phone || "Ext. 9988";
+    const cabin = state.currentUser.cabin || "Room 101";
+
+    const avatarEl = document.getElementById("emp-dash-avatar");
+    if (avatarEl) avatarEl.innerText = name.split(" ").map(n => n[0]).join("");
+
+    const nameEl = document.getElementById("emp-dash-name");
+    if (nameEl) nameEl.innerText = name;
+
+    const codeEl = document.getElementById("emp-dash-code");
+    if (codeEl) codeEl.innerText = code.toUpperCase();
+
+    const deptEl = document.getElementById("emp-dash-dept");
+    if (deptEl) deptEl.innerText = dept;
+
+    const desEl = document.getElementById("emp-dash-designation");
+    if (desEl) desEl.innerText = designation;
+
+    const phoneEl = document.getElementById("emp-dash-phone");
+    if (phoneEl) phoneEl.innerText = phone;
+
+    const cabinEl = document.getElementById("emp-dash-cabin");
+    if (cabinEl) cabinEl.innerText = cabin;
+
+    // Filter Pending guest clearances where current employee is the host
+    const pendingGuests = state.visitors.filter(v => {
+        const hostIdMatch = v.hostId && code && v.hostId.toLowerCase() === code.toLowerCase();
+        const hostNameMatch = v.hostName && name && v.hostName.toLowerCase() === name.toLowerCase();
+        return (hostIdMatch || hostNameMatch) && v.status === "Pending";
+    });
+
+    const countEl = document.getElementById("emp-dash-pending-count");
+    if (countEl) countEl.innerText = `${pendingGuests.length} Waiting`;
+
+    const pendingList = document.getElementById("emp-dash-pending-list");
+    if (pendingList) {
+        pendingList.innerHTML = "";
+        if (pendingGuests.length === 0) {
+            pendingList.innerHTML = `
+                <div style="text-align: center; color: var(--text-muted); padding: 3.5rem 0;" class="text-sm">
+                    No pending visitor approval requests.
+                </div>
+            `;
+        } else {
+            pendingGuests.forEach(v => {
+                const card = document.createElement("div");
+                card.style.padding = "0.75rem 1rem";
+                card.style.border = "1px solid var(--border-color)";
+                card.style.borderRadius = "var(--border-radius-md)";
+                card.style.background = "var(--bg-body)";
+                card.style.display = "flex";
+                card.style.justifyContent = "space-between";
+                card.style.alignItems = "center";
+                card.style.gap = "10px";
+                card.style.marginBottom = "0.5rem";
+                
+                card.innerHTML = `
+                    <div style="flex-grow: 1;">
+                        <div style="font-weight: 700; color: var(--text-primary);">${v.name}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">${v.company || "Independent"} | Purpose: ${v.purpose}</div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="handleEmployeeClearance('${v.id}', 'Approve')" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">Approve</button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="handleEmployeeClearance('${v.id}', 'Reject')" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">Reject</button>
+                    </div>
+                `;
+                pendingList.appendChild(card);
+            });
+        }
+    }
+
+    // Filter host visit history logs
+    const historyLogs = state.visitors.filter(v => {
+        const hostIdMatch = v.hostId && code && v.hostId.toLowerCase() === code.toLowerCase();
+        const hostNameMatch = v.hostName && name && v.hostName.toLowerCase() === name.toLowerCase();
+        return (hostIdMatch || hostNameMatch);
+    });
+
+    const historyBody = document.getElementById("emp-dash-history-body");
+    if (historyBody) {
+        historyBody.innerHTML = "";
+        if (historyLogs.length === 0) {
+            historyBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem 0; color: var(--text-muted);">No visit logs found.</td></tr>`;
+        } else {
+            historyLogs.forEach(v => {
+                const tr = document.createElement("tr");
+                tr.style.borderBottom = "1px solid var(--border-color)";
+                
+                const checkInFormatted = v.checkIn ? new Date(v.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "-";
+                const checkOutFormatted = v.checkOut ? new Date(v.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "-";
+                const statusClass = v.status.toLowerCase().replace(/ /g, "-");
+
+                tr.innerHTML = `
+                    <td style="padding: 10px;"><code>${v.id}</code></td>
+                    <td style="padding: 10px;">
+                        <div style="font-weight: 600;">${v.name}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">${v.company || "Independent"} | ${v.phone}</div>
+                    </td>
+                    <td style="padding: 10px;">${v.purpose}</td>
+                    <td style="padding: 10px;">${v.visitDate}</td>
+                    <td style="padding: 10px;">${checkInFormatted}</td>
+                    <td style="padding: 10px;">${checkOutFormatted}</td>
+                    <td style="padding: 10px;"><span class="badge-status ${statusClass}">${v.status}</span></td>
+                `;
+                historyBody.appendChild(tr);
+            });
+        }
+    }
+}
+
+// Handle approvals/rejections directly inside the Employee Dashboard
+window.handleEmployeeClearance = async function(visitorId, action) {
+    if (action === 'Approve') {
+        await window.approvePendingVisitor(visitorId);
+    } else {
+        const visitor = state.visitors.find(v => v.id === visitorId);
+        if (visitor) {
+            const reason = prompt("Enter rejection reason:", "Unavailable") || "Denied by host";
+            visitor.rejectionReason = reason;
+        }
+        rejectPendingVisitor(visitorId);
+    }
+    renderEmployeeDashboard();
+};
+
 // Role checking helper
 function isViewAuthorized(viewId) {
     if (!state.currentUser) return false;
@@ -1312,19 +1509,42 @@ function isViewAuthorized(viewId) {
     // Admin bypasses all restrictions
     if (role === "admin" || role === "administrator") return true;
 
-    // Security User (non-admin roles like security officer, gatekeeper, etc.)
-    const allowed = [
-        "view-dashboard",
-        "view-reports",
-        "view-student-registration",
-        "view-customer-registration",
-        "view-vendor-registration"
-    ];
-    return allowed.includes(viewId);
+    // Security Users (Security Gatekeeper, Front Desk Operator)
+    if (role === "security gatekeeper" || role === "front desk operator" || role === "gatekeeper" || role === "security") {
+        const allowed = [
+            "view-dashboard",
+            "view-reports",
+            "view-student-registration",
+            "view-customer-registration",
+            "view-vendor-registration",
+            "view-contractor-registration",
+            "view-delivery-registration",
+            "view-service-engineer-registration"
+        ];
+        return allowed.includes(viewId);
+    }
+
+    // Host Employees
+    if (role === "employee") {
+        const allowed = [
+            "view-dashboard",
+            "view-reports"
+        ];
+        return allowed.includes(viewId);
+    }
+
+    return false;
 }
 
 // Navigation Routing Router
 window.navigateTo = function (path, pushState = true) {
+    if (!state.currentUser) {
+        document.getElementById("login-container").classList.remove("hidden");
+        document.getElementById("main-app-container").classList.add("hidden");
+        stopCamera();
+        return;
+    }
+
     // Path mapping to viewId
     const pathMap = {
         "/": "view-dashboard",
@@ -1344,11 +1564,11 @@ window.navigateTo = function (path, pushState = true) {
     if (!isViewAuthorized(viewId)) {
         showToast(
             "Access Denied",
-            `Your security role (${state.currentUser ? state.currentUser.role : 'Guest'}) is not authorized to access this page.`,
+            `Your security role (${state.currentUser.role}) is not authorized to access this page.`,
             "danger"
         );
-        // Redirect to Dashboard if logged in
-        if (state.currentUser) {
+        // Redirect to Dashboard if logged in to prevent loop
+        if (path !== "/dashboard" && path !== "/") {
             window.navigateTo("/dashboard", false);
         }
         return;
@@ -1824,8 +2044,16 @@ async function handleLoginSubmit(e) {
     const userVal = document.getElementById("login-username").value.trim().toLowerCase();
     const passVal = document.getElementById("login-password").value;
 
+    const btnSubmit = document.querySelector("#login-form button[type='submit']");
+    const overlay = document.getElementById("login-loading-overlay");
+    const loadingText = document.getElementById("login-loading-text");
+
+    // Disable login button and show overlay
+    if (btnSubmit) btnSubmit.disabled = true;
+    if (overlay) overlay.classList.remove("hidden");
+    if (loadingText) loadingText.innerText = "Authenticating...";
+
     if (supabaseClient) {
-        showToast("Authenticating", "Verifying credentials with Supabase...", "info");
         try {
             // Map simple local usernames to domain emails for Supabase Auth
             let email = userVal;
@@ -1839,22 +2067,20 @@ async function handleLoginSubmit(e) {
             });
 
             if (error) {
-                console.error("Supabase Auth error:", error);
-                console.log("Attempting offline login fallback...");
-                performOfflineLogin(userVal, passVal);
+                console.error("[Login] Supabase Auth error:", error);
+                // Attempt offline login fallback
+                if (loadingText) loadingText.innerText = "Fallback to offline database...";
+                await performOfflineLogin(userVal, passVal);
                 return;
             }
 
             if (data && data.user) {
-                // Fetch the security user profile to retrieve the proper role configuration
-                const { data: profile, error: profileErr } = await supabaseClient
-                    .from('security_users')
-                    .select('*')
-                    .eq('id', data.user.id)
-                    .single();
-
-                if (profileErr || !profile) {
-                    console.warn("Custom profile not found in security_users, using auth default metadata.", profileErr);
+                if (loadingText) loadingText.innerText = "Loading user profile...";
+                
+                const profile = await fetchUserProfileAndRole(data.user);
+                
+                if (!profile) {
+                    console.warn("[Login] Custom profile not found in database. Falling back to default metadata.");
                     state.currentUser = {
                         username: userVal,
                         name: userVal.charAt(0).toUpperCase() + userVal.slice(1),
@@ -1863,28 +2089,31 @@ async function handleLoginSubmit(e) {
                         shift: "Continuous"
                     };
                 } else {
-                    state.currentUser = mapSecurityUserFromDb(profile);
+                    state.currentUser = profile;
                 }
 
                 saveState();
                 showToast("Access Granted", getTranslatedText("logged-in-as", "Logged in as {name}").replace("{name}", state.currentUser.name), "success");
                 document.getElementById("login-form").reset();
-                checkAuthSession();
+                await checkAuthSession();
 
-                // Fetch latest state updates from Supabase
+                // Sync latest state updates from Supabase
                 syncFromSupabase();
             }
         } catch (err) {
-            console.error("Supabase auth exception:", err);
+            console.error("[Login] Supabase auth exception:", err);
             showToast("Auth Service Offline", "Could not connect to Supabase server. Falling back to offline local auth.", "warning");
-            performOfflineLogin(userVal, passVal);
+            await performOfflineLogin(userVal, passVal);
         }
     } else {
-        performOfflineLogin(userVal, passVal);
+        await performOfflineLogin(userVal, passVal);
     }
 }
 
-function performOfflineLogin(userVal, passVal) {
+async function performOfflineLogin(userVal, passVal) {
+    const btnSubmit = document.querySelector("#login-form button[type='submit']");
+    const overlay = document.getElementById("login-loading-overlay");
+
     const matchedUser = state.securityUsers.find(u => u.username === userVal);
     const matchedEmp = state.employees ? state.employees.find(e => (e.id && e.id.toLowerCase() === userVal) || (e.email && e.email.toLowerCase() === userVal)) : null;
 
@@ -1893,7 +2122,7 @@ function performOfflineLogin(userVal, passVal) {
         saveState();
         showToast("Access Granted", getTranslatedText("logged-in-as", "Logged in as {name}").replace("{name}", matchedUser.name), "success");
         document.getElementById("login-form").reset();
-        checkAuthSession();
+        await checkAuthSession();
     } else if (matchedEmp && passVal !== "") {
         state.currentUser = {
             username: matchedEmp.id.toLowerCase(),
@@ -1901,14 +2130,20 @@ function performOfflineLogin(userVal, passVal) {
             role: "Employee",
             employeeCode: matchedEmp.id,
             phone: matchedEmp.phone,
-            shift: "Regular"
+            shift: "Regular",
+            dept: matchedEmp.dept,
+            designation: matchedEmp.designation,
+            cabin: matchedEmp.cabin
         };
         saveState();
         showToast("Access Granted", getTranslatedText("logged-in-as", "Logged in as {name}").replace("{name}", matchedEmp.name), "success");
         document.getElementById("login-form").reset();
-        checkAuthSession();
+        await checkAuthSession();
     } else {
+        // Invalid credentials error handling
         showToast("Access Denied", "Invalid credentials. Use admin, security, receptionist, or an employee code.", "danger");
+        if (btnSubmit) btnSubmit.disabled = false;
+        if (overlay) overlay.classList.add("hidden");
     }
 }
 
