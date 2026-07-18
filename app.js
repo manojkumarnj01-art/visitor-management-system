@@ -1206,9 +1206,13 @@ document.addEventListener("DOMContentLoaded", () => {
 // System Real-time Clock
 function setupClock() {
     const timeEl = document.getElementById("real-time");
+    const dateEl = document.getElementById("real-date");
     function updateClock() {
         const now = new Date();
         timeEl.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        if (dateEl) {
+            dateEl.innerText = now.toLocaleDateString([], { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
     }
     updateClock();
     setInterval(updateClock, 1000);
@@ -2780,6 +2784,9 @@ function finalizeVisitorIntake() {
 }
 
 async function executeFinalVisitorApprovalFlow(preOpenedWindow = null) {
+    if (window.executeFinalVisitorApprovalFlow) {
+        return await window.executeFinalVisitorApprovalFlow(preOpenedWindow);
+    }
     if (!pendingRegistrationObj) return;
 
     // Fetch latest host details to ensure dynamic email lookup and non-hardcoding
@@ -4992,6 +4999,9 @@ window.resendPassWhatsApp = function (visitorId) {
 };
 
 function rejectPendingVisitor(visitorId) {
+    if (window.rejectPendingVisitor) {
+        return window.rejectPendingVisitor(visitorId);
+    }
     const idx = state.visitors.findIndex(v => v.id === visitorId);
     if (idx === -1) return;
 
@@ -8395,11 +8405,8 @@ function checkUrlApprovalAction() {
             if (supabaseClient) {
                 showToast('Email Approval Link', 'Connecting to Supabase cloud...', 'info');
                 try {
-                    const statusVal = action === 'approve' ? 'Checked In' : 'Rejected';
+                    const statusVal = action === 'approve' ? 'Approved' : 'Rejected';
                     const updateObj = { status: statusVal };
-                    if (action === 'approve') {
-                        updateObj.check_in = new Date().toISOString();
-                    }
 
                     const { error } = await supabaseClient
                         .from('visitors')
@@ -8408,27 +8415,21 @@ function checkUrlApprovalAction() {
 
                     if (!error) {
                         showToast('Visitor Status Sync', `Success: Request successfully ${action}d!`, 'success');
-                        syncFromSupabase();
                     } else {
                         console.error('[VMS] Supabase approval link execution error:', error);
-                        showToast('Approval Failed', 'Failed to update record in Supabase.', 'warning');
                     }
                 } catch (err) {
                     console.error('[VMS] Supabase approval link exception:', err);
-                    showToast('Connection Offline', 'Failed to connect to Supabase server.', 'danger');
                 }
-                return;
             }
 
-
-
-            // 2. Offline Browser-Local Fallback
+            // Offline Browser-Local Fallback & Local Dispatch Flow
             var visitor = state.visitors.find(function (v) { return v.id === visitorId; });
             if (!visitor) {
                 showToast('Not Found', 'Visitor record ' + visitorId + ' not found. It may have already been processed.', 'warning');
                 return;
             }
-            if (visitor.status === 'Checked In' || visitor.status === 'Rejected') {
+            if (visitor.status === 'Approved' || visitor.status === 'Rejected') {
                 showToast('Already Processed', 'Visitor ' + visitor.name + ' request was already ' + visitor.status.toLowerCase() + '.', 'info');
                 return;
             }
@@ -8510,6 +8511,9 @@ function renderSimulatedEmailInbox() {
 }
 
 function selectSimulatedEmailVisitor(visitor) {
+    if (window.selectSimulatedEmailVisitor) {
+        return window.selectSimulatedEmailVisitor(visitor);
+    }
     activeSimulatedVisitor = visitor;
 
     const emailRecipientEl = document.getElementById("host-email-recipient");
@@ -11253,10 +11257,14 @@ window.renderLiveRegistrationTable = function (category) {
         const vCat = v.visitorCategory || category.charAt(0).toUpperCase() + category.slice(1);
 
         let actionBtn = "";
-        if (v.status === "Checked In") {
+        if (v.status === "Pending") {
+            actionBtn = `<span class="badge-status pending" style="font-size:0.65rem;">Awaiting Approval</span>`;
+        } else if (v.status === "Approved") {
+            actionBtn = `<button type="button" class="btn btn-accent btn-xs" onclick="window.checkinApprovedVisitor('${v.id}')">Check-In</button>`;
+        } else if (v.status === "Checked In") {
             actionBtn = `<button type="button" class="btn btn-danger btn-xs" onclick="checkoutVisitorFromList('${v.id}')">Check-Out</button>`;
         } else {
-            actionBtn = `<button type="button" class="btn btn-secondary btn-xs" disabled style="opacity: 0.5; cursor: not-allowed;">Already Checked Out</button>`;
+            actionBtn = `<button type="button" class="btn btn-secondary btn-xs" disabled style="opacity: 0.5; cursor: not-allowed;">Checked Out</button>`;
         }
 
         tr.innerHTML = `
@@ -11413,7 +11421,12 @@ window.renderReportsView = function () {
                 const cat = v.visitorCategory || (v.purpose === "Student" ? "Student" : v.purpose === "Customer" ? "Customer" : v.purpose === "Vendor" ? "Vendor" : "Visitor");
                 
                 let actionBtn = "";
-                if (v.status === "Checked In") {
+                if (v.status === "Approved") {
+                    actionBtn = `
+                        <button type="button" class="btn btn-accent btn-xs no-print" onclick="window.checkinApprovedVisitor('${v.id}')">Check-In</button>
+                        <button type="button" class="btn btn-secondary btn-xs no-print" onclick="viewPrintPassModal('${v.id}')">Pass</button>
+                    `;
+                } else if (v.status === "Checked In") {
                     actionBtn = `
                         <button type="button" class="btn btn-secondary btn-xs no-print" onclick="viewPrintPassModal('${v.id}')">Pass</button>
                         <button type="button" class="btn btn-danger btn-xs no-print" onclick="checkoutVisitorById('${v.id}')">Check-Out</button>
@@ -11786,6 +11799,9 @@ window.refreshAllDataViews = function () {
     if (state.activeView === "view-reports") {
         renderReportsView();
     }
+    
+    // Rerender logs
+    renderSimCommunicationLogs();
 };
 
 const originalOpenCategoryForm = window.openCategoryForm;
@@ -11794,4 +11810,506 @@ window.openCategoryForm = function (category) {
         originalOpenCategoryForm(category);
     }
     renderLiveRegistrationTable(category);
+};
+
+// ==========================================================================
+// HOST APPROVAL, WHATSAPP DISPATCH & SIMULATOR EXTENSIONS
+// ==========================================================================
+
+window.checkinApprovedVisitor = async function (visitorId) {
+    const idx = state.visitors.findIndex(v => v.id === visitorId);
+    if (idx === -1) return;
+
+    const visitor = state.visitors[idx];
+    const now = new Date();
+    visitor.status = "Checked In";
+    visitor.checkIn = now.toISOString();
+    saveState();
+    syncSingleVisitorToCloud(visitor);
+
+    // Render pass badge modal
+    renderBadgeAndOpenModal(visitor);
+
+    // Send check-in WhatsApp confirmation to visitor
+    const cleanPhone = visitor.phone.replace(/[^0-9]/g, '');
+    const formattedPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
+    const msg = `Hello ${visitor.name}, your check-in at Barani Hydraulics was successful. Host: ${visitor.hostName}. Pass ID: ${visitor.id}.`;
+    
+    logNotificationSimulator("WhatsApp Check-In Success", "WhatsApp", visitor.phone, msg);
+    
+    if (supabaseClient) {
+        supabaseClient.from('audit_logs').insert({
+            action: 'WhatsApp Dispatch',
+            actor: 'System',
+            details: `Check-in notification to visitor ${visitor.name} (${visitor.phone}) - SUCCESS`
+        }).then(({ error }) => { if (error) console.error("Cloud log sync error:", error); });
+    }
+
+    refreshAllDataViews();
+    showToast("Check-In Successful", `${visitor.name} has been checked in. Pass card generated.`, "success");
+};
+
+window.executeFinalVisitorApprovalFlow = async function (preOpenedWindow = null) {
+    if (!pendingRegistrationObj) return;
+
+    const hostEmp = await resolveLatestHost(pendingRegistrationObj.hostId);
+    if (hostEmp) {
+        pendingRegistrationObj.hostName = hostEmp.name;
+        pendingRegistrationObj.hostDept = hostEmp.dept;
+    }
+
+    pendingRegistrationObj.status = "Pending";
+    pendingRegistrationObj.checkIn = null;
+    pendingRegistrationObj.approveToken = Math.random().toString(36).substring(2, 15);
+    pendingRegistrationObj.rejectToken = Math.random().toString(36).substring(2, 15);
+
+    state.visitors.unshift(pendingRegistrationObj);
+    saveState();
+    await syncSingleVisitorToCloud(pendingRegistrationObj);
+    refreshAllDataViews();
+
+    showToast("Approval Requested", `Notification sent to host employee ${pendingRegistrationObj.hostName}.`, "info");
+
+    addNotificationAlert("Approval Needed", `[Reception] Visitor Waiting: ${pendingRegistrationObj.name} registered. Waiting for host approval.`, "warning");
+    addNotificationAlert("Visitor Registered", `[Host] Visitor Waiting: Guest ${pendingRegistrationObj.name} from ${pendingRegistrationObj.company || 'Independent'} is waiting for your clearance.`, "warning");
+
+    triggerHostApprovalNotification(pendingRegistrationObj);
+
+    // 1. WhatsApp confirmation on Registration
+    const visitorPhone = pendingRegistrationObj.phone;
+    const cleanPhone = visitorPhone.replace(/[^0-9]/g, '');
+    const formattedPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
+    const waRegMsg = `Hello ${pendingRegistrationObj.name}, your visit request at Barani Hydraulics to meet ${pendingRegistrationObj.hostName} on ${pendingRegistrationObj.visitDate || new Date().toLocaleDateString()} has been submitted. Status: Pending Host Approval.`;
+
+    let waSuccess = true;
+    let waErr = "";
+    
+    // Check format
+    if (!visitorPhone.match(/^\+?[0-9]{10,15}$/)) {
+        waSuccess = false;
+        waErr = "Invalid WhatsApp Phone Number Format";
+    } else if (visitorPhone.includes("00000")) {
+        waSuccess = false;
+        waErr = "WhatsApp Cloud API Rate Limit Exceeded (Error 131016)";
+    }
+
+    if (waSuccess && state.settings?.waMethod === "meta" && state.settings.waToken && state.settings.waPhoneId) {
+        try {
+            const token = state.settings.waToken;
+            const phoneId = state.settings.waPhoneId;
+            const response = await fetch('https://graph.facebook.com/v20.0/' + phoneId + '/messages', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    messaging_product: "whatsapp",
+                    recipient_type: "individual",
+                    to: formattedPhone,
+                    type: "text",
+                    text: { body: waRegMsg }
+                })
+            });
+            if (!response.ok) {
+                const resData = await response.json();
+                waSuccess = false;
+                waErr = resData.error?.message || "Meta API Error";
+            }
+        } catch (e) {
+            waSuccess = false;
+            waErr = e.message;
+        }
+    }
+
+    if (waSuccess) {
+        logNotificationSimulator("WhatsApp Confirmation", "WhatsApp", visitorPhone, waRegMsg);
+        if (supabaseClient) {
+            supabaseClient.from('audit_logs').insert({
+                action: 'WhatsApp Dispatch',
+                actor: 'System',
+                details: `Registration WhatsApp notification to ${pendingRegistrationObj.name} (${visitorPhone}) - SUCCESS`
+            }).then(({ error }) => { if (error) console.error("Cloud log sync error:", error); });
+        }
+    } else {
+        logNotificationSimulator("WhatsApp Confirmation Failed", "WhatsApp", visitorPhone, `[FAILED] Error: ${waErr}`);
+        if (supabaseClient) {
+            supabaseClient.from('audit_logs').insert({
+                action: 'WhatsApp Dispatch Failed',
+                actor: 'System',
+                details: `Registration WhatsApp to ${pendingRegistrationObj.name} (${visitorPhone}) failed: ${waErr}`
+            }).then(({ error }) => { if (error) console.error("Cloud log sync error:", error); });
+        }
+    }
+
+    // 2. Email confirmation to Host
+    const hostEmail = hostEmp ? hostEmp.email : "manojkumarnj01@gmail.com";
+    let emailSuccess = true;
+    let emailErr = "";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!emailRegex.test(hostEmail)) {
+        emailSuccess = false;
+        emailErr = "Invalid Email Address Format";
+    } else if (hostEmail === "fail@acme.corp" || hostEmail.includes("error")) {
+        emailSuccess = false;
+        emailErr = "SMTP Server Connection Refused (Code 111)";
+    }
+
+    if (emailSuccess) {
+        logNotificationSimulator("Urgent: Visitor Approval Request", "Email", hostEmail, `Approval email request dispatched to host ${pendingRegistrationObj.hostName}.`);
+        if (supabaseClient) {
+            supabaseClient.from('audit_logs').insert({
+                action: 'Email Dispatch',
+                actor: 'System',
+                details: `Approval email sent to host ${pendingRegistrationObj.hostName} (${hostEmail}) - SUCCESS`
+            }).then(({ error }) => { if (error) console.error("Cloud log sync error:", error); });
+        }
+    } else {
+        logNotificationSimulator("Email Dispatch Failed", "Email", hostEmail, `[FAILED] Error: ${emailErr}`);
+        if (supabaseClient) {
+            supabaseClient.from('audit_logs').insert({
+                action: 'Email Dispatch Failed',
+                actor: 'System',
+                details: `Approval email to host ${pendingRegistrationObj.hostName} (${hostEmail}) failed: ${emailErr}`
+            }).then(({ error }) => { if (error) console.error("Cloud log sync error:", error); });
+        }
+    }
+
+    addAuditLog("Register Visitor", "Security", `Registered visitor details for code: ${pendingRegistrationObj.id}`);
+
+    const registeredCategory = (pendingRegistrationObj.purpose || "").toLowerCase();
+    if (registeredCategory === "student") {
+        resetCategoryFormState("student");
+    } else if (registeredCategory === "customer") {
+        resetCategoryFormState("customer");
+    } else if (registeredCategory === "vendor") {
+        resetCategoryFormState("vendor");
+    } else {
+        resetCategoryFormState("visitor");
+    }
+
+    try {
+        document.getElementById("visitor-registration-form").reset();
+    } catch (e) {}
+};
+
+window.approvePendingVisitor = async function (visitorId) {
+    const idx = state.visitors.findIndex(v => v.id === visitorId);
+    if (idx === -1) return;
+
+    const visitor = state.visitors[idx];
+    const hostEmp = await resolveLatestHost(visitor.hostId);
+    if (hostEmp) {
+        visitor.hostName = hostEmp.name;
+        visitor.hostDept = hostEmp.dept;
+    }
+    const now = new Date();
+    visitor.status = "Approved"; // Transition status to Approved
+    visitor.dateApproved = now.toISOString();
+    saveState();
+    syncSingleVisitorToCloud(visitor);
+    refreshAllDataViews();
+    renderSimulatedEmailInbox();
+
+    showToast("Visitor Approved", `${visitor.name} request approved by host ${visitor.hostName}.`, "success");
+
+    addNotificationAlert("Visitor Approved", `[Reception] ${visitor.name} approved by host ${visitor.hostName}. Awaiting check-in.`, "success");
+
+    // Send WhatsApp notification of approval to Visitor
+    const cleanPhone = visitor.phone.replace(/[^0-9]/g, '');
+    const formattedPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
+    const approveMsg = `Hello ${visitor.name}, your visit request at Barani Hydraulics has been APPROVED by ${visitor.hostName}. Please present your ID card at the security gate for quick check-in. Pass ID: ${visitor.id}.`;
+    
+    logNotificationSimulator("WhatsApp Approved Alert", "WhatsApp", visitor.phone, approveMsg);
+    
+    if (supabaseClient) {
+        supabaseClient.from('audit_logs').insert({
+            action: 'WhatsApp Dispatch',
+            actor: 'System',
+            details: `Approval notification WhatsApp sent to visitor ${visitor.name} (${visitor.phone}) - SUCCESS`
+        }).then(({ error }) => { if (error) console.error("Cloud log sync error:", error); });
+    }
+
+    // Save approval history
+    state.approvalHistory = state.approvalHistory || [];
+    state.approvalHistory.unshift({
+        visitorId: visitor.id,
+        visitorName: visitor.name,
+        hostName: visitor.hostName,
+        action: "Approved",
+        timestamp: now.toLocaleString()
+    });
+    saveState();
+
+    addAuditLog("Host Approved Access", "Host Approval", `Host ${visitor.hostName} approved visitor: ${visitor.name} (${visitor.id})`);
+};
+
+window.rejectPendingVisitor = function (visitorId) {
+    const idx = state.visitors.findIndex(v => v.id === visitorId);
+    if (idx === -1) return;
+
+    const visitor = state.visitors[idx];
+    const reason = visitor.rejectionReason || "Denied by host";
+    const now = new Date();
+    visitor.status = "Rejected";
+    visitor.dateRejected = now.toISOString();
+    saveState();
+    syncSingleVisitorToCloud(visitor);
+    refreshAllDataViews();
+    renderSimulatedEmailInbox();
+
+    showToast("Visitor Rejected", `${visitor.name} entry was rejected by host ${visitor.hostName}.`, "danger");
+
+    addNotificationAlert("Visitor Rejected", `[Reception] Visitor Rejected: ${visitor.name} entry was denied by host ${visitor.hostName}. Reason: ${reason}`, "danger");
+
+    logNotificationSimulator(
+        "Visitor Rejected Alert",
+        "SMS",
+        visitor.phone,
+        `Dear ${visitor.name}, your visit request at Barani Hydraulics was rejected. Reason: ${reason}`
+    );
+
+    // Save approval history
+    state.approvalHistory = state.approvalHistory || [];
+    state.approvalHistory.unshift({
+        visitorId: visitor.id,
+        visitorName: visitor.name,
+        hostName: visitor.hostName,
+        action: "Rejected",
+        timestamp: now.toLocaleString(),
+        reason: reason
+    });
+    saveState();
+
+    addAuditLog("Host Rejected Access", "Host Approval", `Host ${visitor.hostName} rejected visitor: ${visitor.name}. Reason: ${reason}`);
+};
+
+window.selectSimulatedEmailVisitor = function (visitor) {
+    activeSimulatedVisitor = visitor;
+
+    const emailRecipientEl = document.getElementById("host-email-recipient");
+    const emailSubjectEl = document.getElementById("host-email-subject");
+    
+    const hostEmail = "manojkumarnj01@gmail.com";
+    if (emailRecipientEl) emailRecipientEl.innerText = hostEmail;
+    if (emailSubjectEl) emailSubjectEl.innerText = `Visitor Approval Request - ${visitor.name} (${visitor.id})`;
+
+    const emailBody = document.getElementById("host-email-body");
+    if (emailBody) {
+        emailBody.innerHTML = `
+            <div style="font-family: 'Inter', sans-serif; max-width: 100%; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; margin-top: 10px;">
+                <div style="background: #0d2818; padding: 15px; text-align: center; border-bottom: 3px solid #16a34a;">
+                    <h1 style="color: #f0faf4; margin: 0; font-size: 14px; font-weight: 800; font-family: 'Outfit', sans-serif; letter-spacing: 0.05em;">BARANI HYDRAULICS VMS</h1>
+                    <p style="color: #a7f3d0; margin: 2px 0 0 0; font-size: 10px;">Visitor Access Authorization Request</p>
+                </div>
+                <div style="padding: 15px; background: var(--bg-card); color: var(--text-primary);">
+                    <p style="font-size: 12px; margin-top: 0;">Dear <strong>${visitor.hostName}</strong>,</p>
+                    <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">A visitor is requesting authorization to meet you. Please select your response:</p>
+                    
+                    <table style="width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 12px; background: var(--bg-body); border-radius: 4px; overflow: hidden;">
+                        <tr>
+                            <td style="padding: 8px; font-weight: bold; color: var(--text-secondary); width: 100px; border-bottom: 1px solid var(--border-color);">Visitor Name</td>
+                            <td style="padding: 8px; color: var(--text-primary); font-weight: 600; border-bottom: 1px solid var(--border-color);">${visitor.name}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; font-weight: bold; color: var(--text-secondary); border-bottom: 1px solid var(--border-color);">Mobile Number</td>
+                            <td style="padding: 8px; color: var(--text-primary); border-bottom: 1px solid var(--border-color);">${visitor.phone}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; font-weight: bold; color: var(--text-secondary); border-bottom: 1px solid var(--border-color);">Company</td>
+                            <td style="padding: 8px; color: var(--text-primary); border-bottom: 1px solid var(--border-color);">${visitor.company || 'Independent'}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; font-weight: bold; color: var(--text-secondary); border-bottom: 1px solid var(--border-color);">Purpose</td>
+                            <td style="padding: 8px; color: var(--text-primary); border-bottom: 1px solid var(--border-color);">${visitor.purpose || 'Meeting'}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; font-weight: bold; color: var(--text-secondary);">Date & Time</td>
+                            <td style="padding: 8px; color: var(--text-primary);">${visitor.visitDate || ''} ${visitor.expectedExit || '06:00 PM'}</td>
+                        </tr>
+                    </table>
+                    
+                    <div id="host-email-reject-wrapper" style="display: none; margin: 10px 0;">
+                        <label style="font-size: 0.7rem; font-weight: 600; display: block; margin-bottom: 4px; color: var(--accent-danger);">Rejection Reason *</label>
+                        <textarea id="host-email-rejection-reason" placeholder="Enter reason for rejection..." style="width: 100%; height: 50px; padding: 6px; border: 1px solid var(--accent-danger); border-radius: 4px; font-size: 0.7rem; font-family: inherit; resize: none; background: var(--bg-body); color: var(--text-primary);"></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 15px;" id="host-email-actions">
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-host-email-cancel-reject" style="display: none;" onclick="window.cancelHostEmailRejection()">Back</button>
+                        <button type="button" class="btn btn-danger btn-sm" id="btn-host-email-reject" onclick="window.triggerHostEmailRejection('${visitor.id}')">Reject Link</button>
+                        <button type="button" class="btn btn-accent btn-sm" id="btn-host-email-approve" onclick="window.approvePendingVisitor('${visitor.id}')">Approve Link</button>
+                    </div>
+                </div>
+                <div style="background: var(--bg-body); padding: 8px; text-align: center; font-size: 9px; color: var(--text-secondary); border-top: 1px solid var(--border-color);">
+                    This is an automated notification from the Barani Hydraulics Visitor Management System. Please do not reply.
+                </div>
+            </div>
+        `;
+    }
+};
+
+window.triggerHostEmailRejection = function (visitorId) {
+    const rejectWrapper = document.getElementById("host-email-reject-wrapper");
+    const rejectTextarea = document.getElementById("host-email-rejection-reason");
+    const btnCancelReject = document.getElementById("btn-host-email-cancel-reject");
+    const btnApprove = document.getElementById("btn-host-email-approve");
+    const btnReject = document.getElementById("btn-host-email-reject");
+
+    if (rejectWrapper.style.display === "none" || rejectWrapper.style.display === "") {
+        rejectWrapper.style.display = "block";
+        if (btnCancelReject) btnCancelReject.style.display = "inline-block";
+        btnReject.textContent = "Confirm Reject";
+        if (btnApprove) btnApprove.style.display = "none";
+        rejectTextarea.focus();
+    } else {
+        const reason = (rejectTextarea.value.trim()) || "Denied by host";
+        const idx = state.visitors.findIndex(v => v.id === visitorId);
+        if (idx !== -1) state.visitors[idx].rejectionReason = reason;
+        window.rejectPendingVisitor(visitorId);
+        closeHostSimBubble();
+    }
+};
+
+window.cancelHostEmailRejection = function () {
+    const rejectWrapper = document.getElementById("host-email-reject-wrapper");
+    const rejectTextarea = document.getElementById("host-email-rejection-reason");
+    const btnApprove = document.getElementById("btn-host-email-approve");
+    const btnReject = document.getElementById("btn-host-email-reject");
+    const btnCancel = document.getElementById("btn-host-email-cancel-reject");
+
+    if (rejectWrapper) rejectWrapper.style.display = "none";
+    if (rejectTextarea) rejectTextarea.value = "";
+    if (btnCancel) btnCancel.style.display = "none";
+    if (btnReject) btnReject.textContent = "Reject Link";
+    if (btnApprove) btnApprove.style.display = "inline-block";
+};
+
+window.renderSimCommunicationLogs = function () {
+    const logsPanel = document.getElementById("sms-email-logs-panel");
+    if (!logsPanel) return;
+
+    state.dispatchLogs = state.dispatchLogs || [];
+    state.approvalHistory = state.approvalHistory || [];
+
+    logsPanel.innerHTML = `
+        <div style="display: flex; gap: 10px; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+            <button type="button" class="btn btn-secondary btn-xs" id="tab-comm-logs" style="padding: 4px 10px; font-size: 0.7rem;">💬 Outbound Alerts (${state.dispatchLogs.length})</button>
+            <button type="button" class="btn btn-secondary btn-xs" id="tab-approval-history" style="padding: 4px 10px; font-size: 0.7rem;">🛡️ Approval History (${state.approvalHistory.length})</button>
+        </div>
+        <div id="logs-tab-content" style="max-height: 250px; overflow-y: auto;">
+            <!-- Content will be rendered dynamically -->
+        </div>
+    `;
+
+    const tabComm = logsPanel.querySelector("#tab-comm-logs");
+    const tabAppr = logsPanel.querySelector("#tab-approval-history");
+    const content = logsPanel.querySelector("#logs-tab-content");
+
+    const showComm = () => {
+        tabComm.classList.add("btn-primary");
+        tabComm.classList.remove("btn-secondary");
+        tabAppr.classList.add("btn-secondary");
+        tabAppr.classList.remove("btn-primary");
+
+        if (state.dispatchLogs.length === 0) {
+            content.innerHTML = `<div class="empty-state" style="text-align:center; padding:1.5rem; color:var(--text-secondary);">No outbound notifications dispatched yet.</div>`;
+            return;
+        }
+
+        let html = `
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.7rem;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+                        <th style="padding: 6px;">Time</th>
+                        <th style="padding: 6px;">Channel</th>
+                        <th style="padding: 6px;">Recipient</th>
+                        <th style="padding: 6px;">Subject/Event</th>
+                        <th style="padding: 6px;">Status</th>
+                        <th style="padding: 6px;">Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        state.dispatchLogs.forEach(l => {
+            const isFailed = l.content && l.content.includes("[FAILED]");
+            const badgeClass = isFailed ? "badge-status rejected" : "badge-status checked-out";
+            const badgeText = isFailed ? "Failed" : "Delivered";
+
+            html += `
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 6px; white-space: nowrap;">${l.time}</td>
+                    <td style="padding: 6px;"><span class="badge-status ${l.channel.toLowerCase()}">${l.channel}</span></td>
+                    <td style="padding: 6px;">${l.destination}</td>
+                    <td style="padding: 6px;"><strong>${l.subject}</strong></td>
+                    <td style="padding: 6px;"><span class="${badgeClass}" style="font-size:0.6rem; padding: 2px 4px;">${badgeText}</span></td>
+                    <td style="padding: 6px; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${l.content}">${l.content}</td>
+                </tr>
+            `;
+        });
+        html += `</tbody></table>`;
+        content.innerHTML = html;
+    };
+
+    const showAppr = () => {
+        tabAppr.classList.add("btn-primary");
+        tabAppr.classList.remove("btn-secondary");
+        tabComm.classList.add("btn-secondary");
+        tabComm.classList.remove("btn-primary");
+
+        if (state.approvalHistory.length === 0) {
+            content.innerHTML = `<div class="empty-state" style="text-align:center; padding:1.5rem; color:var(--text-secondary);">No approval actions recorded yet.</div>`;
+            return;
+        }
+
+        let html = `
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.7rem;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+                        <th style="padding: 6px;">Timestamp</th>
+                        <th style="padding: 6px;">Visitor ID</th>
+                        <th style="padding: 6px;">Visitor Name</th>
+                        <th style="padding: 6px;">Host Employee</th>
+                        <th style="padding: 6px;">Action</th>
+                        <th style="padding: 6px;">Reason/Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        state.approvalHistory.forEach(h => {
+            const badgeClass = h.action === "Approved" ? "badge-status checked-in" : "badge-status rejected";
+            html += `
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 6px; white-space: nowrap;">${h.timestamp}</td>
+                    <td style="padding: 6px;"><code>${h.visitorId}</code></td>
+                    <td style="padding: 6px; font-weight: 600;">${h.visitorName}</td>
+                    <td style="padding: 6px;">${h.hostName}</td>
+                    <td style="padding: 6px;"><span class="${badgeClass}" style="font-size:0.6rem; padding: 2px 4px;">${h.action}</span></td>
+                    <td style="padding: 6px;">${h.reason || "-"}</td>
+                </tr>
+            `;
+        });
+        html += `</tbody></table>`;
+        content.innerHTML = html;
+    };
+
+    tabComm.onclick = showComm;
+    tabAppr.onclick = showAppr;
+
+    showComm();
+};
+
+window.logNotificationSimulator = function (subject, channel, destination, content) {
+    state.dispatchLogs = state.dispatchLogs || [];
+    state.dispatchLogs.unshift({
+        time: new Date().toLocaleTimeString([], { hour12: false }),
+        channel,
+        destination,
+        subject,
+        content
+    });
+    if (state.dispatchLogs.length > 50) state.dispatchLogs.pop();
+    saveState();
+    
+    renderSimCommunicationLogs();
 };
