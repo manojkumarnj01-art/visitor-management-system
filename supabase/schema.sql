@@ -5,6 +5,7 @@
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Shared trigger function to update updated_at timestamps
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -402,3 +403,31 @@ CREATE TABLE IF NOT EXISTS students (
 CREATE TRIGGER update_students_modtime
     BEFORE UPDATE ON students
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- ==========================================================================
+-- 14. AUTOMATIC AUTH USER PROFILE SYNC TRIGGER
+-- ==========================================================================
+
+-- Automatically create profile in public.security_users when a new user signs up in auth.users
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.security_users (id, username, name, role, phone, shift)
+  VALUES (
+    new.id,
+    COALESCE(new.raw_user_meta_data->>'username', split_part(new.email, '@', 1)),
+    COALESCE(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1)),
+    COALESCE(new.raw_user_meta_data->>'role', 'Security Gatekeeper'),
+    COALESCE(new.raw_user_meta_data->>'phone', 'Ext. ' || floor(random() * 9000 + 1000)::text),
+    COALESCE(new.raw_user_meta_data->>'shift', 'All shifts')
+  )
+  ON CONFLICT (username) DO UPDATE SET
+    id = EXCLUDED.id;
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to run handle_new_user on auth.users insert
+CREATE OR REPLACE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();

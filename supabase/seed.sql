@@ -65,3 +65,18 @@ ON CONFLICT (manual_code) DO NOTHING;
 INSERT INTO work_permits (permit_code, purchase_manual_id, company_entity, location_site, conducted_on, work_activity, high_risk_work, start_time, end_time, rep_name, start_date, end_date, description, chk_standards, dec_risk_reviewed, dec_controls_adequate, dec_competent_coord, dec_implement_controls, dec_workers_informed, dec_monitor_hazards, dec_req_approval, dec_supervisor_sig, eng_reviewed_docs, eng_monitor_methods, eng_informed_persons, eng_contractor_sig, auth_reviewed_docs, auth_registered, auth_person_sig, status, safety_officer_approved, final_authorized) VALUES
 ('WP20260001', 'PM1001', 'Infosys Ltd', 'Server Room B, 2nd Floor', '2026-07-09', 'Running Cat6 Ethernet cables and installing racks.', 'General', '09:00:00', '18:00:00', 'Rajesh Kumar', '2026-07-09', '2026-07-11', 'Executing fiber layout for Server Cabin B.', TRUE, 'Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Yes', 'Karthik Subramanian', 'Yes', 'Yes', 'Yes', 'Rajesh Kumar', 'Yes', 'Yes', 'Arun Moorthy (Safety Head)', 'Approved', TRUE, TRUE)
 ON CONFLICT (permit_code) DO NOTHING;
+
+-- Seed Auth Users
+INSERT INTO auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, recovery_sent_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token)
+VALUES
+('00000000-0000-0000-0000-000000000000', 'a0e0a912-3201-4475-a89e-4b62f6a9e102', 'authenticated', 'authenticated', 'admin@acme.corp', crypt('admin123', gen_salt('bf')), now(), null, null, '{"provider":"email","providers":["email"]}', '{"name":"System Administrator","role":"Administrator"}', now(), now(), '', '', '', ''),
+('00000000-0000-0000-0000-000000000000', 'b0e0a912-3201-4475-a89e-4b62f6a9e103', 'authenticated', 'authenticated', 'security@acme.corp', crypt('security123', gen_salt('bf')), now(), null, null, '{"provider":"email","providers":["email"]}', '{"name":"Officer Higgins","role":"Security Gatekeeper"}', now(), now(), '', '', '', ''),
+('00000000-0000-0000-0000-000000000000', 'c0e0a912-3201-4475-a89e-4b62f6a9e104', 'authenticated', 'authenticated', 'receptionist@acme.corp', crypt('receptionist123', gen_salt('bf')), now(), null, null, '{"provider":"email","providers":["email"]}', '{"name":"Clara Sterling","role":"Front Desk Operator"}', now(), now(), '', '', '', '')
+ON CONFLICT (id) DO NOTHING;
+
+-- Seed public.security_users matching profiles
+INSERT INTO public.security_users (id, username, name, role, phone, shift) VALUES
+('a0e0a912-3201-4475-a89e-4b62f6a9e102', 'admin', 'System Administrator', 'Administrator', 'Ext. 9901', 'All shifts'),
+('b0e0a912-3201-4475-a89e-4b62f6a9e103', 'security', 'Officer Higgins', 'Security Gatekeeper', 'Ext. 9011', 'Day Shift (08:00 - 16:00)'),
+('c0e0a912-3201-4475-a89e-4b62f6a9e104', 'receptionist', 'Clara Sterling', 'Front Desk Operator', 'Ext. 9022', 'Day Shift (08:00 - 16:00)')
+ON CONFLICT (id) DO NOTHING;
