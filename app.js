@@ -1563,7 +1563,9 @@ window.navigateTo = function (path, pushState = true) {
         "/work-permit": "view-work-permit",
         "/purchase-manual": "view-purchase-manual",
         "/settings": "view-settings",
-        "/pending-approvals": "view-pending-approvals"
+        "/pending-approvals": "view-pending-approvals",
+        "/checkout": "view-checkout",
+        "/employee-search": "view-employee-search"
     };
 
     let viewId = pathMap[path] || "view-dashboard";
@@ -1597,9 +1599,6 @@ window.navigateTo = function (path, pushState = true) {
 
 function switchView(viewId) {
     let targetViewId = viewId;
-    if (viewId === "view-student-registration" || viewId === "view-customer-registration" || viewId === "view-vendor-registration") {
-        targetViewId = "view-dashboard";
-    }
     state.activeView = targetViewId;
 
     // Toggle active view panel
@@ -1729,20 +1728,14 @@ function switchView(viewId) {
     }
 
     // Dynamic execution specific view setups
-    if (targetViewId === "view-dashboard") {
-        if (viewId === "view-student-registration") {
-            openCategoryForm("student");
-        } else if (viewId === "view-customer-registration") {
-            openCategoryForm("customer");
-        } else if (viewId === "view-vendor-registration") {
-            openCategoryForm("vendor");
-        } else {
-            // Keep forms hidden if we just navigated to base dashboard
-            document.getElementById("student-registration-wrapper").classList.add("hidden");
-            document.getElementById("customer-registration-wrapper").classList.add("hidden");
-            document.getElementById("vendor-registration-wrapper").classList.add("hidden");
-        }
+    if (viewId === "view-dashboard") {
         refreshDashboardStatsAndTables();
+    } else if (viewId === "view-student-registration") {
+        openCategoryForm("student");
+    } else if (viewId === "view-customer-registration") {
+        openCategoryForm("customer");
+    } else if (viewId === "view-vendor-registration") {
+        openCategoryForm("vendor");
     } else if (viewId === "view-reports") {
         renderReportsData("today");
     } else if (viewId === "view-settings") {
