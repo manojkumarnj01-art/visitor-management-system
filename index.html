@@ -137,6 +137,14 @@
                     </svg>
                     <span data-i18n="nav-dashboard">Dashboard</span>
                 </div>
+                <!-- Pending Approvals Navigation -->
+                <div class="nav-link" data-target="view-pending-approvals">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    <span>Pending Approvals</span>
+                </div>
                 <!-- 2. Student Registration -->
                 <div class="nav-link" data-target="reg-student">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
@@ -366,6 +374,49 @@
 
                 <!-- VIEW 1: DASHBOARD -->
                 <section id="view-dashboard" class="page-view active">
+                    <!-- Live Dashboard Statistics Grid -->
+                    <div class="dashboard-stats-grid mb-4" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; margin-top: 1rem; margin-bottom: 1.5rem;">
+                        <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; text-align: center; box-shadow: var(--shadow-sm);">
+                            <span style="font-size: 1.2rem;">📅</span>
+                            <div style="font-size: 0.6rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Today's Visitors</div>
+                            <div id="db-stat-today" style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-top: 2px;">0</div>
+                        </div>
+                        <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; text-align: center; box-shadow: var(--shadow-sm);">
+                            <span style="font-size: 1.2rem;">⏳</span>
+                            <div style="font-size: 0.6rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pending Approvals</div>
+                            <div id="db-stat-pending" style="font-size: 1.15rem; font-weight: 800; color: var(--accent-warning); margin-top: 2px;">0</div>
+                        </div>
+                        <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; text-align: center; box-shadow: var(--shadow-sm);">
+                            <span style="font-size: 1.2rem;">✅</span>
+                            <div style="font-size: 0.6rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Approved Visitors</div>
+                            <div id="db-stat-approved" style="font-size: 1.15rem; font-weight: 800; color: var(--accent-success); margin-top: 2px;">0</div>
+                        </div>
+                        <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; text-align: center; box-shadow: var(--shadow-sm);">
+                            <span style="font-size: 1.2rem;">❌</span>
+                            <div style="font-size: 0.6rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Rejected Visitors</div>
+                            <div id="db-stat-rejected" style="font-size: 1.15rem; font-weight: 800; color: var(--accent-danger); margin-top: 2px;">0</div>
+                        </div>
+                        <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; text-align: center; box-shadow: var(--shadow-sm);">
+                            <span style="font-size: 1.2rem;">🚪</span>
+                            <div style="font-size: 0.6rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Checked In</div>
+                            <div id="db-stat-checkedin" style="font-size: 1.15rem; font-weight: 800; color: var(--accent-primary); margin-top: 2px;">0</div>
+                        </div>
+                        <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; text-align: center; box-shadow: var(--shadow-sm);">
+                            <span style="font-size: 1.2rem;">📤</span>
+                            <div style="font-size: 0.6rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Checked Out</div>
+                            <div id="db-stat-checkedout" style="font-size: 1.15rem; font-weight: 800; color: var(--text-secondary); margin-top: 2px;">0</div>
+                        </div>
+                        <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; text-align: center; box-shadow: var(--shadow-sm);">
+                            <span style="font-size: 1.2rem;">🏢</span>
+                            <div style="font-size: 0.6rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Inside Campus</div>
+                            <div id="db-stat-inside" style="font-size: 1.15rem; font-weight: 800; color: var(--accent-primary); margin-top: 2px;">0</div>
+                        </div>
+                        <div class="stat-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; text-align: center; box-shadow: var(--shadow-sm);">
+                            <span style="font-size: 1.2rem;">📊</span>
+                            <div style="font-size: 0.6rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Total Visitors</div>
+                            <div id="db-stat-total" style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-top: 2px;">0</div>
+                        </div>
+                    </div>
                     <div id="visitor-registration-wrapper">
                         <!-- Redesigned Registration Dashboard Grid -->
                         <div id="registration-dashboard-wrapper" class="w-full">
@@ -426,6 +477,493 @@
                                             onclick="navigateTo('/checkout')">Check-Out</button>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- 1. Compact Student Registration Form (Embedded in Dashboard) -->
+                        <div id="student-registration-wrapper" class="hidden mt-4">
+                            <button type="button" class="btn btn-secondary btn-sm mb-2" onclick="showRegistrationDashboard()">← Close Form</button>
+                            <div class="dashboard-card" style="padding: 12px; border: 1px solid var(--border-color); background: var(--bg-card);">
+                                <div class="card-header" style="margin-bottom: 0.5rem; padding-bottom: 5px; border-bottom: 1px solid var(--border-color);">
+                                    <h2 style="font-size: 0.95rem; font-weight: 700; color: var(--accent-primary);">🎓 Student Registration Form (Compact)</h2>
+                                </div>
+                                <form id="student-registration-form" class="app-form app-form-compact" autocomplete="off">
+                                    <div class="form-row">
+                                        <div class="col-8">
+                                            <!-- Compact Search -->
+                                            <div class="search-visitor-box mb-2" style="background: var(--bg-app); border: 1px solid var(--border-color); padding: 6px; border-radius: 4px;">
+                                                <h3 style="font-size: 0.8rem; font-weight: 700; margin-bottom: 1px; color: var(--accent-primary);">Search Existing Student</h3>
+                                                <input type="text" class="search-visitor-input form-control" id="search-visitor-student" placeholder="Type Phone or Roll No..." style="padding: 3px 6px; font-size: 0.75rem;">
+                                                <div class="search-visitor-badge mt-1" id="search-status-badge-student" style="display: none; padding: 2px 4px; font-size: 0.7rem;"></div>
+                                            </div>
+                                            <div id="student-badge-alert" class="badge-status checked-in hidden mb-2" style="font-size: 0.75rem; text-align: center; display: block;">
+                                                Returning student profile loaded!
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-4">
+                                                    <label for="reg-student-name">Student Name *</label>
+                                                    <input type="text" id="reg-student-name" placeholder="Full Name" required>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-student-phone">Phone Number *</label>
+                                                    <input type="tel" id="reg-student-phone" placeholder="Phone Number" required>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-student-email">Email Address</label>
+                                                    <input type="email" id="reg-student-email" placeholder="student@college.edu">
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-4">
+                                                    <label for="reg-student-college">College / Institution *</label>
+                                                    <input type="text" id="reg-student-college" placeholder="College Name" required>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-student-dept">Department / Course *</label>
+                                                    <input type="text" id="reg-student-dept" placeholder="e.g. BE Mechanical" required>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-student-rollno">Roll Number / Student ID *</label>
+                                                    <input type="text" id="reg-student-rollno" placeholder="Roll Number" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-4">
+                                                    <label for="reg-student-company">Company (Optional)</label>
+                                                    <input type="text" id="reg-student-company" placeholder="e.g. Sponsor">
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-student-aadhaar">Aadhaar Number</label>
+                                                    <input type="text" id="reg-student-aadhaar" placeholder="12-digit Aadhaar Number">
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-student-category">Visitor Category</label>
+                                                    <input type="text" id="reg-student-category" value="Student" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-12">
+                                                    <label for="reg-student-address">Address *</label>
+                                                    <input type="text" id="reg-student-address" placeholder="Residential Address" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-4">
+                                                    <label>College ID Proof *</label>
+                                                    <label for="reg-student-id-doc-file" class="file-upload-btn" style="border: 1px dashed var(--border-color); cursor: pointer;">
+                                                        <input type="file" id="reg-student-id-doc-file" class="file-upload-input" accept="image/*">
+                                                        <span id="student-id-doc-label">Upload College ID</span>
+                                                    </label>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-student-purpose">Purpose of Visit *</label>
+                                                    <select id="reg-student-purpose" required>
+                                                        <option value="">— Select Purpose —</option>
+                                                        <option value="Industrial Visit">Industrial Visit</option>
+                                                        <option value="College Student Project">College Student Project</option>
+                                                        <option value="Internship / Training">Internship / Training</option>
+                                                        <option value="Interview">Interview</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-student-host">Whom to Meet *</label>
+                                                    <div class="autocomplete-container">
+                                                        <input type="text" id="reg-student-host" placeholder="Type employee name..." required autocomplete="off">
+                                                        <div id="reg-student-host-suggestions" class="suggestions-box"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-4">
+                                                    <label for="reg-student-visit-date">Visit Date</label>
+                                                    <input type="date" id="reg-student-visit-date" required>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-student-expected-exit">Expected Exit Time</label>
+                                                    <input type="time" id="reg-student-expected-exit" required>
+                                                </div>
+                                                <div class="form-group col-2">
+                                                    <label for="reg-student-start-date">Start Date *</label>
+                                                    <input type="date" id="reg-student-start-date" required>
+                                                </div>
+                                                <div class="form-group col-2">
+                                                    <label for="reg-student-end-date">End Date *</label>
+                                                    <input type="date" id="reg-student-end-date" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Photo Column Right -->
+                                        <div class="col-4">
+                                            <div class="camera-panel">
+                                                <div class="camera-preview-wrapper" style="position: relative;">
+                                                    <video id="camera-stream-student" autoplay playsinline class="hidden" style="width: 100%; border-radius: 4px; object-fit: cover; aspect-ratio: 4/3;"></video>
+                                                    <canvas id="photo-canvas-student" class="hidden"></canvas>
+                                                    <img id="photo-preview-student" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>" alt="Captured Photo Preview">
+                                                    <div class="camera-overlay-info" id="camera-status-student" style="font-size: 0.65rem; padding: 2px;">Camera Inactive</div>
+                                                    <div class="photo-options-container hidden" id="photo-options-student">
+                                                        <button type="button" class="btn btn-success btn-xs" id="btn-existing-photo-student">✅ Use Existing</button>
+                                                        <button type="button" class="btn btn-secondary btn-xs" id="btn-new-photo-student">📷 Capture New</button>
+                                                    </div>
+                                                </div>
+                                                <div class="camera-controls" style="margin-top: 0.25rem; display: flex; gap: 0.25rem; justify-content: center;">
+                                                    <button type="button" class="btn btn-secondary btn-xs" id="btn-enable-camera-student" onclick="initCategoryCamera('student')">Camera</button>
+                                                    <button type="button" class="btn btn-primary btn-xs hidden" id="btn-capture-student" onclick="captureCategoryPhoto('student')">Capture</button>
+                                                    <button type="button" class="btn btn-secondary btn-xs hidden" id="btn-retake-student" onclick="retakeCategoryPhoto('student')">Retake</button>
+                                                </div>
+                                                <div class="photo-fallback" style="margin-top: 0.25rem; text-align: center;">
+                                                    <label for="visitor-photo-file-student" class="file-upload-btn" style="cursor: pointer;">
+                                                        <input type="file" id="visitor-photo-file-student" class="file-upload-input" accept="image/*">
+                                                        <span>Upload File</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions mt-2" style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="showRegistrationDashboard()">Cancel</button>
+                                        <button type="submit" class="btn btn-primary btn-sm">Submit Visit Details</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- 2. Compact Customer Registration Form (Embedded in Dashboard) -->
+                        <div id="customer-registration-wrapper" class="hidden mt-4">
+                            <button type="button" class="btn btn-secondary btn-sm mb-2" onclick="showRegistrationDashboard()">← Close Form</button>
+                            <div class="dashboard-card" style="padding: 12px; border: 1px solid var(--border-color); background: var(--bg-card);">
+                                <div class="card-header" style="margin-bottom: 0.5rem; padding-bottom: 5px; border-bottom: 1px solid var(--border-color);">
+                                    <h2 style="font-size: 0.95rem; font-weight: 700; color: var(--accent-primary);">🏢 Customer Registration Form (Compact)</h2>
+                                </div>
+                                <form id="customer-registration-form" class="app-form app-form-compact" autocomplete="off">
+                                    <div class="form-row">
+                                        <div class="col-8">
+                                            <!-- Compact Search -->
+                                            <div class="search-visitor-box mb-2" style="background: var(--bg-app); border: 1px solid var(--border-color); padding: 6px; border-radius: 4px;">
+                                                <h3 style="font-size: 0.8rem; font-weight: 700; margin-bottom: 1px; color: var(--accent-primary);">Search Existing Customer</h3>
+                                                <input type="text" class="search-visitor-input form-control" id="search-visitor-customer" placeholder="Type Phone or Customer ID..." style="padding: 3px 6px; font-size: 0.75rem;">
+                                                <div class="search-visitor-badge mt-1" id="search-status-badge-customer" style="display: none; padding: 2px 4px; font-size: 0.7rem;"></div>
+                                            </div>
+                                            <div id="customer-badge-alert" class="badge-status checked-in hidden mb-2" style="font-size: 0.75rem; text-align: center; display: block;">
+                                                Returning customer profile loaded!
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-4">
+                                                    <label for="reg-customer-name">Customer Name *</label>
+                                                    <input type="text" id="reg-customer-name" placeholder="Full Name" required>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-customer-phone">Phone Number *</label>
+                                                    <input type="tel" id="reg-customer-phone" placeholder="Phone Number" required>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-customer-email">Email Address</label>
+                                                    <input type="email" id="reg-customer-email" placeholder="name@company.com">
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-4">
+                                                    <label for="reg-customer-company">Company Name *</label>
+                                                    <input type="text" id="reg-customer-company" placeholder="e.g. Acme Corp" required>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-customer-dept">Department *</label>
+                                                    <input type="text" id="reg-customer-dept" placeholder="e.g. Business Development" required>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-customer-id">Customer ID (Auto-Generated)</label>
+                                                    <input type="text" id="reg-customer-id" placeholder="Will be auto-generated" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-4">
+                                                    <label for="reg-customer-aadhaar">Aadhaar Number</label>
+                                                    <input type="text" id="reg-customer-aadhaar" placeholder="12-digit Aadhaar Number">
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-customer-college">College (Optional)</label>
+                                                    <input type="text" id="reg-customer-college" placeholder="College Name">
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-customer-purpose">Purpose of Visit *</label>
+                                                    <select id="reg-customer-purpose" required>
+                                                        <option value="">— Select Purpose —</option>
+                                                        <option value="Business Meeting">Business Meeting</option>
+                                                        <option value="Plant Visit">Plant Visit</option>
+                                                        <option value="Audit / Compliance">Audit / Compliance</option>
+                                                        <option value="Other">Other</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-12">
+                                                    <label for="reg-customer-address">Address *</label>
+                                                    <input type="text" id="reg-customer-address" placeholder="Corporate Address" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-4">
+                                                    <label for="reg-customer-id-type">ID Card Proof (Optional)</label>
+                                                    <select id="reg-customer-id-type">
+                                                        <option value="">Select ID Type</option>
+                                                        <option value="Aadhaar">Aadhaar Card</option>
+                                                        <option value="PAN Card">PAN Card</option>
+                                                        <option value="Passport">Passport</option>
+                                                        <option value="Driver License">Driver License</option>
+                                                        <option value="Company ID">Company ID</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-customer-id-number">ID Number (Optional)</label>
+                                                    <input type="text" id="reg-customer-id-number" placeholder="ID Number">
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-customer-vehicle">Vehicle Number</label>
+                                                    <input type="text" id="reg-customer-vehicle" placeholder="e.g. KA-51-AB-1234">
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-6">
+                                                    <label for="reg-customer-host">Whom to Meet *</label>
+                                                    <div class="autocomplete-container">
+                                                        <input type="text" id="reg-customer-host" placeholder="Type employee name..." required autocomplete="off">
+                                                        <div id="reg-customer-host-suggestions" class="suggestions-box"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-3">
+                                                    <label for="reg-customer-visit-date">Visit Date</label>
+                                                    <input type="date" id="reg-customer-visit-date" required>
+                                                </div>
+                                                <div class="form-group col-3">
+                                                    <label for="reg-customer-expected-exit">Expected Exit Time</label>
+                                                    <input type="time" id="reg-customer-expected-exit" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Photo Column Right -->
+                                        <div class="col-4">
+                                            <div class="camera-panel">
+                                                <div class="camera-preview-wrapper" style="position: relative;">
+                                                    <video id="camera-stream-customer" autoplay playsinline class="hidden" style="width: 100%; border-radius: 4px; object-fit: cover; aspect-ratio: 4/3;"></video>
+                                                    <canvas id="photo-canvas-customer" class="hidden"></canvas>
+                                                    <img id="photo-preview-customer" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>" alt="Captured Photo Preview">
+                                                    <div class="camera-overlay-info" id="camera-status-customer" style="font-size: 0.65rem; padding: 2px;">Camera Inactive</div>
+                                                    <div class="photo-options-container hidden" id="photo-options-customer">
+                                                        <button type="button" class="btn btn-success btn-xs" id="btn-existing-photo-customer">✅ Use Existing</button>
+                                                        <button type="button" class="btn btn-secondary btn-xs" id="btn-new-photo-customer">📷 Capture New</button>
+                                                    </div>
+                                                </div>
+                                                <div class="camera-controls" style="margin-top: 0.25rem; display: flex; gap: 0.25rem; justify-content: center;">
+                                                    <button type="button" class="btn btn-secondary btn-xs" id="btn-enable-camera-customer" onclick="initCategoryCamera('customer')">Camera</button>
+                                                    <button type="button" class="btn btn-primary btn-xs hidden" id="btn-capture-customer" onclick="captureCategoryPhoto('customer')">Capture</button>
+                                                    <button type="button" class="btn btn-secondary btn-xs hidden" id="btn-retake-customer" onclick="retakeCategoryPhoto('customer')">Retake</button>
+                                                </div>
+                                                <div class="photo-fallback" style="margin-top: 0.25rem; text-align: center;">
+                                                    <label for="visitor-photo-file-customer" class="file-upload-btn" style="cursor: pointer;">
+                                                        <input type="file" id="visitor-photo-file-customer" class="file-upload-input" accept="image/*">
+                                                        <span>Upload File</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions mt-2" style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="showRegistrationDashboard()">Cancel</button>
+                                        <button type="submit" class="btn btn-primary btn-sm">Submit Visit Details</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- 3. Compact Vendor Registration Form (Embedded in Dashboard) -->
+                        <div id="vendor-registration-wrapper" class="hidden mt-4">
+                            <button type="button" class="btn btn-secondary btn-sm mb-2" onclick="showRegistrationDashboard()">← Close Form</button>
+                            <div class="dashboard-card" style="padding: 12px; border: 1px solid var(--border-color); background: var(--bg-card);">
+                                <div class="card-header" style="margin-bottom: 0.5rem; padding-bottom: 5px; border-bottom: 1px solid var(--border-color);">
+                                    <h2 style="font-size: 0.95rem; font-weight: 700; color: var(--accent-primary);">🚚 Vendor Registration Form (Compact)</h2>
+                                </div>
+                                <form id="vendor-registration-form" class="app-form app-form-compact" autocomplete="off">
+                                    <div class="form-row">
+                                        <div class="col-8">
+                                            <!-- Compact Search -->
+                                            <div class="search-visitor-box mb-2" style="background: var(--bg-app); border: 1px solid var(--border-color); padding: 6px; border-radius: 4px;">
+                                                <h3 style="font-size: 0.8rem; font-weight: 700; margin-bottom: 1px; color: var(--accent-primary);">Search Existing Vendor</h3>
+                                                <input type="text" class="search-visitor-input form-control" id="search-visitor-vendor" placeholder="Type Phone or Vendor ID..." style="padding: 3px 6px; font-size: 0.75rem;">
+                                                <div class="search-visitor-badge mt-1" id="search-status-badge-vendor" style="display: none; padding: 2px 4px; font-size: 0.7rem;"></div>
+                                            </div>
+                                            <div id="vendor-badge-alert" class="badge-status checked-in hidden mb-2" style="font-size: 0.75rem; text-align: center; display: block;">
+                                                Returning vendor profile loaded!
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-4">
+                                                    <label for="reg-vendor-name">Vendor Representative Name *</label>
+                                                    <input type="text" id="reg-vendor-name" placeholder="Full Name" required>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-vendor-phone">Phone Number *</label>
+                                                    <input type="tel" id="reg-vendor-phone" placeholder="Phone Number" required>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-vendor-email">Email Address</label>
+                                                    <input type="email" id="reg-vendor-email" placeholder="name@vendor.com">
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-4">
+                                                    <label for="reg-vendor-company">Vendor Company Name *</label>
+                                                    <input type="text" id="reg-vendor-company" placeholder="e.g. Tata Steel" required>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-vendor-dept">Department *</label>
+                                                    <input type="text" id="reg-vendor-dept" placeholder="e.g. Purchase / Inventory" required>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-vendor-visitor-id">Vendor ID (System-Generated)</label>
+                                                    <input type="text" id="reg-vendor-visitor-id" placeholder="Will be auto-generated" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-4">
+                                                    <label for="reg-vendor-invoice">Invoice / Delivery Challan No</label>
+                                                    <input type="text" id="reg-vendor-invoice" placeholder="Invoice Number">
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-vendor-aadhaar">Aadhaar Number</label>
+                                                    <input type="text" id="reg-vendor-aadhaar" placeholder="12-digit Aadhaar Number">
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-vendor-college">College (Optional)</label>
+                                                    <input type="text" id="reg-vendor-college" placeholder="N/A">
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-12">
+                                                    <label for="reg-vendor-address">Address *</label>
+                                                    <input type="text" id="reg-vendor-address" placeholder="Vendor Corporate Address" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-4">
+                                                    <label for="reg-vendor-id-type">ID Card Proof (Optional)</label>
+                                                    <select id="reg-vendor-id-type">
+                                                        <option value="">Select ID Type</option>
+                                                        <option value="Aadhaar">Aadhaar Card</option>
+                                                        <option value="PAN Card">PAN Card</option>
+                                                        <option value="Passport">Passport</option>
+                                                        <option value="Driver License">Driver License</option>
+                                                        <option value="Company ID">Company ID</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-vendor-id-number">ID Number (Optional)</label>
+                                                    <input type="text" id="reg-vendor-id-number" placeholder="ID Number">
+                                                </div>
+                                                <div class="form-group col-4">
+                                                    <label for="reg-vendor-vehicle">Vehicle Number</label>
+                                                    <input type="text" id="reg-vendor-vehicle" placeholder="e.g. KA-51-AB-1234">
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-6">
+                                                    <label for="reg-vendor-host">Whom to Meet *</label>
+                                                    <div class="autocomplete-container">
+                                                        <input type="text" id="reg-vendor-host" placeholder="Type employee name..." required autocomplete="off">
+                                                        <div id="reg-vendor-host-suggestions" class="suggestions-box"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-3">
+                                                    <label for="reg-vendor-visit-date">Visit Date</label>
+                                                    <input type="date" id="reg-vendor-visit-date" required>
+                                                </div>
+                                                <div class="form-group col-3">
+                                                    <label for="reg-vendor-expected-exit">Expected Exit Time</label>
+                                                    <input type="time" id="reg-vendor-expected-exit" required>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Photo Column Right -->
+                                        <div class="col-4">
+                                            <div class="camera-panel">
+                                                <div class="camera-preview-wrapper" style="position: relative;">
+                                                    <video id="camera-stream-vendor" autoplay playsinline class="hidden" style="width: 100%; border-radius: 4px; object-fit: cover; aspect-ratio: 4/3;"></video>
+                                                    <canvas id="photo-canvas-vendor" class="hidden"></canvas>
+                                                    <img id="photo-preview-vendor" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>" alt="Captured Photo Preview">
+                                                    <div class="camera-overlay-info" id="camera-status-vendor" style="font-size: 0.65rem; padding: 2px;">Camera Inactive</div>
+                                                    <div class="photo-options-container hidden" id="photo-options-vendor">
+                                                        <button type="button" class="btn btn-success btn-xs" id="btn-existing-photo-vendor">✅ Use Existing</button>
+                                                        <button type="button" class="btn btn-secondary btn-xs" id="btn-new-photo-vendor">📷 Capture New</button>
+                                                    </div>
+                                                </div>
+                                                <div class="camera-controls" style="margin-top: 0.25rem; display: flex; gap: 0.25rem; justify-content: center;">
+                                                    <button type="button" class="btn btn-secondary btn-xs" id="btn-enable-camera-vendor" onclick="initCategoryCamera('vendor')">Camera</button>
+                                                    <button type="button" class="btn btn-primary btn-xs hidden" id="btn-capture-vendor" onclick="captureCategoryPhoto('vendor')">Capture</button>
+                                                    <button type="button" class="btn btn-secondary btn-xs hidden" id="btn-retake-vendor" onclick="retakeCategoryPhoto('vendor')">Retake</button>
+                                                </div>
+                                                <div class="photo-fallback" style="margin-top: 0.25rem; text-align: center;">
+                                                    <label for="visitor-photo-file-vendor" class="file-upload-btn" style="cursor: pointer;">
+                                                        <input type="file" id="visitor-photo-file-vendor" class="file-upload-input" accept="image/*">
+                                                        <span>Upload File</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions mt-2" style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="showRegistrationDashboard()">Cancel</button>
+                                        <button type="submit" class="btn btn-primary btn-sm">Submit Visit Details</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- 4. Recently Registered Visitors Table (Always visible below the active form/cards) -->
+                        <div class="dashboard-card" id="dashboard-recent-visitors-card" style="border: 1px solid var(--border-color); background: var(--bg-card); margin-top: 1.5rem; padding: 12px;">
+                            <div class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                <h3 style="font-size: 1rem; font-weight: 700; color: var(--accent-primary); margin: 0;">📅 Recently Registered Visitors</h3>
+                                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                    <input type="text" id="db-search-recent" placeholder="Search name, ID, mobile, host..." style="font-size: 0.75rem; padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px; margin-bottom: 0; width: 220px; background: var(--bg-body); color: var(--text-primary);">
+                                    <select id="db-filter-status" style="font-size: 0.75rem; padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-body); color: var(--text-primary);">
+                                        <option value="">All Statuses</option>
+                                        <option value="PENDING_APPROVAL">Pending Approval</option>
+                                        <option value="APPROVED">Approved</option>
+                                        <option value="REJECTED">Rejected</option>
+                                        <option value="Checked In">Checked In</option>
+                                        <option value="Checked Out">Checked Out</option>
+                                    </select>
+                                    <select id="db-filter-time" style="font-size: 0.75rem; padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-body); color: var(--text-primary);">
+                                        <option value="today">Today</option>
+                                        <option value="yesterday">Yesterday</option>
+                                        <option value="week">This Week</option>
+                                        <option value="month">This Month</option>
+                                        <option value="all">All Time</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="table-responsive" style="overflow-x: auto; width: 100%;">
+                                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.75rem;">
+                                    <thead>
+                                        <tr style="border-bottom: 2px solid var(--border-color); background: var(--bg-app); font-weight: 700; color: var(--text-secondary);">
+                                            <th style="padding: 8px 6px;">Photo</th>
+                                            <th style="padding: 8px 6px;">Visitor Name</th>
+                                            <th style="padding: 8px 6px;">Visitor ID</th>
+                                            <th style="padding: 8px 6px;">Mobile</th>
+                                            <th style="padding: 8px 6px;">Host Employee</th>
+                                            <th style="padding: 8px 6px;">Visit Date</th>
+                                            <th style="padding: 8px 6px;">Check In</th>
+                                            <th style="padding: 8px 6px;">Check Out</th>
+                                            <th style="padding: 8px 6px;">Status</th>
+                                            <th style="padding: 8px 6px;" class="no-print">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="db-recent-visitors-body">
+                                        <tr>
+                                            <td colspan="10" style="text-align: center; padding: 2rem 0; color: var(--text-muted);">No recently registered visitors.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -507,8 +1045,40 @@
                     </div>
                 </section>
 
+                <!-- VIEW: PENDING APPROVALS -->
+                <section id="view-pending-approvals" class="page-view">
+                    <div class="dashboard-card" style="padding: 20px; border: 1px solid var(--border-color); background: var(--bg-card);">
+                        <div class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                            <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--accent-primary); margin: 0;">⏳ Pending Host Approvals Queue</h2>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Review and process pending visitor clearance requests.</p>
+                        </div>
+                        <div class="table-responsive" style="overflow-x: auto; width: 100%;">
+                            <table class="data-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid var(--border-color); background: var(--bg-app); font-weight: 700; color: var(--text-secondary);">
+                                        <th style="padding: 12px 10px;">Visitor Photo</th>
+                                        <th style="padding: 12px 10px;">Visitor Name</th>
+                                        <th style="padding: 12px 10px;">Mobile</th>
+                                        <th style="padding: 12px 10px;">Company</th>
+                                        <th style="padding: 12px 10px;">Purpose</th>
+                                        <th style="padding: 12px 10px;">Visit Date</th>
+                                        <th style="padding: 12px 10px;">Host Employee</th>
+                                        <th style="padding: 12px 10px;">Status</th>
+                                        <th style="padding: 12px 10px;" class="no-print">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="view-pending-approvals-tbody">
+                                    <tr>
+                                        <td colspan="9" style="text-align: center; padding: 3rem 0; color: var(--text-muted);">No visitors awaiting approval.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- VIEW 1a: STUDENT REGISTRATION -->
-                <section id="view-student-registration" class="page-view">
+                <section id="view-student-registration" class="page-view hidden" style="display: none !important;">
                     <div id="student-registration-wrapper" class="hidden">
                         <button type="button" class="btn btn-secondary btn-sm mb-4"
                             onclick="showRegistrationDashboard()">← Back to Dashboard</button>
@@ -775,7 +1345,7 @@
                 </section>
 
                 <!-- VIEW 1b: CUSTOMER REGISTRATION -->
-                <section id="view-customer-registration" class="page-view">
+                <section id="view-customer-registration" class="page-view hidden" style="display: none !important;">
                     <div id="customer-registration-wrapper" class="hidden">
                         <button type="button" class="btn btn-secondary btn-sm mb-4"
                             onclick="showRegistrationDashboard()">← Back to Dashboard</button>
@@ -1036,7 +1606,7 @@
                 </section>
 
                 <!-- VIEW 1c: VENDOR REGISTRATION -->
-                <section id="view-vendor-registration" class="page-view">
+                <section id="view-vendor-registration" class="page-view hidden" style="display: none !important;">
                     <div id="vendor-registration-wrapper" class="hidden">
                         <button type="button" class="btn btn-secondary btn-sm mb-4"
                             onclick="showRegistrationDashboard()">← Back to Dashboard</button>
@@ -3593,6 +4163,10 @@
                                         <td class="value" id="badge-company-name">Independent</td>
                                     </tr>
                                     <tr>
+                                        <td class="label">Mobile</td>
+                                        <td class="value" id="badge-phone-number">-</td>
+                                    </tr>
+                                    <tr>
                                         <td class="label">Host</td>
                                         <td class="value" id="badge-host-name">Manoj Kumar</td>
                                     </tr>
@@ -3609,12 +4183,16 @@
                                         <td class="value" id="badge-date">07-07-2026</td>
                                     </tr>
                                     <tr>
-                                        <td class="label">Entry</td>
-                                        <td class="value" id="badge-time">10:30 AM</td>
+                                        <td class="label">Valid From</td>
+                                        <td class="value" id="badge-valid-from">-</td>
                                     </tr>
                                     <tr>
-                                        <td class="label">Exit</td>
-                                        <td class="value" id="badge-exit-time">6:00 PM</td>
+                                        <td class="label">Valid Until</td>
+                                        <td class="value" id="badge-valid-until">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">Status</td>
+                                        <td class="value" id="badge-status-val" style="font-weight: bold; color: var(--accent-success); text-transform: uppercase;">APPROVED</td>
                                     </tr>
                                     <tr id="badge-row-start-date" class="hidden">
                                         <td class="label">Start Date</td>
@@ -3636,13 +4214,8 @@
                             <div class="badge-qr-container" id="badge-qr-code" style="margin-bottom: 0.5rem;"></div>
                         </div>
                         <div class="badge-footer"
-                            style="margin-top: auto; border-top: 1px dashed var(--border-color); padding: 0.5rem 1rem; font-size: 0.7rem; text-align: center; color: var(--text-secondary); background: #f8fafc;">
-                            <div style="font-weight: bold; margin-bottom: 0.25rem;">Security Instructions:</div>
-                            <div style="font-size: 0.65rem; line-height: 1.3; margin-bottom: 0.5rem;">
-                                Please display this pass at all times. Photography is strictly prohibited. Escort
-                                required in shop floor.
-                            </div>
-                            <div style="font-weight: bold;">Emergency Contact: +91 422 2636222</div>
+                            style="margin-top: auto; border-top: 1px dashed var(--border-color); padding: 0.5rem 1rem; font-size: 0.75rem; text-align: center; color: var(--text-secondary); background: #f8fafc; font-weight: 700;">
+                            Please show this Visitor Pass at the Security Gate.
                         </div>
                     </div>
                 </div>

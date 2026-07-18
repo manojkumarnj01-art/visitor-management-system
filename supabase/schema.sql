@@ -115,6 +115,13 @@ CREATE TABLE IF NOT EXISTS visitors (
     branch VARCHAR(100) REFERENCES branches(name) ON UPDATE CASCADE,
     start_date DATE,
     end_date DATE,
+    approved_by VARCHAR(255),
+    approved_at TIMESTAMPTZ,
+    valid_from TIMESTAMPTZ,
+    valid_until TIMESTAMPTZ,
+    qr_code TEXT,
+    visitor_pass_image TEXT,
+    visitor_pass_pdf TEXT,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );

@@ -2199,6 +2199,63 @@ input:focus, select:focus, textarea:focus {
     }
 }
 
+/* Compact forms styling to fit 1920x1080 screens without scrolling */
+.app-form-compact {
+    gap: 0.4rem !important;
+}
+.app-form-compact .form-row {
+    gap: 0.4rem !important;
+}
+.app-form-compact .form-group {
+    gap: 0.1rem !important;
+    margin-bottom: 0.15rem !important;
+}
+.app-form-compact label {
+    font-size: 0.7rem !important;
+    margin-bottom: 1px !important;
+    font-weight: 700 !important;
+}
+.app-form-compact input, 
+.app-form-compact select, 
+.app-form-compact textarea {
+    padding: 3px 6px !important;
+    height: 28px !important;
+    font-size: 0.75rem !important;
+}
+.app-form-compact .file-upload-btn {
+    padding: 3px 6px !important;
+    font-size: 0.7rem !important;
+    height: 28px !important;
+    line-height: 20px !important;
+}
+.app-form-compact .camera-panel {
+    padding: 6px !important;
+}
+.app-form-compact .camera-preview-wrapper {
+    max-height: 140px !important;
+}
+.app-form-compact .camera-preview-wrapper img,
+.app-form-compact .camera-preview-wrapper video {
+    max-height: 140px !important;
+    object-fit: cover !important;
+}
+.app-form-compact .search-visitor-box {
+    padding: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+}
+.app-form-compact .search-visitor-box h3 {
+    font-size: 0.85rem !important;
+}
+.app-form-compact .search-visitor-box p {
+    font-size: 0.65rem !important;
+    margin-bottom: 0.4rem !important;
+}
+.app-form-compact .search-visitor-input {
+    height: 28px !important;
+    padding: 3px 6px !important;
+    font-size: 0.75rem !important;
+}
+
 
 
 

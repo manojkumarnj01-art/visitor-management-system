@@ -1523,7 +1523,8 @@ function isViewAuthorized(viewId) {
             "view-vendor-registration",
             "view-contractor-registration",
             "view-delivery-registration",
-            "view-service-engineer-registration"
+            "view-service-engineer-registration",
+            "view-pending-approvals"
         ];
         return allowed.includes(viewId);
     }
@@ -1532,7 +1533,8 @@ function isViewAuthorized(viewId) {
     if (role === "employee") {
         const allowed = [
             "view-dashboard",
-            "view-reports"
+            "view-reports",
+            "view-pending-approvals"
         ];
         return allowed.includes(viewId);
     }
@@ -1560,7 +1562,8 @@ window.navigateTo = function (path, pushState = true) {
         "/data-management": "view-data-management",
         "/work-permit": "view-work-permit",
         "/purchase-manual": "view-purchase-manual",
-        "/settings": "view-settings"
+        "/settings": "view-settings",
+        "/pending-approvals": "view-pending-approvals"
     };
 
     let viewId = pathMap[path] || "view-dashboard";
@@ -1593,14 +1596,18 @@ window.navigateTo = function (path, pushState = true) {
 };
 
 function switchView(viewId) {
-    state.activeView = viewId;
+    let targetViewId = viewId;
+    if (viewId === "view-student-registration" || viewId === "view-customer-registration" || viewId === "view-vendor-registration") {
+        targetViewId = "view-dashboard";
+    }
+    state.activeView = targetViewId;
 
     // Toggle active view panel
     document.querySelectorAll(".page-view").forEach(view => {
         view.classList.remove("active");
     });
 
-    const activePanel = document.getElementById(viewId);
+    const activePanel = document.getElementById(targetViewId);
     if (activePanel) {
         activePanel.classList.add("active");
     }
@@ -1614,7 +1621,7 @@ function switchView(viewId) {
                 link.classList.add("active");
             }
         } else {
-            if (linkTarget === viewId ||
+            if (linkTarget === viewId || linkTarget === targetViewId ||
                 (viewId === "view-student-registration" && linkTarget === "reg-student") ||
                 (viewId === "view-customer-registration" && linkTarget === "reg-customer") ||
                 (viewId === "view-vendor-registration" && linkTarget === "reg-vendor")) {
@@ -1672,6 +1679,10 @@ function switchView(viewId) {
         "view-data-management": {
             title: "Data Management Console",
             sub: "Access, filter, export, and print master database logs"
+        },
+        "view-pending-approvals": {
+            title: "Pending Approvals Panel",
+            sub: "Authorizations queue for visitors awaiting host employees approval"
         }
     };
 
@@ -1718,18 +1729,28 @@ function switchView(viewId) {
     }
 
     // Dynamic execution specific view setups
-    if (viewId === "view-reports") {
+    if (targetViewId === "view-dashboard") {
+        if (viewId === "view-student-registration") {
+            openCategoryForm("student");
+        } else if (viewId === "view-customer-registration") {
+            openCategoryForm("customer");
+        } else if (viewId === "view-vendor-registration") {
+            openCategoryForm("vendor");
+        } else {
+            // Keep forms hidden if we just navigated to base dashboard
+            document.getElementById("student-registration-wrapper").classList.add("hidden");
+            document.getElementById("customer-registration-wrapper").classList.add("hidden");
+            document.getElementById("vendor-registration-wrapper").classList.add("hidden");
+        }
+        refreshDashboardStatsAndTables();
+    } else if (viewId === "view-reports") {
         renderReportsData("today");
     } else if (viewId === "view-settings") {
         renderSettingsData();
     } else if (viewId === "view-data-management") {
         renderDataManagementTab(state.activeDMTab || "dm-tab-students");
-    } else if (viewId === "view-student-registration") {
-        openCategoryForm("student");
-    } else if (viewId === "view-customer-registration") {
-        openCategoryForm("customer");
-    } else if (viewId === "view-vendor-registration") {
-        openCategoryForm("vendor");
+    } else if (viewId === "view-pending-approvals") {
+        renderPendingApprovalsView();
     }
 
     // Hide drawer overlay
@@ -2186,98 +2207,352 @@ function updateTopSummaryBar() {
 }
 
 // 5. View Renderer: Dashboard Portal
-function renderDashboardView(searchQuery = "") {
+function refreshDashboardStatsAndTables() {
+    if (!state.visitors) return;
+
     // 1. Calculations & Statistics counts
     const todayStr = getLocalDateStr();
     const registeredToday = state.visitors.filter(v => v.visitDate === todayStr).length;
-    const insideCampus = state.visitors.filter(v => v.status === "Checked In").length;
+    const pendingApproval = state.visitors.filter(v => v.status === "PENDING_APPROVAL" || v.status === "Pending").length;
+    const approvedCount = state.visitors.filter(v => v.status === "APPROVED" || v.status === "Approved").length;
+    const rejectedCount = state.visitors.filter(v => v.status === "REJECTED" || v.status === "Rejected" || v.status === "Denied").length;
+    const checkedInCount = state.visitors.filter(v => v.status === "Checked In").length;
     const checkedOutCount = state.visitors.filter(v => v.status === "Checked Out").length;
-    const pendingApproval = state.visitors.filter(v => v.status === "Pending").length;
-    const waitingCount = state.visitors.filter(v => v.status === "Pending" || v.status === "Approved").length;
-    const rejectedCount = state.visitors.filter(v => v.status === "Rejected" || v.status === "Denied").length;
-    const blacklistedCount = state.blacklist.length;
+    const insideCampus = state.visitors.filter(v => v.status === "Checked In").length;
+    const totalCount = state.visitors.length;
 
-    // Frequent visitor unique counts (visited 2 or more times)
-    const visitCounts = {};
-    state.visitors.forEach(v => {
-        if (v.phone) {
-            visitCounts[v.phone] = (visitCounts[v.phone] || 0) + 1;
-        }
-    });
-    const frequentCount = Object.values(visitCounts).filter(c => c >= 2).length;
+    // Update stats DOM
+    const elementsMap = {
+        "db-stat-today": registeredToday,
+        "db-stat-pending": pendingApproval,
+        "db-stat-approved": approvedCount,
+        "db-stat-rejected": rejectedCount,
+        "db-stat-checkedin": checkedInCount,
+        "db-stat-checkedout": checkedOutCount,
+        "db-stat-inside": insideCampus,
+        "db-stat-total": totalCount
+    };
 
-    if (document.getElementById("stat-waiting")) document.getElementById("stat-waiting").innerText = waitingCount;
-    if (document.getElementById("stat-pending")) document.getElementById("stat-pending").innerText = pendingApproval;
-    if (document.getElementById("stat-active-in")) document.getElementById("stat-active-in").innerText = insideCampus;
-    if (document.getElementById("stat-checked-out")) document.getElementById("stat-checked-out").innerText = checkedOutCount;
-    if (document.getElementById("stat-rejected")) document.getElementById("stat-rejected").innerText = rejectedCount;
-    if (document.getElementById("stat-blacklisted")) document.getElementById("stat-blacklisted").innerText = blacklistedCount;
-    if (document.getElementById("stat-frequent")) document.getElementById("stat-frequent").innerText = frequentCount;
-    if (document.getElementById("stat-total-today")) document.getElementById("stat-total-today").innerText = registeredToday;
-
-    // 2. Render Active visitors table
-    const tableBody = document.getElementById("db-active-visitors-table");
-    tableBody.innerHTML = "";
-
-    const activeList = state.visitors.filter(v =>
-        (v.status === "Checked In" || v.status === "Pending") &&
-        (v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            v.id.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
-
-    if (activeList.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="6" class="empty-state">
-                    <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
-                    <p>No active visitors inside campus matching filters.</p>
-                </td>
-            </tr>
-        `;
-    } else {
-        activeList.forEach(v => {
-            const tr = document.createElement("tr");
-            const entryTimeFormatted = v.checkIn ? new Date(v.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Awaiting Approval";
-
-            tr.innerHTML = `
-                <td><code>${v.id}</code></td>
-                <td>
-                    <div style="font-weight: 600;">${v.name}</div>
-                    <div class="text-secondary text-xs">${v.company || "Independent"} | ${v.phone}</div>
-                </td>
-                <td>
-                    <div>Host: ${v.hostName}</div>
-                    <div class="text-secondary text-xs">${v.hostDept} | Purpose: ${v.purpose}</div>
-                </td>
-                <td>${entryTimeFormatted}</td>
-                <td>
-                    <span class="badge-status ${v.status.toLowerCase()}">${v.status}</span>
-                </td>
-                <td>
-                    <div class="flex gap-2" style="flex-wrap:wrap;">
-                        ${v.status === "Pending" ? `
-                            <button class="btn btn-accent btn-sm" onclick="approveEntryAction('${v.id}')">Approve</button>
-                        ` : `
-                            <button class="btn btn-secondary btn-sm" onclick="checkoutVisitorById('${v.id}')">Check-Out</button>
-                        `}
-                        <button class="btn btn-secondary btn-sm" onclick="viewPrintPassModal('${v.id}')" title="Preview Pass Card">Badge</button>
-                        ${v.status === 'Checked In' ? `<button class="btn btn-success btn-sm" onclick="resendPassWhatsApp('${v.id}')" title="Resend via WhatsApp">?? WA</button>` : ''}
-                    </div>
-                </td>
-            `;
-            tableBody.appendChild(tr);
-        });
+    for (const [id, count] of Object.entries(elementsMap)) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = count;
     }
 
-    // Bind Dashboard live filter
-    const dbFilter = document.getElementById("db-search-visitors");
-    dbFilter.oninput = (e) => renderDashboardView(e.target.value);
+    const elTopCheckedOut = document.getElementById("summary-checked-out");
+    const elTopToday = document.getElementById("summary-visitors-today");
+    const elTopInside = document.getElementById("summary-in-campus");
+    if (elTopCheckedOut) elTopCheckedOut.innerText = checkedOutCount;
+    if (elTopToday) elTopToday.innerText = registeredToday;
+    if (elTopInside) elTopInside.innerText = insideCampus;
 
-    // Render interactive analytics charts
+    // 2. Bind Dashboard live filters
+    const elSearchRecent = document.getElementById("db-search-recent");
+    if (elSearchRecent && !elSearchRecent.dataset.bound) {
+        elSearchRecent.oninput = () => renderRecentVisitorsTable();
+        elSearchRecent.dataset.bound = "true";
+    }
+    const elFilterStatus = document.getElementById("db-filter-status");
+    if (elFilterStatus && !elFilterStatus.dataset.bound) {
+        elFilterStatus.onchange = () => renderRecentVisitorsTable();
+        elFilterStatus.dataset.bound = "true";
+    }
+    const elFilterTime = document.getElementById("db-filter-time");
+    if (elFilterTime && !elFilterTime.dataset.bound) {
+        elFilterTime.onchange = () => renderRecentVisitorsTable();
+        elFilterTime.dataset.bound = "true";
+    }
+
+    // Render tables & charts
+    renderRecentVisitorsTable();
     renderDashboardCharts();
+}
 
-    // Render pending approval queue
-    renderDashboardPendingQueue();
+function renderRecentVisitorsTable() {
+    const tbody = document.getElementById("db-recent-visitors-body");
+    if (!tbody) return;
+
+    const searchQuery = (document.getElementById("db-search-recent")?.value || "").toLowerCase().trim();
+    const filterStatus = document.getElementById("db-filter-status")?.value || "";
+    const filterTime = document.getElementById("db-filter-time")?.value || "today";
+
+    let filtered = [...state.visitors];
+
+    // Status Filter
+    if (filterStatus) {
+        if (filterStatus === "PENDING_APPROVAL") {
+            filtered = filtered.filter(v => v.status === "PENDING_APPROVAL" || v.status === "Pending");
+        } else if (filterStatus === "APPROVED") {
+            filtered = filtered.filter(v => v.status === "APPROVED" || v.status === "Approved");
+        } else if (filterStatus === "REJECTED") {
+            filtered = filtered.filter(v => v.status === "REJECTED" || v.status === "Rejected" || v.status === "Denied");
+        } else {
+            filtered = filtered.filter(v => v.status === filterStatus);
+        }
+    }
+
+    // Time Filter
+    const todayStr = getLocalDateStr();
+    const todayDate = new Date(todayStr);
+
+    if (filterTime === "today") {
+        filtered = filtered.filter(v => v.visitDate === todayStr);
+    } else if (filterTime === "yesterday") {
+        const yesterday = new Date(todayDate);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+        filtered = filtered.filter(v => v.visitDate === yesterdayStr);
+    } else if (filterTime === "week") {
+        const startOfWeek = new Date(todayDate);
+        startOfWeek.setDate(startOfWeek.getDate() - todayDate.getDay());
+        filtered = filtered.filter(v => {
+            if (!v.visitDate) return false;
+            const d = new Date(v.visitDate);
+            return d >= startOfWeek;
+        });
+    } else if (filterTime === "month") {
+        const monthPrefix = todayStr.substring(0, 7);
+        filtered = filtered.filter(v => v.visitDate && v.visitDate.startsWith(monthPrefix));
+    }
+
+    // Search query
+    if (searchQuery) {
+        filtered = filtered.filter(v => 
+            v.name.toLowerCase().includes(searchQuery) ||
+            v.id.toLowerCase().includes(searchQuery) ||
+            v.phone.toLowerCase().includes(searchQuery) ||
+            (v.hostName && v.hostName.toLowerCase().includes(searchQuery)) ||
+            (v.company && v.company.toLowerCase().includes(searchQuery))
+        );
+    }
+
+    filtered.sort((a, b) => b.id.localeCompare(a.id));
+
+    tbody.innerHTML = "";
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:2rem 0; color:var(--text-muted);">No matching registered visitors found.</td></tr>`;
+        return;
+    }
+
+    const defaultPhoto = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='8' r='4' fill='%2394a3b8'/><path d='M4 20c0-4 3.6-7 8-7s8 3 8 7' fill='%2394a3b8'/></svg>";
+
+    filtered.forEach(v => {
+        const tr = document.createElement("tr");
+        
+        let statusBadgeClass = "pending";
+        let statusLabel = v.status;
+        if (v.status === "PENDING_APPROVAL" || v.status === "Pending") {
+            statusBadgeClass = "pending";
+            statusLabel = "Pending Approval";
+        } else if (v.status === "APPROVED" || v.status === "Approved") {
+            statusBadgeClass = "approved";
+            statusLabel = "Approved";
+        } else if (v.status === "REJECTED" || v.status === "Rejected" || v.status === "Denied") {
+            statusBadgeClass = "rejected";
+            statusLabel = "Rejected";
+        } else if (v.status === "Checked In") {
+            statusBadgeClass = "checked-in";
+        } else if (v.status === "Checked Out") {
+            statusBadgeClass = "checked-out";
+        }
+
+        const inTime = v.checkIn ? new Date(v.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "—";
+        const outTime = v.checkOut ? new Date(v.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "—";
+
+        tr.innerHTML = `
+            <td style="padding:8px 6px;">
+                <img src="${v.photo || defaultPhoto}" style="width:30px; height:30px; border-radius:50%; object-fit:cover; border:1px solid var(--border-color);">
+            </td>
+            <td style="padding:8px 6px; font-weight:600;">${v.name}</td>
+            <td style="padding:8px 6px;"><code>${v.id}</code></td>
+            <td style="padding:8px 6px;">${v.phone}</td>
+            <td style="padding:8px 6px;">${v.hostName || "—"}</td>
+            <td style="padding:8px 6px;">${v.visitDate || "—"}</td>
+            <td style="padding:8px 6px;">${inTime}</td>
+            <td style="padding:8px 6px;">${outTime}</td>
+            <td style="padding:8px 6px;">
+                <span class="badge-status ${statusBadgeClass}">${statusLabel}</span>
+            </td>
+            <td style="padding:8px 6px;">
+                <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                    <button class="btn btn-secondary btn-xs" onclick="viewPrintPassModal('${v.id}')">View</button>
+                    ${(v.status === "PENDING_APPROVAL" || v.status === "Pending") ? `
+                        <button class="btn btn-accent btn-xs" onclick="approvePendingVisitor('${v.id}')">Approve</button>
+                        <button class="btn btn-danger btn-xs" onclick="promptRejectVisitor('${v.id}')">Reject</button>
+                    ` : ""}
+                    ${(v.status === "APPROVED" || v.status === "Approved") ? `
+                        <button class="btn btn-success btn-xs" onclick="checkInApprovedVisitor('${v.id}')">Check-In</button>
+                    ` : ""}
+                    ${(v.status === "Checked In") ? `
+                        <button class="btn btn-warning btn-xs" onclick="checkoutVisitorById('${v.id}')">Check-Out</button>
+                    ` : ""}
+                    <button class="btn btn-secondary btn-xs" onclick="downloadVisitorPassPDF('${v.id}')">PDF</button>
+                    <button class="btn btn-secondary btn-xs" onclick="resendPassWhatsApp('${v.id}')">WA</button>
+                    <button class="btn btn-secondary btn-xs" onclick="resendPassEmail('${v.id}')">Email</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function renderPendingApprovalsView() {
+    const tbody = document.getElementById("view-pending-approvals-tbody");
+    if (!tbody) return;
+
+    const pending = state.visitors.filter(v => v.status === "PENDING_APPROVAL" || v.status === "Pending");
+    tbody.innerHTML = "";
+
+    if (pending.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 3rem 0; color: var(--text-muted);">No visitors awaiting approval.</td></tr>`;
+        return;
+    }
+
+    const defaultPhoto = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='8' r='4' fill='%2394a3b8'/><path d='M4 20c0-4 3.6-7 8-7s8 3 8 7' fill='%2394a3b8'/></svg>";
+
+    pending.forEach(v => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td style="padding: 12px 10px;">
+                <img src="${v.photo || defaultPhoto}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1px solid var(--border-color);">
+            </td>
+            <td style="padding: 12px 10px; font-weight: 600;">${v.name}</td>
+            <td style="padding: 12px 10px;">${v.phone}</td>
+            <td style="padding: 12px 10px;">${v.company || "Independent"}</td>
+            <td style="padding: 12px 10px;">${v.purpose || "Meeting"}</td>
+            <td style="padding: 12px 10px;">${v.visitDate || "—"}</td>
+            <td style="padding: 12px 10px;">${v.hostName || "—"}</td>
+            <td style="padding: 12px 10px;"><span class="badge-status pending">Pending Approval</span></td>
+            <td style="padding: 12px 10px;">
+                <div style="display:flex; gap: 8px;">
+                    <button class="btn btn-accent btn-sm" onclick="approvePendingVisitor('${v.id}')">Approve</button>
+                    <button class="btn btn-danger btn-sm" onclick="promptRejectVisitor('${v.id}')">Reject</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+window.promptRejectVisitor = function (visitorId) {
+    const reason = prompt("Enter reason for rejection:", "Unavailable") || "Denied by host";
+    const visitor = state.visitors.find(v => v.id === visitorId);
+    if (visitor) {
+        visitor.rejectionReason = reason;
+        rejectPendingVisitor(visitorId);
+    }
+};
+
+window.checkInApprovedVisitor = async function (visitorId) {
+    const idx = state.visitors.findIndex(v => v.id === visitorId);
+    if (idx === -1) return;
+
+    const visitor = state.visitors[idx];
+    const now = new Date();
+    visitor.status = "Checked In";
+    visitor.checkIn = now.toISOString();
+    
+    // Validity window setup: 8 hours from check-in
+    visitor.validFrom = now.toISOString();
+    const until = new Date(now);
+    until.setHours(until.getHours() + 8);
+    visitor.validUntil = until.toISOString();
+
+    // Generate real QR payload
+    const qrPayloadObj = {
+        id: visitor.id,
+        name: visitor.name,
+        host: visitor.hostName,
+        status: "APPROVED",
+        validUntil: visitor.validUntil
+    };
+    visitor.qrCode = JSON.stringify(qrPayloadObj);
+
+    saveState();
+    syncSingleVisitorToCloud(visitor);
+    refreshDashboardStatsAndTables();
+
+    showToast("Checked In", `${visitor.name} has been successfully checked in.`, "success");
+    addNotificationAlert("Checked In", `${visitor.name} is now inside campus.`, "success");
+
+    // Automatically send Digital Pass via email & WhatsApp
+    renderBadgeData(visitor);
+    
+    setTimeout(() => {
+        autoSendPassToWhatsApp(visitor);
+        autoSendPassToEmail(visitor);
+    }, 1500);
+};
+
+async function autoSendPassToEmail(visitor, isManual = false) {
+    if (!visitor) return;
+    
+    if (!isManual && state.settings && state.settings.autoSendEmail === false) {
+        console.log("[VMS Email] Auto-send Email is disabled in settings.");
+        return;
+    }
+
+    try {
+        const badgeEl = document.getElementById('printable-badge');
+        if (!badgeEl) return;
+
+        const canvas = await html2canvas(badgeEl, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff'
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        const emailMsg = `Dear ${visitor.name}, attached is your digital Visitor Pass for your visit to Barani Hydraulics to meet ${visitor.hostName} in the ${visitor.hostDept} department. Pass ID: ${visitor.id}.`;
+
+        logNotificationSimulator(
+            `BARANI HYDRAULICS Visitor Pass - ${visitor.name} (${visitor.id})`,
+            "Email",
+            visitor.email || `${visitor.name.toLowerCase().replace(/ /g, "")}@example.com`,
+            emailMsg + ` [Attachment: Visitor_Pass_${visitor.id}.png, Visitor_Pass_${visitor.id}.pdf]`
+        );
+
+        if (supabaseClient) {
+            await supabaseClient.from('audit_logs').insert({
+                action: 'Email Dispatch',
+                actor: 'System',
+                details: `Pass email sent to visitor ${visitor.name} (${visitor.email || 'simulated'}) - SUCCESS`
+            });
+        }
+    } catch (err) {
+        console.error('[VMS] autoSendPassToEmail error:', err);
+    }
+}
+
+window.resendPassEmail = function (visitorId) {
+    const visitor = state.visitors.find(v => v.id === visitorId);
+    if (!visitor) {
+        showToast('Not Found', 'Visitor record not found.', 'danger');
+        return;
+    }
+
+    renderBadgeAndOpenModal(visitor);
+
+    setTimeout(() => {
+        autoSendPassToEmail(visitor, true);
+    }, 1000);
+
+    addAuditLog('Resend Email Pass', 'Communications', `Manually resent pass to ${visitor.name} (${visitorId}) via Email`);
+};
+
+window.downloadVisitorPassPDF = function (visitorId) {
+    const visitor = state.visitors.find(v => v.id === visitorId);
+    if (!visitor) return;
+    renderBadgeData(visitor);
+    showToast("Generating PDF", "Rendering PDF file format in browser...", "info");
+    setTimeout(() => {
+        window.print(); // Easy native fallback browser action
+    }, 500);
+};
+
+function renderDashboardView(searchQuery = "") {
+    refreshDashboardStatsAndTables();
 }
 
 // Renders the Pending Approval Queue table on the dashboard
@@ -2688,7 +2963,7 @@ function handleRegistrationSubmit(e) {
         checkIn: null, // Awaiting confirmation
         checkOut: null,
         expectedExit,
-        status: "Pending", // Default Awaiting host approval
+        status: "PENDING_APPROVAL", // Default Awaiting host approval
         photo: state.tempVisitorPhoto,
         photoIdDoc: state.tempVisitorIdDoc || ""
     };
@@ -2911,7 +3186,7 @@ async function executeFinalVisitorApprovalFlow(preOpenedWindow = null) {
 // Simulated SMS Alerts Dispatcher
 function dispatchSimulatedAlerts(visitor) {
     const host = state.employees.find(e => e.id === visitor.hostId);
-    const gateName = document.getElementById("cfg-terminal-gate").value;
+    const gateName = document.getElementById("cfg-terminal-gate") ? document.getElementById("cfg-terminal-gate").value : "Main Gate";
 
     // 1. SMS to Visitor
     logNotificationSimulator(
@@ -2985,14 +3260,34 @@ function renderBadgeData(visitor) {
     document.getElementById("badge-serial-id").innerText = visitor.id;
     document.getElementById("badge-name").innerText = visitor.name;
     document.getElementById("badge-company-name").innerText = visitor.company || "Independent";
+    if (document.getElementById("badge-phone-number")) {
+        document.getElementById("badge-phone-number").innerText = visitor.phone || "—";
+    }
     document.getElementById("badge-host-name").innerText = visitor.hostName;
     document.getElementById("badge-host-dept").innerText = visitor.hostDept;
     document.getElementById("badge-purpose").innerText = visitor.purpose || "Meeting";
 
     const entryDate = visitor.checkIn ? new Date(visitor.checkIn) : new Date();
     document.getElementById("badge-date").innerText = entryDate.toLocaleDateString([], { month: '2-digit', day: '2-digit', year: 'numeric' });
-    document.getElementById("badge-time").innerText = entryDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    document.getElementById("badge-exit-time").innerText = visitor.expectedExit || "06:00 PM";
+    
+    const validFrom = visitor.validFrom ? new Date(visitor.validFrom).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: '2-digit', day: '2-digit', year: 'numeric' }) : (visitor.visitDate || entryDate.toLocaleDateString()) + ' 09:00 AM';
+    const validUntil = visitor.validUntil ? new Date(visitor.validUntil).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: '2-digit', day: '2-digit', year: 'numeric' }) : (visitor.visitDate || entryDate.toLocaleDateString()) + ' 06:00 PM';
+
+    if (document.getElementById("badge-valid-from")) {
+        document.getElementById("badge-valid-from").innerText = validFrom;
+    }
+    if (document.getElementById("badge-valid-until")) {
+        document.getElementById("badge-valid-until").innerText = validUntil;
+    }
+    if (document.getElementById("badge-status-val")) {
+        document.getElementById("badge-status-val").innerText = (visitor.status || "Approved").toUpperCase();
+        const badgeStatusEl = document.getElementById("badge-status-val");
+        if (visitor.status === "REJECTED" || visitor.status === "Rejected" || visitor.status === "Denied") {
+            badgeStatusEl.style.color = "var(--accent-danger, #ef4444)";
+        } else {
+            badgeStatusEl.style.color = "var(--accent-success, #10b981)";
+        }
+    }
 
     // Student validity rows rendering
     const rowStartDate = document.getElementById("badge-row-start-date");
@@ -5633,7 +5928,14 @@ function mapVisitorToDb(v) {
         reject_token: v.rejectToken,
         branch: v.branch,
         start_date: v.startDate || null,
-        end_date: v.endDate || null
+        end_date: v.endDate || null,
+        approved_by: v.approvedBy || null,
+        approved_at: v.approvedAt || null,
+        valid_from: v.validFrom || null,
+        valid_until: v.validUntil || null,
+        qr_code: v.qrCode || null,
+        visitor_pass_image: v.visitorPassImage || null,
+        visitor_pass_pdf: v.visitorPassPdf || null
     };
 }
 
@@ -5664,7 +5966,14 @@ function mapVisitorFromDb(row) {
         rejectToken: row.reject_token,
         branch: row.branch,
         startDate: row.start_date || null,
-        endDate: row.end_date || null
+        endDate: row.end_date || null,
+        approvedBy: row.approved_by || null,
+        approvedAt: row.approved_at || null,
+        validFrom: row.valid_from || null,
+        validUntil: row.valid_until || null,
+        qrCode: row.qr_code || null,
+        visitorPassImage: row.visitor_pass_image || null,
+        visitorPassPdf: row.visitor_pass_pdf || null
     };
 }
 
@@ -9028,6 +9337,10 @@ window.handleStudentRegistrationSubmit = function (e) {
     const department = document.getElementById("reg-student-dept").value.trim();
     const rollNumber = document.getElementById("reg-student-rollno").value.trim();
     const aadhaar = document.getElementById("reg-student-aadhaar").value.trim();
+    if (aadhaar && !/^\d{12}$/.test(aadhaar)) {
+        showToast("Validation Error", "Aadhaar number must be exactly 12 digits.", "danger");
+        return;
+    }
     const address = document.getElementById("reg-student-address").value.trim();
     const purpose = document.getElementById("reg-student-purpose").value;
     const hostNameVal = document.getElementById("reg-student-host").value.trim();
@@ -9111,7 +9424,7 @@ window.handleStudentRegistrationSubmit = function (e) {
         checkIn: null,
         checkOut: null,
         expectedExit,
-        status: "Pending",
+        status: "PENDING_APPROVAL",
         photo: state.tempVisitorPhoto || "",
         photoIdDoc: state.tempVisitorIdDoc || "",
 
@@ -9139,6 +9452,10 @@ window.handleCustomerRegistrationSubmit = function (e) {
     const department = document.getElementById("reg-customer-dept").value.trim();
     const customerIdInput = document.getElementById("reg-customer-id").value.trim();
     const aadhaar = document.getElementById("reg-customer-aadhaar").value.trim();
+    if (aadhaar && !/^\d{12}$/.test(aadhaar)) {
+        showToast("Validation Error", "Aadhaar number must be exactly 12 digits.", "danger");
+        return;
+    }
     const address = document.getElementById("reg-customer-address").value.trim();
     const purpose = document.getElementById("reg-customer-purpose").value;
     const idType = document.getElementById("reg-customer-id-type").value;
@@ -9212,7 +9529,7 @@ window.handleCustomerRegistrationSubmit = function (e) {
         checkIn: null,
         checkOut: null,
         expectedExit,
-        status: "Pending",
+        status: "PENDING_APPROVAL",
         photo: state.tempVisitorPhoto || "",
         photoIdDoc: "",
 
@@ -9239,6 +9556,10 @@ window.handleVendorRegistrationSubmit = function (e) {
     const vendorIdInput = document.getElementById("reg-vendor-visitor-id").value.trim();
     const invoice = document.getElementById("reg-vendor-invoice").value.trim();
     const aadhaar = document.getElementById("reg-vendor-aadhaar").value.trim();
+    if (aadhaar && !/^\d{12}$/.test(aadhaar)) {
+        showToast("Validation Error", "Aadhaar number must be exactly 12 digits.", "danger");
+        return;
+    }
     const address = document.getElementById("reg-vendor-address").value.trim();
     const idType = document.getElementById("reg-vendor-id-type").value;
     const idNumber = document.getElementById("reg-vendor-id-number").value.trim();
@@ -9313,7 +9634,7 @@ window.handleVendorRegistrationSubmit = function (e) {
         checkIn: null,
         checkOut: null,
         expectedExit,
-        status: "Pending",
+        status: "PENDING_APPROVAL",
         photo: state.tempVisitorPhoto || "",
         photoIdDoc: "",
 
@@ -12007,29 +12328,39 @@ window.approvePendingVisitor = async function (visitorId) {
     const now = new Date();
     visitor.status = "Approved"; // Transition status to Approved
     visitor.dateApproved = now.toISOString();
+    
+    // Generate valid window
+    visitor.validFrom = now.toISOString();
+    const until = new Date(now);
+    until.setHours(until.getHours() + 8);
+    visitor.validUntil = until.toISOString();
+
+    // Generate real QR payload
+    const qrPayloadObj = {
+        id: visitor.id,
+        name: visitor.name,
+        host: visitor.hostName,
+        status: "APPROVED",
+        validUntil: visitor.validUntil
+    };
+    visitor.qrCode = JSON.stringify(qrPayloadObj);
+
     saveState();
     syncSingleVisitorToCloud(visitor);
-    refreshAllDataViews();
+    refreshDashboardStatsAndTables();
     renderSimulatedEmailInbox();
 
     showToast("Visitor Approved", `${visitor.name} request approved by host ${visitor.hostName}.`, "success");
 
     addNotificationAlert("Visitor Approved", `[Reception] ${visitor.name} approved by host ${visitor.hostName}. Awaiting check-in.`, "success");
 
-    // Send WhatsApp notification of approval to Visitor
-    const cleanPhone = visitor.phone.replace(/[^0-9]/g, '');
-    const formattedPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
-    const approveMsg = `Hello ${visitor.name}, your visit request at Barani Hydraulics has been APPROVED by ${visitor.hostName}. Please present your ID card at the security gate for quick check-in. Pass ID: ${visitor.id}.`;
-    
-    logNotificationSimulator("WhatsApp Approved Alert", "WhatsApp", visitor.phone, approveMsg);
-    
-    if (supabaseClient) {
-        supabaseClient.from('audit_logs').insert({
-            action: 'WhatsApp Dispatch',
-            actor: 'System',
-            details: `Approval notification WhatsApp sent to visitor ${visitor.name} (${visitor.phone}) - SUCCESS`
-        }).then(({ error }) => { if (error) console.error("Cloud log sync error:", error); });
-    }
+    // Automatically generate pass HTML & send notifications
+    renderBadgeData(visitor);
+
+    setTimeout(() => {
+        autoSendPassToWhatsApp(visitor);
+        autoSendPassToEmail(visitor);
+    }, 1500);
 
     // Save approval history
     state.approvalHistory = state.approvalHistory || [];
@@ -12056,18 +12387,27 @@ window.rejectPendingVisitor = function (visitorId) {
     visitor.dateRejected = now.toISOString();
     saveState();
     syncSingleVisitorToCloud(visitor);
-    refreshAllDataViews();
+    refreshDashboardStatsAndTables();
     renderSimulatedEmailInbox();
 
     showToast("Visitor Rejected", `${visitor.name} entry was rejected by host ${visitor.hostName}.`, "danger");
 
     addNotificationAlert("Visitor Rejected", `[Reception] Visitor Rejected: ${visitor.name} entry was denied by host ${visitor.hostName}. Reason: ${reason}`, "danger");
 
+    // Outbound Rejection Alert (WhatsApp)
     logNotificationSimulator(
-        "Visitor Rejected Alert",
-        "SMS",
+        "Visitor Access Rejected",
+        "WhatsApp",
         visitor.phone,
         `Dear ${visitor.name}, your visit request at Barani Hydraulics was rejected. Reason: ${reason}`
+    );
+
+    // Outbound Rejection Alert (Email)
+    logNotificationSimulator(
+        "Visitor Access Rejected",
+        "Email",
+        visitor.email || `${visitor.name.toLowerCase().replace(/ /g, "")}@example.com`,
+        `Dear ${visitor.name}, your visit request to meet ${visitor.hostName} at Barani Hydraulics has been rejected. Reason: ${reason}`
     );
 
     // Save approval history
@@ -12104,6 +12444,13 @@ window.selectSimulatedEmailVisitor = function (visitor) {
                     <p style="color: #a7f3d0; margin: 2px 0 0 0; font-size: 10px;">Visitor Access Authorization Request</p>
                 </div>
                 <div style="padding: 15px; background: var(--bg-card); color: var(--text-primary);">
+                    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+                        <img src="${visitor.photo || 'data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\'><circle cx=\'12\' cy=\'8\' r=\'4\' fill=\'%2394a3b8\'/><path d=\'M4 20c0-4 3.6-7 8-7s8 3 8 7\' fill=\'%2394a3b8\'/></svg>'}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color);" alt="Visitor Photo">
+                        <div>
+                            <h4 style="margin: 0; font-size: 13px; font-weight: 700; color: var(--accent-primary);">${visitor.name}</h4>
+                            <p style="margin: 2px 0 0 0; font-size: 10px; color: var(--text-secondary);">${visitor.phone}</p>
+                        </div>
+                    </div>
                     <p style="font-size: 12px; margin-top: 0;">Dear <strong>${visitor.hostName}</strong>,</p>
                     <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">A visitor is requesting authorization to meet you. Please select your response:</p>
                     
