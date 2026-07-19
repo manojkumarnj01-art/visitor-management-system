@@ -45,6 +45,12 @@ TO authenticated
 USING (get_current_user_role() = 'Administrator')
 WITH CHECK (get_current_user_role() = 'Administrator');
 
+CREATE POLICY "Allow users to manage their own profile"
+ON security_users FOR ALL
+TO authenticated
+USING (auth.uid() = id)
+WITH CHECK (auth.uid() = id);
+
 
 -- ==========================================================================
 -- B. SYSTEM SETTINGS POLICIES

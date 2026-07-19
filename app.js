@@ -2095,17 +2095,44 @@ async function handleLoginSubmit(e) {
             if (data && data.user) {
                 if (loadingText) loadingText.innerText = "Loading user profile...";
 
-                const profile = await fetchUserProfileAndRole(data.user);
+                let profile = await fetchUserProfileAndRole(data.user);
 
                 if (!profile) {
                     console.warn("[Login] Custom profile not found in database. Falling back to default metadata.");
-                    state.currentUser = {
-                        username: userVal,
-                        name: userVal.charAt(0).toUpperCase() + userVal.slice(1),
-                        role: userVal === "admin" ? "Administrator" : "Security Gatekeeper",
+                    let derivedUsername = userVal;
+                    if (derivedUsername.includes("@")) {
+                        derivedUsername = derivedUsername.split("@")[0];
+                    }
+                    const defaultProfile = {
+                        username: derivedUsername,
+                        name: derivedUsername.charAt(0).toUpperCase() + derivedUsername.slice(1),
+                        role: (derivedUsername === "admin" || derivedUsername === "administrator") ? "Administrator" : "Security Gatekeeper",
                         phone: "Supabase Session",
                         shift: "Continuous"
                     };
+                    state.currentUser = defaultProfile;
+
+                    // Auto-upsert profile using the new RLS self-management policy
+                    try {
+                        const dbProfile = {
+                            id: data.user.id,
+                            username: defaultProfile.username,
+                            name: defaultProfile.name,
+                            role: defaultProfile.role,
+                            phone: defaultProfile.phone,
+                            shift: defaultProfile.shift
+                        };
+                        const { error: upsertErr } = await supabaseClient
+                            .from('security_users')
+                            .upsert(dbProfile);
+                        if (upsertErr) {
+                            console.error("[Login] Failed to auto-create profile in security_users table:", upsertErr);
+                        } else {
+                            console.log("[Login] Auto-created profile in security_users table for user:", data.user.id);
+                        }
+                    } catch (upsertEx) {
+                        console.error("[Login] Exception auto-creating profile:", upsertEx);
+                    }
                 } else {
                     state.currentUser = profile;
                 }
@@ -2132,7 +2159,12 @@ async function performOfflineLogin(userVal, passVal) {
     const btnSubmit = document.querySelector("#login-form button[type='submit']");
     const overlay = document.getElementById("login-loading-overlay");
 
-    const matchedUser = state.securityUsers.find(u => u.username === userVal);
+    let cleanUser = userVal;
+    if (cleanUser.includes("@")) {
+        cleanUser = cleanUser.split("@")[0];
+    }
+
+    const matchedUser = state.securityUsers.find(u => u.username === cleanUser);
     const matchedEmp = state.employees ? state.employees.find(e => (e.id && e.id.toLowerCase() === userVal) || (e.email && e.email.toLowerCase() === userVal)) : null;
 
     if (matchedUser && passVal !== "") {
@@ -2165,12 +2197,41 @@ async function performOfflineLogin(userVal, passVal) {
     }
 }
 
-function handleLogoutClick() {
+async function handleLogoutClick() {
+    if (supabaseClient) {
+        try {
+            await supabaseClient.auth.signOut();
+        } catch (e) {
+            console.error("Supabase signOut error:", e);
+        }
+    }
+
+    const settings = localStorage.getItem("gk_settings");
+    const theme = localStorage.getItem("gk_theme");
+    const lang = localStorage.getItem("gk_lang") || localStorage.getItem("vms_lang");
+    
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    if (settings) localStorage.setItem("gk_settings", settings);
+    if (theme) localStorage.setItem("gk_theme", theme);
+    if (lang) {
+        localStorage.setItem("gk_lang", lang);
+        localStorage.setItem("vms_lang", lang);
+    }
+
     state.currentUser = null;
     saveState();
-    showToast("Logged Out", "Active session terminated.", "info");
-    checkAuthSession();
+    showToast("Logged Out Successfully", "Active session terminated.", "success");
+    
+    window.history.pushState(null, "", window.location.href);
+    window.onpopstate = function () {
+        window.history.pushState(null, "", window.location.href);
+    };
+
+    await checkAuthSession();
 }
+window.handleLogoutClick = handleLogoutClick;
 
 // 4. Data Sync Views Refresher
 function refreshAllDataViews() {
@@ -12025,34 +12086,7 @@ window.deleteVisitorRecord = function (visitorId) {
     }
 };
 
-window.handleLogoutClick = async function () {
-    if (window.supabase) {
-        try {
-            await window.supabase.auth.signOut();
-        } catch (e) {
-            console.error("Supabase signOut error:", e);
-        }
-    }
-
-    const settings = localStorage.getItem("gk_settings");
-    const lang = localStorage.getItem("vms_lang");
-    
-    localStorage.clear();
-    sessionStorage.clear();
-    
-    if (settings) localStorage.setItem("gk_settings", settings);
-    if (lang) localStorage.setItem("vms_lang", lang);
-
-    state.currentUser = null;
-    showToast("Logged Out Successfully", "Logged out successfully.", "success");
-    
-    window.history.pushState(null, "", window.location.href);
-    window.onpopstate = function () {
-        window.history.pushState(null, "", window.location.href);
-    };
-
-    checkAuthSession();
-};
+// window.handleLogoutClick is bound to handleLogoutClick globally
 
 window.checkoutVisitorById = async function (visitorId, bypassConfirm = false) {
     const idx = state.visitors.findIndex(v => v.id === visitorId);
