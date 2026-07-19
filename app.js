@@ -1897,6 +1897,14 @@ function setupEventListeners() {
     document.getElementById("btn-execute-checkout").addEventListener("click", executeCheckoutAction);
     document.getElementById("btn-trigger-qr-scanner").addEventListener("click", openQRScannerModal);
     document.getElementById("btn-simulate-qr-scan").addEventListener("click", executeQRScanSimulation);
+    const cancelCheckoutBtn = document.getElementById("btn-cancel-checkout");
+    if (cancelCheckoutBtn) {
+        cancelCheckoutBtn.addEventListener("click", () => {
+            document.getElementById("checkout-details-card").classList.add("hidden");
+            document.getElementById("checkout-visitor-id").value = "";
+            activeCheckoutRecord = null;
+        });
+    }
 
     // 9. History Filter
     document.getElementById("history-search-keyword").addEventListener("input", filterHistoryLogs);
@@ -3335,6 +3343,18 @@ function renderBadgeData(visitor) {
     const validFrom = visitor.validFrom ? new Date(visitor.validFrom).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: '2-digit', day: '2-digit', year: 'numeric' }) : (visitor.visitDate || entryDate.toLocaleDateString()) + ' 09:00 AM';
     const validUntil = visitor.validUntil ? new Date(visitor.validUntil).toLocaleString([], { hour: '2-digit', minute: '2-digit', month: '2-digit', day: '2-digit', year: 'numeric' }) : (visitor.visitDate || entryDate.toLocaleDateString()) + ' 06:00 PM';
 
+    const isStudent = (visitor.visitorCategory || "").toLowerCase() === "student" || visitor.purpose === "Student";
+    const rowFrom = document.getElementById("badge-row-valid-from");
+    const rowUntil = document.getElementById("badge-row-valid-until");
+
+    if (isStudent) {
+        if (rowFrom) rowFrom.classList.remove("hidden");
+        if (rowUntil) rowUntil.classList.remove("hidden");
+    } else {
+        if (rowFrom) rowFrom.classList.add("hidden");
+        if (rowUntil) rowUntil.classList.add("hidden");
+    }
+
     if (document.getElementById("badge-valid-from")) {
         document.getElementById("badge-valid-from").innerText = validFrom;
     }
@@ -3454,17 +3474,19 @@ function loadCheckoutRecordCard(visitor) {
     const statusEl = document.getElementById("checkout-visitor-status");
 
     const infoId = document.getElementById("checkout-info-id");
+    const infoType = document.getElementById("checkout-info-type");
+    const infoCompany = document.getElementById("checkout-info-company");
     const infoHost = document.getElementById("checkout-info-host");
-    const infoDept = document.getElementById("checkout-info-dept");
     const infoCheckIn = document.getElementById("checkout-info-checkin");
-    const infoExit = document.getElementById("checkout-info-exit");
-    const infoPurpose = document.getElementById("checkout-info-purpose");
-    const infoStatus = document.getElementById("checkout-info-status");
+    const infoDate = document.getElementById("checkout-info-date");
     const checkoutBtn = document.getElementById("btn-execute-checkout");
 
     if (photoEl) photoEl.src = visitor.photo || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='1.5'><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>";
     if (nameEl) nameEl.innerText = visitor.name;
-    if (companyEl) companyEl.innerText = visitor.company || "Independent";
+    
+    const category = visitor.visitorCategory || (visitor.purpose === "Student" ? "Student" : visitor.purpose === "Customer" ? "Customer" : visitor.purpose === "Vendor" ? "Vendor" : "Visitor");
+    let companyOrCollegeText = visitor.company || visitor.college || "Independent";
+    if (companyEl) companyEl.innerText = companyOrCollegeText;
 
     if (statusEl) {
         statusEl.innerText = visitor.status;
@@ -3472,12 +3494,11 @@ function loadCheckoutRecordCard(visitor) {
     }
 
     if (infoId) infoId.innerText = visitor.id;
+    if (infoType) infoType.innerText = category;
+    if (infoCompany) infoCompany.innerText = companyOrCollegeText;
     if (infoHost) infoHost.innerText = visitor.hostName;
-    if (infoDept) infoDept.innerText = visitor.hostDept;
     if (infoCheckIn) infoCheckIn.innerText = visitor.checkIn ? new Date(visitor.checkIn).toLocaleString() : "?";
-    if (infoExit) infoExit.innerText = visitor.checkOut ? new Date(visitor.checkOut).toLocaleString() : (visitor.expectedExit || "?");
-    if (infoPurpose) infoPurpose.innerText = visitor.purpose;
-    if (infoStatus) infoStatus.innerText = visitor.status;
+    if (infoDate) infoDate.innerText = visitor.visitDate || "?";
 
     if (checkoutBtn) {
         if (visitor.status === "Checked Out") {
@@ -9529,15 +9550,15 @@ window.handleCustomerRegistrationSubmit = function (e) {
     const name = document.getElementById("reg-customer-name").value.trim();
     const phone = document.getElementById("reg-customer-phone").value.trim();
     const email = document.getElementById("reg-customer-email").value.trim();
-    const company = document.getElementById("reg-customer-company").value.trim();
-    const college = document.getElementById("reg-customer-college").value.trim();
-    const department = document.getElementById("reg-customer-dept").value.trim();
-    const customerIdInput = document.getElementById("reg-customer-id").value.trim();
-    const aadhaar = document.getElementById("reg-customer-aadhaar").value.trim();
-    if (aadhaar && !/^\d{12}$/.test(aadhaar)) {
-        showToast("Validation Error", "Aadhaar number must be exactly 12 digits.", "danger");
+    if (!email) {
+        showToast("Validation Error", "Email is mandatory.", "danger");
         return;
     }
+    const company = document.getElementById("reg-customer-company").value.trim();
+    const college = "";
+    const department = document.getElementById("reg-customer-dept").value.trim();
+    const customerIdInput = document.getElementById("reg-customer-id").value.trim();
+    const aadhaar = "";
     const address = document.getElementById("reg-customer-address").value.trim();
     const purpose = document.getElementById("reg-customer-purpose").value;
     const idType = document.getElementById("reg-customer-id-type").value;
@@ -9586,7 +9607,7 @@ window.handleCustomerRegistrationSubmit = function (e) {
             customerId,
             name,
             phone,
-            email: email || `${name.toLowerCase().replace(/ /g, "")}@example.com`,
+            email: email,
             company,
             college,
             department,
@@ -9622,7 +9643,7 @@ window.handleCustomerRegistrationSubmit = function (e) {
         masterId: customerId,
         name,
         phone,
-        email: email || `${name.toLowerCase().replace(/ /g, "")}@example.com`,
+        email: email,
         company,
         address: address,
         purpose: "Customer",
@@ -9659,15 +9680,11 @@ window.handleVendorRegistrationSubmit = function (e) {
     const phone = document.getElementById("reg-vendor-phone").value.trim();
     const email = document.getElementById("reg-vendor-email").value.trim();
     const company = document.getElementById("reg-vendor-company").value.trim();
-    const college = document.getElementById("reg-vendor-college").value.trim();
+    const college = "";
     const department = document.getElementById("reg-vendor-dept").value.trim();
     const vendorIdInput = document.getElementById("reg-vendor-visitor-id").value.trim();
     const invoice = document.getElementById("reg-vendor-invoice").value.trim();
-    const aadhaar = document.getElementById("reg-vendor-aadhaar").value.trim();
-    if (aadhaar && !/^\d{12}$/.test(aadhaar)) {
-        showToast("Validation Error", "Aadhaar number must be exactly 12 digits.", "danger");
-        return;
-    }
+    const aadhaar = "";
     const address = document.getElementById("reg-vendor-address").value.trim();
     const idType = document.getElementById("reg-vendor-id-type").value;
     const idNumber = document.getElementById("reg-vendor-id-number").value.trim();
@@ -9683,6 +9700,11 @@ window.handleVendorRegistrationSubmit = function (e) {
     const hostNameVal = document.getElementById("reg-vendor-host").value.trim();
     const visitDate = document.getElementById("reg-vendor-visit-date").value;
     const expectedExit = document.getElementById("reg-vendor-expected-exit").value;
+    const purpose = document.getElementById("reg-vendor-purpose").value;
+    if (!purpose) {
+        showToast("Validation Error", "Purpose of Visit is mandatory.", "danger");
+        return;
+    }
 
     const matchedHost = state.employees.find(emp => emp.name === hostNameVal);
     if (!matchedHost) {
@@ -9756,7 +9778,7 @@ window.handleVendorRegistrationSubmit = function (e) {
         email: email || `${name.toLowerCase().replace(/ /g, "")}@vendor.com`,
         company,
         address: address,
-        purpose: "Vendor",
+        purpose,
         vehicle,
         numVisitors: 1,
         idType,
@@ -11696,11 +11718,24 @@ window.renderLiveRegistrationTable = function (category) {
     }
     const tableState = state.liveTables[category];
 
-    // Filter visitors list
-    const filtered = (state.visitors || []).filter(v => {
+    // Filter visitors list by category
+    const catVisitors = (state.visitors || []).filter(v => {
         const vCat = (v.visitorCategory || "").toLowerCase() || (v.purpose === "Student" ? "student" : v.purpose === "Customer" ? "customer" : v.purpose === "Vendor" ? "vendor" : "");
-        if (vCat !== category) return false;
+        return vCat === category;
+    });
 
+    // Sort descending by date/time (or ID/visitDate) to get latest first
+    catVisitors.sort((a, b) => {
+        const dateA = a.checkIn || a.visitDate || "";
+        const dateB = b.checkIn || b.visitDate || "";
+        return dateB.localeCompare(dateA);
+    });
+
+    // Strictly limit to the latest TWO registrations for the quick preview table
+    const latestTwo = catVisitors.slice(0, 2);
+
+    // Filter only among these latest 2 records if filters/search are set
+    const filtered = latestTwo.filter(v => {
         // Status Filter
         if (tableState.statusFilter && v.status !== tableState.statusFilter) return false;
 
@@ -11737,15 +11772,8 @@ window.renderLiveRegistrationTable = function (category) {
         return true;
     });
 
-    // Sort descending by date/time (or ID/visitDate)
-    filtered.sort((a, b) => {
-        const dateA = a.checkIn || a.visitDate || "";
-        const dateB = b.checkIn || b.visitDate || "";
-        return dateB.localeCompare(dateA);
-    });
-
-    // Pagination setup
-    const pageSize = 5;
+    // Pagination setup (strictly maximum 2 rows)
+    const pageSize = 2;
     const totalItems = filtered.length;
     const totalPages = Math.ceil(totalItems / pageSize) || 1;
     
@@ -11967,10 +11995,8 @@ window.editLiveRegistration = function (id, category) {
         document.getElementById("reg-customer-phone").value = visitor.phone || "";
         document.getElementById("reg-customer-email").value = visitor.email || "";
         document.getElementById("reg-customer-company").value = visitor.company || "";
-        document.getElementById("reg-customer-college").value = visitor.college || "";
         document.getElementById("reg-customer-dept").value = visitor.department || "";
         document.getElementById("reg-customer-id").value = visitor.masterId || "";
-        document.getElementById("reg-customer-aadhaar").value = visitor.aadhaar || "";
         document.getElementById("reg-customer-address").value = visitor.address || "";
         document.getElementById("reg-customer-purpose").value = visitor.purpose || "Customer";
         document.getElementById("reg-customer-id-type").value = visitor.idType || "";
@@ -11984,11 +12010,9 @@ window.editLiveRegistration = function (id, category) {
         document.getElementById("reg-vendor-phone").value = visitor.phone || "";
         document.getElementById("reg-vendor-email").value = visitor.email || "";
         document.getElementById("reg-vendor-company").value = visitor.company || "";
-        document.getElementById("reg-vendor-college").value = visitor.college || "";
         document.getElementById("reg-vendor-dept").value = visitor.department || "";
         document.getElementById("reg-vendor-visitor-id").value = visitor.masterId || "";
         document.getElementById("reg-vendor-invoice").value = visitor.invoice || "";
-        document.getElementById("reg-vendor-aadhaar").value = visitor.aadhaar || "";
         document.getElementById("reg-vendor-address").value = visitor.address || "";
         document.getElementById("reg-vendor-id-type").value = visitor.idType || "";
         document.getElementById("reg-vendor-id-number").value = visitor.idNumber || "";
@@ -11996,6 +12020,7 @@ window.editLiveRegistration = function (id, category) {
         document.getElementById("reg-vendor-host").value = visitor.hostName || "";
         document.getElementById("reg-vendor-visit-date").value = visitor.visitDate || "";
         document.getElementById("reg-vendor-expected-exit").value = visitor.expectedExit || "";
+        document.getElementById("reg-vendor-purpose").value = visitor.purpose || "Vendor";
     }
 };
 
@@ -12013,10 +12038,20 @@ window.liveTableAction = function (category, action) {
     const tableState = state.liveTables[category];
 
     // Get currently filtered records
-    const filtered = (state.visitors || []).filter(v => {
+    const catVisitors = (state.visitors || []).filter(v => {
         const vCat = (v.visitorCategory || "").toLowerCase() || (v.purpose === "Student" ? "student" : v.purpose === "Customer" ? "customer" : v.purpose === "Vendor" ? "vendor" : "");
-        if (vCat !== category) return false;
+        return vCat === category;
+    });
 
+    catVisitors.sort((a, b) => {
+        const dateA = a.checkIn || a.visitDate || "";
+        const dateB = b.checkIn || b.visitDate || "";
+        return dateB.localeCompare(dateA);
+    });
+
+    const latestTwo = catVisitors.slice(0, 2);
+
+    const filtered = latestTwo.filter(v => {
         // Status Filter
         if (tableState.statusFilter && v.status !== tableState.statusFilter) return false;
 
@@ -12051,12 +12086,6 @@ window.liveTableAction = function (category, action) {
         }
 
         return true;
-    });
-
-    filtered.sort((a, b) => {
-        const dateA = a.checkIn || a.visitDate || "";
-        const dateB = b.checkIn || b.visitDate || "";
-        return dateB.localeCompare(dateA);
     });
 
     const headers = category === 'student'
@@ -12580,7 +12609,7 @@ window.checkoutVisitorById = async function (visitorId, bypassConfirm = false) {
     state.visitors[idx].status = "Checked Out";
     state.visitors[idx].checkOut = new Date().toISOString();
     saveState();
-    syncSingleVisitorToCloud(state.visitors[idx]);
+    await syncSingleVisitorToCloud(state.visitors[idx]);
     
     // Redraw live registration tables if visible
     renderLiveRegistrationTable("student");
@@ -12595,11 +12624,37 @@ window.checkoutVisitorById = async function (visitorId, bypassConfirm = false) {
     const host = state.employees.find(e => e.id === state.visitors[idx].hostId);
     if (host) {
         logNotificationSimulator(
-            "Checked-Out",
-            "Email/SMS",
+            "Checked-Out Email",
+            "Email",
             host.email,
             `Hello ${host.name}, your visitor ${state.visitors[idx].name} has officially checked out at the exit gate.`
         );
+    }
+
+    // Send Checkout Email confirmation to Visitor
+    logNotificationSimulator(
+        "Visitor Check-Out Email",
+        "Email",
+        state.visitors[idx].email || "visitor@example.com",
+        `Hello ${state.visitors[idx].name}, you have successfully checked out of Barani Hydraulics. Checkout Time: ${new Date().toLocaleTimeString()}.`
+    );
+
+    // Send Checkout WhatsApp confirmation to Visitor
+    const visitorPhone = state.visitors[idx].phone || "";
+    const cleanPhone = visitorPhone.replace(/[^0-9]/g, '');
+    const formattedPhone = cleanPhone.length === 10 ? '91' + cleanPhone : cleanPhone;
+    const waCheckoutMsg = `Hello ${state.visitors[idx].name}, you have successfully checked out of Barani Hydraulics on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}. Thank you for your visit.`;
+
+    logNotificationSimulator(
+        "Visitor Check-Out WA",
+        "WhatsApp",
+        visitorPhone,
+        waCheckoutMsg
+    );
+
+    if (formattedPhone && !bypassConfirm) {
+        const waUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(waCheckoutMsg)}`;
+        window.open(waUrl, "_blank");
     }
 };
 

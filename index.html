@@ -853,7 +853,7 @@
                                             style="background: var(--bg-app); border: 1px solid var(--border-color); padding: 1rem; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-sm);">
                                             <h3
                                                 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--accent-primary);">
-                                                Search Existing Visitor</h3>
+                                                Search Existing Customer</h3>
                                             <p
                                                 style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
                                                 Search by Mobile Number, Aadhaar Number, or Visitor ID</p>
@@ -870,23 +870,25 @@
                                             style="font-size: 0.8rem; width: 100%; text-align: center; display: block;">
                                             Returning customer profile loaded automatically!
                                         </div>
+                                        <input type="hidden" id="reg-customer-id" value="">
+                                        <input type="hidden" id="reg-customer-category" value="Customer">
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-name">Customer Name *</label>
+                                                <label for="reg-customer-name">Full Name *</label>
                                                 <input type="text" id="reg-customer-name" placeholder="Full Name"
                                                     required autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-phone">Phone Number *</label>
+                                                <label for="reg-customer-phone">Mobile Number *</label>
                                                 <input type="tel" id="reg-customer-phone" placeholder="Phone Number"
                                                     required autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-email">Email Address</label>
+                                                <label for="reg-customer-email">Email *</label>
                                                 <input type="email" id="reg-customer-email"
-                                                    placeholder="name@company.com" autocomplete="off">
+                                                    placeholder="name@company.com" required autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
                                                 <label for="reg-customer-company">Company Name *</label>
@@ -896,23 +898,9 @@
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-college">College (for Students -
-                                                    Optional)</label>
-                                                <input type="text" id="reg-customer-college" placeholder="N/A"
-                                                    autocomplete="off">
-                                            </div>
-                                            <div class="form-group col-6">
-                                                <label for="reg-customer-dept">Department *</label>
+                                                <label for="reg-customer-dept">Designation</label>
                                                 <input type="text" id="reg-customer-dept"
-                                                    placeholder="e.g. Business Development" required autocomplete="off">
-                                            </div>
-                                        </div>
-                                        <div class="form-row" style="margin-bottom: 1rem;">
-                                            <div class="form-group col-6">
-                                                <label for="reg-customer-id">Customer ID (Auto-Generated or
-                                                    Manual)</label>
-                                                <input type="text" id="reg-customer-id" placeholder="CUST10001"
-                                                    autocomplete="off">
+                                                    placeholder="e.g. Purchase Manager" autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
                                                 <label for="reg-customer-purpose">Purpose of Visit *</label>
@@ -920,22 +908,9 @@
                                                     <option value="">— Select Purpose —</option>
                                                     <option value="Business Meeting">Business Meeting</option>
                                                     <option value="Product Inspection">Product Inspection</option>
-                                                    <option value="Purchase / Sales discussion">Purchase / Sales
-                                                        Discussion</option>
+                                                    <option value="Purchase / Sales discussion">Purchase / Sales Discussion</option>
                                                     <option value="Other">Other</option>
                                                 </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-row" style="margin-bottom: 1rem;">
-                                            <div class="form-group col-6">
-                                                <label for="reg-customer-aadhaar">Aadhaar Number *</label>
-                                                <input type="text" id="reg-customer-aadhaar"
-                                                    placeholder="12-digit Aadhaar Number" required autocomplete="off">
-                                            </div>
-                                            <div class="form-group col-6">
-                                                <label for="reg-customer-category">Visitor Category</label>
-                                                <input type="text" id="reg-customer-category" value="Customer" readonly
-                                                    autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
@@ -970,7 +945,7 @@
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-host">Whom to Meet *</label>
+                                                <label for="reg-customer-host">Host Employee *</label>
                                                 <div class="autocomplete-container">
                                                     <input type="text" id="reg-customer-host"
                                                         placeholder="Type employee name to search..." required
@@ -980,12 +955,12 @@
                                                 </div>
                                             </div>
                                             <div class="form-group col-3">
-                                                <label for="reg-customer-visit-date">Visit Date</label>
+                                                <label for="reg-customer-visit-date">Visit Date *</label>
                                                 <input type="date" id="reg-customer-visit-date" required
                                                     autocomplete="off">
                                             </div>
                                             <div class="form-group col-3">
-                                                <label for="reg-customer-expected-exit">Expected Exit Time</label>
+                                                <label for="reg-customer-expected-exit">Expected Exit Time *</label>
                                                 <input type="time" id="reg-customer-expected-exit" required
                                                     autocomplete="off">
                                             </div>
@@ -1147,7 +1122,7 @@
                                             style="background: var(--bg-app); border: 1px solid var(--border-color); padding: 1rem; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-sm);">
                                             <h3
                                                 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--accent-primary);">
-                                                Search Existing Visitor</h3>
+                                                Search Existing Vendor</h3>
                                             <p
                                                 style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
                                                 Search by Mobile Number, Aadhaar Number, or Visitor ID</p>
@@ -1160,66 +1135,57 @@
                                                 style="display: none; padding: 0.35rem 0.75rem; border-radius: var(--border-radius-md); font-size: 0.8rem; font-weight: 600;">
                                             </div>
                                         </div>
+                                        <input type="hidden" id="reg-vendor-visitor-id" value="">
+                                        <input type="hidden" id="reg-vendor-category" value="Vendor">
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-name">Vendor Name *</label>
-                                                <input type="text" id="reg-vendor-name" placeholder="Full Name" required
-                                                    autocomplete="off">
-                                            </div>
-                                            <div class="form-group col-6">
-                                                <label for="reg-vendor-phone">Phone Number *</label>
-                                                <input type="tel" id="reg-vendor-phone" placeholder="Phone Number"
-                                                    required autocomplete="off">
-                                            </div>
-                                        </div>
-                                        <div class="form-row" style="margin-bottom: 1rem;">
-                                            <div class="form-group col-6">
-                                                <label for="reg-vendor-email">Email Address</label>
-                                                <input type="email" id="reg-vendor-email" placeholder="name@vendor.com"
-                                                    autocomplete="off">
-                                            </div>
-                                            <div class="form-group col-6">
-                                                <label for="reg-vendor-company">Vendor / Supplier Company Name *</label>
+                                                <label for="reg-vendor-company">Vendor Company *</label>
                                                 <input type="text" id="reg-vendor-company" placeholder="e.g. Tata Steel"
                                                     required autocomplete="off">
                                             </div>
+                                            <div class="form-group col-6">
+                                                <label for="reg-vendor-name">Contact Person *</label>
+                                                <input type="text" id="reg-vendor-name" placeholder="Full Name" required
+                                                    autocomplete="off">
+                                            </div>
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-college">College (for Students -
-                                                    Optional)</label>
-                                                <input type="text" id="reg-vendor-college" placeholder="N/A"
-                                                    autocomplete="off">
+                                                <label for="reg-vendor-phone">Mobile Number *</label>
+                                                <input type="tel" id="reg-vendor-phone" placeholder="Phone Number"
+                                                    required autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-dept">Service Type / Purpose of Visit *</label>
+                                                <label for="reg-vendor-email">Email</label>
+                                                <input type="email" id="reg-vendor-email" placeholder="name@vendor.com"
+                                                    autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="form-row" style="margin-bottom: 1rem;">
+                                            <div class="form-group col-6">
+                                                <label for="reg-vendor-dept">Service Type *</label>
                                                 <input type="text" id="reg-vendor-dept"
-                                                    placeholder="e.g. Purchase / Inventory" required autocomplete="off">
-                                            </div>
-                                        </div>
-                                        <div class="form-row" style="margin-bottom: 1rem;">
-                                            <div class="form-group col-6">
-                                                <label for="reg-vendor-visitor-id">Vendor ID (System-Generated)</label>
-                                                <input type="text" id="reg-vendor-visitor-id"
-                                                    placeholder="Will be auto-generated" readonly autocomplete="off">
+                                                    placeholder="e.g. Machine Maintenance" required autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-invoice">Goods Delivery Details / Invoice
-                                                    Number</label>
+                                                <label for="reg-vendor-invoice">Material Carrying (Optional)</label>
                                                 <input type="text" id="reg-vendor-invoice"
-                                                    placeholder="Invoice / Delivery Challan Number" autocomplete="off">
+                                                    placeholder="Goods details / Invoice details" autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-aadhaar">Aadhaar Number *</label>
-                                                <input type="text" id="reg-vendor-aadhaar"
-                                                    placeholder="12-digit Aadhaar Number" required autocomplete="off">
+                                                <label for="reg-vendor-purpose">Purpose of Visit *</label>
+                                                <select id="reg-vendor-purpose" required>
+                                                    <option value="">— Select Purpose —</option>
+                                                    <option value="Goods Delivery">Goods Delivery</option>
+                                                    <option value="Machine Maintenance">Machine Maintenance</option>
+                                                    <option value="Service / Maintenance">Service / Maintenance</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-category">Visitor Category</label>
-                                                <input type="text" id="reg-vendor-category" value="Vendor" readonly
-                                                    autocomplete="off">
+                                                <!-- Empty slot for grid balance -->
                                             </div>
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
@@ -1254,7 +1220,7 @@
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-host">Whom to Meet *</label>
+                                                <label for="reg-vendor-host">Host Employee *</label>
                                                 <div class="autocomplete-container">
                                                     <input type="text" id="reg-vendor-host"
                                                         placeholder="Type employee name to search..." required
@@ -1264,12 +1230,12 @@
                                                 </div>
                                             </div>
                                             <div class="form-group col-3">
-                                                <label for="reg-vendor-visit-date">Visit Date</label>
+                                                <label for="reg-vendor-visit-date">Visit Date *</label>
                                                 <input type="date" id="reg-vendor-visit-date" required
                                                     autocomplete="off">
                                             </div>
                                             <div class="form-group col-3">
-                                                <label for="reg-vendor-expected-exit">Expected Exit Time</label>
+                                                <label for="reg-vendor-expected-exit">Expected Exit Time *</label>
                                                 <input type="time" id="reg-vendor-expected-exit" required
                                                     autocomplete="off">
                                             </div>
@@ -2088,24 +2054,21 @@
                 <section id="view-checkout" class="page-view">
                     <div class="dashboard-card" style="max-width: 600px; margin: 0 auto 1.5rem auto;">
                         <div class="card-header">
-                            <h2 data-i18n="check-out-hdr">Enter Visitor ID or Scan QR</h2>
+                            <h2>🚪 Enter Visitor ID / Mobile or Scan QR</h2>
                         </div>
                         <form id="checkout-search-form" class="app-form">
                             <div class="form-row items-center">
                                 <div class="form-group col-8">
-                                    <label for="checkout-visitor-id" data-i18n="visitor-id-label">Visitor ID
-                                        Number</label>
-                                    <input type="text" id="checkout-visitor-id" placeholder="e.g. V20260012"
-                                        data-i18n-placeholder="checkout-id-placeholder">
+                                    <label for="checkout-visitor-id">Visitor ID or Mobile Number *</label>
+                                    <input type="text" id="checkout-visitor-id" placeholder="e.g. V202610001 or 9876543210" required>
                                 </div>
                                 <div class="form-group col-4" style="margin-top: 1.25rem;">
-                                    <button type="submit" class="btn btn-primary btn-block"
-                                        data-i18n="verify-pass-btn">Verify Pass</button>
+                                    <button type="submit" class="btn btn-primary btn-block">Verify Pass</button>
                                 </div>
                             </div>
                         </form>
                         <div class="text-center mt-4">
-                            <span class="text-secondary text-sm" data-i18n="or-text">OR</span>
+                            <span class="text-secondary text-sm">OR</span>
                         </div>
                         <div class="text-center mt-2">
                             <button type="button" class="btn btn-secondary" id="btn-trigger-qr-scanner">
@@ -2115,7 +2078,7 @@
                                         d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
                                     <circle cx="12" cy="13" r="4" />
                                 </svg>
-                                <span data-i18n="scan-qr-pass-btn">Scan QR Code Pass</span>
+                                <span>Scan QR Code Pass</span>
                             </button>
                         </div>
                     </div>
@@ -2124,62 +2087,58 @@
                     <div id="checkout-details-card" class="dashboard-card hidden"
                         style="max-width: 600px; margin: 0 auto;">
                         <div class="card-header">
-                            <h2 data-i18n="verified-record-hdr">Verified Visitor Record</h2>
+                            <h2>Verified Visitor Record</h2>
                         </div>
-                        <div class="flex gap-4 items-center mb-4">
-                            <div class="badge-photo-wrapper" style="width: 80px; height: 80px;">
+                        <div class="flex gap-4 items-center mb-4" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+                            <div class="badge-photo-wrapper" style="width: 80px; height: 80px; overflow: hidden; border-radius: 50%;">
                                 <img id="checkout-visitor-photo"
                                     src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='1.5'><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/><circle cx='12' cy='7' r='4'/></svg>"
-                                    alt="Visitor Verification Photo">
+                                    alt="Visitor Verification Photo" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
                             <div>
-                                <h3 id="checkout-visitor-name" style="font-size: 1.2rem;">Rahul</h3>
-                                <p class="text-secondary text-sm" id="checkout-visitor-company">Independent</p>
+                                <h3 id="checkout-visitor-name" style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--text-primary);">Rahul</h3>
+                                <p class="text-secondary text-sm" id="checkout-visitor-company" style="margin-bottom: 0.25rem;">Independent</p>
                                 <span class="badge-status checked-in" id="checkout-visitor-status">Checked In</span>
                             </div>
                         </div>
 
-                        <table class="badge-info-table" style="margin-bottom: 1.5rem;">
+                        <table class="badge-info-table" style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.85rem;">
                             <tbody>
                                 <tr>
-                                    <td class="label" data-i18n="tbl-visitor-id">Visitor ID</td>
-                                    <td class="value" id="checkout-info-id">V20260012</td>
+                                    <td class="label" style="font-weight: 600; padding: 6px 0; color: var(--text-secondary);">Visitor ID</td>
+                                    <td class="value" id="checkout-info-id" style="padding: 6px 0; text-align: right; font-weight: 500;">V20260012</td>
                                 </tr>
                                 <tr>
-                                    <td class="label" data-i18n="tbl-host-employee">Host Employee</td>
-                                    <td class="value" id="checkout-info-host">Manoj Kumar</td>
+                                    <td class="label" style="font-weight: 600; padding: 6px 0; color: var(--text-secondary);">Visitor Type</td>
+                                    <td class="value" id="checkout-info-type" style="padding: 6px 0; text-align: right; font-weight: 500;">Student</td>
                                 </tr>
                                 <tr>
-                                    <td class="label" data-i18n="tbl-host-dept">Host Department</td>
-                                    <td class="value" id="checkout-info-dept">IT</td>
+                                    <td class="label" style="font-weight: 600; padding: 6px 0; color: var(--text-secondary);">Company / College</td>
+                                    <td class="value" id="checkout-info-company" style="padding: 6px 0; text-align: right; font-weight: 500;">Test College</td>
                                 </tr>
                                 <tr>
-                                    <td class="label" data-i18n="tbl-checked-in-time">Check-In Time</td>
-                                    <td class="value" id="checkout-info-checkin">07-07-2026 10:30 AM</td>
+                                    <td class="label" style="font-weight: 600; padding: 6px 0; color: var(--text-secondary);">Host Employee</td>
+                                    <td class="value" id="checkout-info-host" style="padding: 6px 0; text-align: right; font-weight: 500;">Manoj Kumar</td>
                                 </tr>
                                 <tr>
-                                    <td class="label" data-i18n="tbl-expected-exit">Expected Exit</td>
-                                    <td class="value" id="checkout-info-exit">07-07-2026 6:00 PM</td>
+                                    <td class="label" style="font-weight: 600; padding: 6px 0; color: var(--text-secondary);">Check-In Time</td>
+                                    <td class="value" id="checkout-info-checkin" style="padding: 6px 0; text-align: right; font-weight: 500;">07-07-2026 10:30 AM</td>
                                 </tr>
                                 <tr>
-                                    <td class="label" data-i18n="tbl-purpose">Purpose</td>
-                                    <td class="value" id="checkout-info-purpose">Meeting</td>
-                                </tr>
-                                <tr>
-                                    <td class="label" data-i18n="tbl-approval-status">Approval Status</td>
-                                    <td class="value" id="checkout-info-status">Approved</td>
+                                    <td class="label" style="font-weight: 600; padding: 6px 0; color: var(--text-secondary);">Visit Date</td>
+                                    <td class="value" id="checkout-info-date" style="padding: 6px 0; text-align: right; font-weight: 500;">07-07-2026</td>
                                 </tr>
                             </tbody>
                         </table>
 
-                        <button type="button" class="btn btn-danger btn-block" id="btn-execute-checkout">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                class="btn-icon">
-                                <line x1="18" y1="6" x2="6" y2="18" />
-                                <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
-                            <span data-i18n="mark-checkout-btn">Mark Check-Out</span>
-                        </button>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <button type="button" class="btn btn-danger" id="btn-execute-checkout" style="flex: 1;">
+                                Check-Out Visitor
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="btn-cancel-checkout" style="flex: 1;">
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </section>
 
@@ -3898,11 +3857,11 @@
                                         <td class="label">Date</td>
                                         <td class="value" id="badge-date">07-07-2026</td>
                                     </tr>
-                                    <tr>
+                                    <tr id="badge-row-valid-from">
                                         <td class="label">Valid From</td>
                                         <td class="value" id="badge-valid-from">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr id="badge-row-valid-until">
                                         <td class="label">Valid Until</td>
                                         <td class="value" id="badge-valid-until">-</td>
                                     </tr>
