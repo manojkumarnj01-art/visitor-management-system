@@ -559,6 +559,16 @@ a:hover {
     overflow-y: auto;
 }
 
+/* Registration page views use flex column to eliminate blank gap */
+#view-student-registration.active,
+#view-customer-registration.active,
+#view-vendor-registration.active {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
 /* Dashboard specific height constraints */
 #view-dashboard.active {
     display: flex;
@@ -581,9 +591,35 @@ a:hover {
 #student-registration-wrapper,
 #customer-registration-wrapper,
 #vendor-registration-wrapper {
-    flex-grow: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    gap: 1rem;
+    padding: 0;
+}
+
+/* Form card stays compact — no extra bottom margin */
+.reg-form-card {
+    flex-shrink: 0;
+    margin-bottom: 0 !important;
     overflow-y: auto;
-    padding-right: 0.5rem;
+    max-height: 62vh;
+}
+
+/* Table card fills all remaining space below the form */
+.reg-table-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.reg-table-card .table-container {
+    flex: 1;
+    overflow-y: auto;
+    max-height: none;
 }
 
 .photo-options-container {
