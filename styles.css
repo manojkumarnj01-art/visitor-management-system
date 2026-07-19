@@ -595,7 +595,7 @@ a:hover {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    gap: 1rem;
+    gap: 4rem;
     padding: 0;
 }
 
