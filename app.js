@@ -1524,7 +1524,8 @@ function isViewAuthorized(viewId) {
             "view-contractor-registration",
             "view-delivery-registration",
             "view-service-engineer-registration",
-            "view-pending-approvals"
+            "view-pending-approvals",
+            "view-checkout"
         ];
         return allowed.includes(viewId);
     }
@@ -2298,6 +2299,13 @@ function refreshDashboardStatsAndTables() {
     if (elTopCheckedOut) elTopCheckedOut.innerText = checkedOutCount;
     if (elTopToday) elTopToday.innerText = registeredToday;
     if (elTopInside) elTopInside.innerText = insideCampus;
+
+    const elDashCheckedOut = document.getElementById("dashboard-stat-checked-out");
+    const elDashToday = document.getElementById("dashboard-stat-visitors-today");
+    const elDashInside = document.getElementById("dashboard-stat-in-campus");
+    if (elDashCheckedOut) elDashCheckedOut.innerText = checkedOutCount;
+    if (elDashToday) elDashToday.innerText = registeredToday;
+    if (elDashInside) elDashInside.innerText = insideCampus;
 
     // 2. Bind Dashboard live filters
     const elSearchRecent = document.getElementById("db-search-recent");
@@ -9390,8 +9398,13 @@ window.handleStudentRegistrationSubmit = function (e) {
     const company = document.getElementById("reg-student-company").value.trim();
     const department = document.getElementById("reg-student-dept").value.trim();
     const rollNumber = document.getElementById("reg-student-rollno").value.trim();
-    const aadhaar = document.getElementById("reg-student-aadhaar").value.trim();
-    if (aadhaar && !/^\d{12}$/.test(aadhaar)) {
+    const idType = document.getElementById("reg-student-id-type").value;
+    const idNumber = document.getElementById("reg-student-id-number").value.trim();
+    if (!idType || !idNumber) {
+        showToast("Validation Error", "ID Proof Type and Number are mandatory.", "danger");
+        return;
+    }
+    if (idType === "Aadhaar Card" && !/^\d{12}$/.test(idNumber)) {
         showToast("Validation Error", "Aadhaar number must be exactly 12 digits.", "danger");
         return;
     }
@@ -9420,7 +9433,8 @@ window.handleStudentRegistrationSubmit = function (e) {
         existing.company = company;
         existing.department = department;
         existing.rollNumber = rollNumber;
-        existing.aadhaar = aadhaar;
+        existing.idType = idType;
+        existing.idNumber = idNumber;
         existing.address = address;
         existing.startDate = startDate;
         existing.endDate = endDate;
@@ -9441,7 +9455,8 @@ window.handleStudentRegistrationSubmit = function (e) {
             company,
             department,
             rollNumber,
-            aadhaar,
+            idType,
+            idNumber,
             address,
             startDate,
             endDate,
@@ -9455,8 +9470,22 @@ window.handleStudentRegistrationSubmit = function (e) {
         syncSingleStudentToCloud(newStudent);
     }
 
-    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+    let visitId = "";
+    let isEditing = false;
+    let existingVisit = null;
+    if (state.editingVisitId) {
+        existingVisit = state.visitors.find(v => v.id === state.editingVisitId);
+        if (existingVisit) {
+            visitId = existingVisit.id;
+            isEditing = true;
+        }
+    }
+    if (!isEditing) {
+        visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+    }
+
     const visitObj = {
+        ...(existingVisit || {}),
         id: visitId,
         masterId: studentId,
         name,
@@ -9467,27 +9496,26 @@ window.handleStudentRegistrationSubmit = function (e) {
         purpose: "Student",
         vehicle: "None",
         numVisitors: 1,
-        idType: "College ID",
-        idNumber: rollNumber,
+        idType,
+        idNumber,
         startDate,
         endDate,
         hostId: matchedHost.id,
         hostName: matchedHost.name,
         hostDept: matchedHost.dept,
         visitDate,
-        checkIn: null,
-        checkOut: null,
+        checkIn: existingVisit ? existingVisit.checkIn : null,
+        checkOut: existingVisit ? existingVisit.checkOut : null,
         expectedExit,
-        status: "PENDING_APPROVAL",
-        photo: state.tempVisitorPhoto || "",
-        photoIdDoc: state.tempVisitorIdDoc || "",
+        status: existingVisit ? existingVisit.status : "PENDING_APPROVAL",
+        photo: state.tempVisitorPhoto || (existingVisit ? existingVisit.photo : ""),
+        photoIdDoc: state.tempVisitorIdDoc || (existingVisit ? existingVisit.photoIdDoc : ""),
 
         // New fields
         college,
         studentCompany: company,
         department,
         rollNumber,
-        aadhaar,
         visitorCategory: "Student"
     };
 
@@ -9514,6 +9542,14 @@ window.handleCustomerRegistrationSubmit = function (e) {
     const purpose = document.getElementById("reg-customer-purpose").value;
     const idType = document.getElementById("reg-customer-id-type").value;
     const idNumber = document.getElementById("reg-customer-id-number").value.trim();
+    if (!idType || !idNumber) {
+        showToast("Validation Error", "ID Proof Type and Number are mandatory.", "danger");
+        return;
+    }
+    if (idType === "Aadhaar Card" && !/^\d{12}$/.test(idNumber)) {
+        showToast("Validation Error", "Aadhaar number must be exactly 12 digits.", "danger");
+        return;
+    }
     const vehicle = document.getElementById("reg-customer-vehicle").value.trim();
     const hostNameVal = document.getElementById("reg-customer-host").value.trim();
     const visitDate = document.getElementById("reg-customer-visit-date").value;
@@ -9536,6 +9572,8 @@ window.handleCustomerRegistrationSubmit = function (e) {
         existing.college = college;
         existing.department = department;
         existing.aadhaar = aadhaar;
+        existing.idType = idType;
+        existing.idNumber = idNumber;
         existing.address = address;
         if (state.tempVisitorPhoto) {
             existing.photo = state.tempVisitorPhoto;
@@ -9553,6 +9591,8 @@ window.handleCustomerRegistrationSubmit = function (e) {
             college,
             department,
             aadhaar,
+            idType,
+            idNumber,
             address,
             photo: state.tempVisitorPhoto || "",
             qrCodeData: customerId,
@@ -9562,8 +9602,22 @@ window.handleCustomerRegistrationSubmit = function (e) {
         saveState();
     }
 
-    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+    let visitId = "";
+    let isEditing = false;
+    let existingVisit = null;
+    if (state.editingVisitId) {
+        existingVisit = state.visitors.find(v => v.id === state.editingVisitId);
+        if (existingVisit) {
+            visitId = existingVisit.id;
+            isEditing = true;
+        }
+    }
+    if (!isEditing) {
+        visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+    }
+
     const visitObj = {
+        ...(existingVisit || {}),
         id: visitId,
         masterId: customerId,
         name,
@@ -9580,11 +9634,11 @@ window.handleCustomerRegistrationSubmit = function (e) {
         hostName: matchedHost.name,
         hostDept: matchedHost.dept,
         visitDate,
-        checkIn: null,
-        checkOut: null,
+        checkIn: existingVisit ? existingVisit.checkIn : null,
+        checkOut: existingVisit ? existingVisit.checkOut : null,
         expectedExit,
-        status: "PENDING_APPROVAL",
-        photo: state.tempVisitorPhoto || "",
+        status: existingVisit ? existingVisit.status : "PENDING_APPROVAL",
+        photo: state.tempVisitorPhoto || (existingVisit ? existingVisit.photo : ""),
         photoIdDoc: "",
 
         // New fields
@@ -9617,6 +9671,14 @@ window.handleVendorRegistrationSubmit = function (e) {
     const address = document.getElementById("reg-vendor-address").value.trim();
     const idType = document.getElementById("reg-vendor-id-type").value;
     const idNumber = document.getElementById("reg-vendor-id-number").value.trim();
+    if (!idType || !idNumber) {
+        showToast("Validation Error", "ID Proof Type and Number are mandatory.", "danger");
+        return;
+    }
+    if (idType === "Aadhaar Card" && !/^\d{12}$/.test(idNumber)) {
+        showToast("Validation Error", "Aadhaar number must be exactly 12 digits.", "danger");
+        return;
+    }
     const vehicle = document.getElementById("reg-vendor-vehicle").value.trim();
     const hostNameVal = document.getElementById("reg-vendor-host").value.trim();
     const visitDate = document.getElementById("reg-vendor-visit-date").value;
@@ -9640,6 +9702,8 @@ window.handleVendorRegistrationSubmit = function (e) {
         existing.department = department;
         existing.invoice = invoice;
         existing.aadhaar = aadhaar;
+        existing.idType = idType;
+        existing.idNumber = idNumber;
         existing.address = address;
         if (state.tempVisitorPhoto) {
             existing.photo = state.tempVisitorPhoto;
@@ -9658,6 +9722,8 @@ window.handleVendorRegistrationSubmit = function (e) {
             department,
             invoice,
             aadhaar,
+            idType,
+            idNumber,
             address,
             photo: state.tempVisitorPhoto || "",
             qrCodeData: vendorId,
@@ -9667,8 +9733,22 @@ window.handleVendorRegistrationSubmit = function (e) {
         saveState();
     }
 
-    const visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+    let visitId = "";
+    let isEditing = false;
+    let existingVisit = null;
+    if (state.editingVisitId) {
+        existingVisit = state.visitors.find(v => v.id === state.editingVisitId);
+        if (existingVisit) {
+            visitId = existingVisit.id;
+            isEditing = true;
+        }
+    }
+    if (!isEditing) {
+        visitId = "V" + new Date().getFullYear() + String(state.visitors.length + 10001).substring(1);
+    }
+
     const visitObj = {
+        ...(existingVisit || {}),
         id: visitId,
         masterId: vendorId,
         name,
@@ -9685,11 +9765,11 @@ window.handleVendorRegistrationSubmit = function (e) {
         hostName: matchedHost.name,
         hostDept: matchedHost.dept,
         visitDate,
-        checkIn: null,
-        checkOut: null,
+        checkIn: existingVisit ? existingVisit.checkIn : null,
+        checkOut: existingVisit ? existingVisit.checkOut : null,
         expectedExit,
-        status: "PENDING_APPROVAL",
-        photo: state.tempVisitorPhoto || "",
+        status: existingVisit ? existingVisit.status : "PENDING_APPROVAL",
+        photo: state.tempVisitorPhoto || (existingVisit ? existingVisit.photo : ""),
         photoIdDoc: "",
 
         // New fields
@@ -11604,10 +11684,373 @@ window.renderLiveRegistrationTable = function (category) {
     if (!tbody) return;
 
     tbody.innerHTML = "";
-    
+
+    state.liveTables = state.liveTables || {};
+    if (!state.liveTables[category]) {
+        state.liveTables[category] = {
+            currentPage: 1,
+            searchQuery: "",
+            statusFilter: "",
+            dateFilter: ""
+        };
+    }
+    const tableState = state.liveTables[category];
+
+    // Filter visitors list
     const filtered = (state.visitors || []).filter(v => {
         const vCat = (v.visitorCategory || "").toLowerCase() || (v.purpose === "Student" ? "student" : v.purpose === "Customer" ? "customer" : v.purpose === "Vendor" ? "vendor" : "");
-        return vCat === category;
+        if (vCat !== category) return false;
+
+        // Status Filter
+        if (tableState.statusFilter && v.status !== tableState.statusFilter) return false;
+
+        // Date Filter
+        if (tableState.dateFilter) {
+            const vDate = v.visitDate || "";
+            if (vDate !== tableState.dateFilter) return false;
+        }
+
+        // Search Filter
+        if (tableState.searchQuery) {
+            const query = tableState.searchQuery;
+            const nameMatch = (v.name || "").toLowerCase().includes(query);
+            const phoneMatch = (v.phone || "").toLowerCase().includes(query);
+            const idMatch = (v.id || "").toLowerCase().includes(query);
+            const masterIdMatch = (v.masterId || "").toLowerCase().includes(query);
+            
+            let companyMatch = false;
+            let otherMatch = false;
+            if (category === "student") {
+                companyMatch = (v.college || "").toLowerCase().includes(query);
+            } else if (category === "customer") {
+                companyMatch = (v.company || "").toLowerCase().includes(query);
+            } else if (category === "vendor") {
+                companyMatch = (v.company || "").toLowerCase().includes(query);
+                otherMatch = (v.department || "").toLowerCase().includes(query); // Service Type
+            }
+
+            if (!nameMatch && !phoneMatch && !idMatch && !masterIdMatch && !companyMatch && !otherMatch) {
+                return false;
+            }
+        }
+
+        return true;
+    });
+
+    // Sort descending by date/time (or ID/visitDate)
+    filtered.sort((a, b) => {
+        const dateA = a.checkIn || a.visitDate || "";
+        const dateB = b.checkIn || b.visitDate || "";
+        return dateB.localeCompare(dateA);
+    });
+
+    // Pagination setup
+    const pageSize = 5;
+    const totalItems = filtered.length;
+    const totalPages = Math.ceil(totalItems / pageSize) || 1;
+    
+    if (tableState.currentPage > totalPages) {
+        tableState.currentPage = totalPages;
+    }
+    const startIndex = (tableState.currentPage - 1) * pageSize;
+    const paginatedItems = filtered.slice(startIndex, startIndex + pageSize);
+
+    if (totalItems === 0) {
+        const cols = category === 'student' ? 10 : 9;
+        tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No registrations found matching the filters.</td></tr>`;
+        
+        // Update pagination block to be empty
+        const paginationEl = document.getElementById(`live-pagination-${category}`);
+        if (paginationEl) paginationEl.innerHTML = "";
+        return;
+    }
+
+    paginatedItems.forEach(v => {
+        const tr = document.createElement("tr");
+        tr.style.borderBottom = "1px solid var(--border-color)";
+
+        const photoSrc = v.photo || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><circle cx='12' cy='8' r='4'/><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/></svg>";
+        const statusClass = v.status.toLowerCase().replace(/ /g, "-");
+
+        let approveRejectHtml = "";
+        if (v.status === "Pending") {
+            approveRejectHtml = `
+                <a class="dropdown-item" href="javascript:void(0)" onclick="window.updateLiveStatus('${v.id}', '${category}', 'Approved')" style="display: block; padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--accent-success); text-decoration: none; hover:background: var(--bg-app);">✅ Approve</a>
+                <a class="dropdown-item" href="javascript:void(0)" onclick="window.updateLiveStatus('${v.id}', '${category}', 'Rejected')" style="display: block; padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--accent-danger); text-decoration: none; hover:background: var(--bg-app);">❌ Reject</a>
+            `;
+        }
+
+        let checkInOutHtml = "";
+        if (v.status === "Approved") {
+            checkInOutHtml = `
+                <a class="dropdown-item" href="javascript:void(0)" onclick="window.checkinApprovedVisitor('${v.id}')" style="display: block; padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--accent-primary); text-decoration: none; hover:background: var(--bg-app);">📥 Check-In</a>
+            `;
+        } else if (v.status === "Checked In") {
+            checkInOutHtml = `
+                <a class="dropdown-item" href="javascript:void(0)" onclick="window.checkoutVisitorFromList('${v.id}')" style="display: block; padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--accent-danger); text-decoration: none; hover:background: var(--bg-app);">📤 Check-Out</a>
+            `;
+        }
+
+        const actionsDropdownHtml = `
+            <div class="dropdown no-print" style="position: relative; display: inline-block;">
+                <button class="btn btn-secondary btn-xs dropdown-toggle" type="button" onclick="window.toggleLiveRowDropdown(event, '${v.id}')" style="padding: 0.25rem 0.5rem; font-size: 0.7rem; border-radius: var(--border-radius-sm);">Actions ▾</button>
+                <div id="dropdown-${v.id}" class="dropdown-menu" style="display: none; position: absolute; right: 0; top: 100%; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); box-shadow: var(--shadow-md); z-index: 100; min-width: 140px; padding: 0.35rem 0;">
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="window.viewPrintPassModal('${v.id}')" style="display: block; padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--text-primary); text-decoration: none;">👁️ View Pass</a>
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="window.editLiveRegistration('${v.id}', '${category}')" style="display: block; padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--text-primary); text-decoration: none;">✏️ Edit Details</a>
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="window.deleteLiveRegistration('${v.id}', '${category}')" style="display: block; padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--accent-danger); text-decoration: none;">🗑️ Delete</a>
+                    ${approveRejectHtml}
+                    ${checkInOutHtml}
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="window.downloadVisitorPassPDF('${v.id}')" style="display: block; padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--text-primary); text-decoration: none;">💾 Download Pass</a>
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="window.resendPassEmail('${v.id}')" style="display: block; padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--text-primary); text-decoration: none;">✉️ Resend Email</a>
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="window.resendPassWhatsApp('${v.id}')" style="display: block; padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--text-primary); text-decoration: none;">💬 Resend WA</a>
+                </div>
+            </div>
+        `;
+
+        if (category === "student") {
+            tr.innerHTML = `
+                <td style="padding: 8px 10px;"><img src="${photoSrc}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;"></td>
+                <td style="padding: 8px 10px;"><code>${v.id}</code></td>
+                <td style="padding: 8px 10px; font-weight: 600;">${v.name}</td>
+                <td style="padding: 8px 10px;">${v.phone || "-"}</td>
+                <td style="padding: 8px 10px;">${v.college || "-"}</td>
+                <td style="padding: 8px 10px;">${v.hostName || "-"}</td>
+                <td style="padding: 8px 10px;">${v.visitDate || "-"}</td>
+                <td style="padding: 8px 10px;">${v.endDate || v.visitDate || "-"}</td>
+                <td style="padding: 8px 10px;"><span class="badge-status ${statusClass}">${v.status}</span></td>
+                <td style="padding: 8px 10px;">${actionsDropdownHtml}</td>
+            `;
+        } else if (category === "customer") {
+            tr.innerHTML = `
+                <td style="padding: 8px 10px;"><img src="${photoSrc}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;"></td>
+                <td style="padding: 8px 10px;"><code>${v.id}</code></td>
+                <td style="padding: 8px 10px; font-weight: 600;">${v.name}</td>
+                <td style="padding: 8px 10px;">${v.company || "-"}</td>
+                <td style="padding: 8px 10px;">${v.phone || "-"}</td>
+                <td style="padding: 8px 10px;">${v.hostName || "-"}</td>
+                <td style="padding: 8px 10px;">${v.visitDate || "-"}</td>
+                <td style="padding: 8px 10px;"><span class="badge-status ${statusClass}">${v.status}</span></td>
+                <td style="padding: 8px 10px;">${actionsDropdownHtml}</td>
+            `;
+        } else if (category === "vendor") {
+            tr.innerHTML = `
+                <td style="padding: 8px 10px;"><img src="${photoSrc}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;"></td>
+                <td style="padding: 8px 10px;"><code>${v.id}</code></td>
+                <td style="padding: 8px 10px; font-weight: 600;">${v.company || "-"}</td>
+                <td style="padding: 8px 10px;">${v.name}</td>
+                <td style="padding: 8px 10px;">${v.phone || "-"}</td>
+                <td style="padding: 8px 10px;">${v.department || "-"}</td>
+                <td style="padding: 8px 10px;">${v.hostName || "-"}</td>
+                <td style="padding: 8px 10px;">${v.visitDate || "-"}</td>
+                <td style="padding: 8px 10px;"><span class="badge-status ${statusClass}">${v.status}</span></td>
+                <td style="padding: 8px 10px;">${actionsDropdownHtml}</td>
+            `;
+        }
+        tbody.appendChild(tr);
+    });
+
+    // Update pagination block
+    const paginationEl = document.getElementById(`live-pagination-${category}`);
+    if (paginationEl) {
+        const endRange = Math.min(startIndex + pageSize, totalItems);
+        paginationEl.innerHTML = `
+            <div>Showing ${startIndex + 1} to ${endRange} of ${totalItems} entries</div>
+            <div style="display: flex; gap: 0.25rem;">
+                <button type="button" class="btn btn-secondary btn-xs" ${tableState.currentPage === 1 ? 'disabled' : ''} onclick="window.liveTableGoToPage('${category}', ${tableState.currentPage - 1})">Prev</button>
+                ${Array.from({ length: totalPages }, (_, i) => i + 1).map(p => `
+                    <button type="button" class="btn btn-xs ${tableState.currentPage === p ? 'btn-accent' : 'btn-secondary'}" onclick="window.liveTableGoToPage('${category}', ${p})">${p}</button>
+                `).join('')}
+                <button type="button" class="btn btn-secondary btn-xs" ${tableState.currentPage === totalPages ? 'disabled' : ''} onclick="window.liveTableGoToPage('${category}', ${tableState.currentPage + 1})">Next</button>
+            </div>
+        `;
+    }
+};
+
+window.liveTableFilterChanged = function (category) {
+    state.liveTables = state.liveTables || {};
+    state.liveTables[category] = state.liveTables[category] || { currentPage: 1 };
+    
+    const searchVal = document.getElementById(`live-search-${category}`)?.value.trim().toLowerCase() || "";
+    const statusVal = document.getElementById(`live-status-${category}`)?.value || "";
+    const dateVal = document.getElementById(`live-date-${category}`)?.value || "";
+
+    state.liveTables[category].searchQuery = searchVal;
+    state.liveTables[category].statusFilter = statusVal;
+    state.liveTables[category].dateFilter = dateVal;
+    state.liveTables[category].currentPage = 1;
+
+    renderLiveRegistrationTable(category);
+};
+
+window.liveTableGoToPage = function (category, page) {
+    state.liveTables = state.liveTables || {};
+    state.liveTables[category] = state.liveTables[category] || { currentPage: 1 };
+    state.liveTables[category].currentPage = page;
+    renderLiveRegistrationTable(category);
+};
+
+window.toggleLiveRowDropdown = function (event, id) {
+    event.stopPropagation();
+    document.querySelectorAll('[id^="dropdown-"]').forEach(el => {
+        if (el.id !== `dropdown-${id}`) {
+            el.style.display = 'none';
+        }
+    });
+    const dropdown = document.getElementById(`dropdown-${id}`);
+    if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+};
+
+document.addEventListener('click', function () {
+    document.querySelectorAll('[id^="dropdown-"]').forEach(el => {
+        el.style.display = 'none';
+    });
+});
+
+window.updateLiveStatus = async function (id, category, newStatus) {
+    const idx = state.visitors.findIndex(v => v.id === id);
+    if (idx === -1) return;
+    
+    state.visitors[idx].status = newStatus;
+    saveState();
+    await syncSingleVisitorToCloud(state.visitors[idx]);
+    refreshAllDataViews();
+    showToast("Status Updated", `Visitor status updated to ${newStatus}.`, "success");
+};
+
+window.deleteLiveRegistration = function (id, category) {
+    if (confirm("Are you sure you want to delete this visitor record?")) {
+        const idx = state.visitors.findIndex(v => v.id === id);
+        if (idx !== -1) {
+            state.visitors.splice(idx, 1);
+            saveState();
+            refreshAllDataViews();
+            showToast("Record Deleted", "Visitor registration deleted.", "success");
+        }
+    }
+};
+
+window.editLiveRegistration = function (id, category) {
+    const visitor = state.visitors.find(v => v.id === id);
+    if (!visitor) return;
+
+    window.navigateTo(`view-${category}-registration`);
+    state.editingVisitId = id;
+
+    const form = document.getElementById(`${category}-registration-form`);
+    if (form) {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.textContent = "Update Registration";
+    }
+
+    if (category === "student") {
+        document.getElementById("reg-student-name").value = visitor.name || "";
+        document.getElementById("reg-student-phone").value = visitor.phone || "";
+        document.getElementById("reg-student-email").value = visitor.email || "";
+        document.getElementById("reg-student-college").value = visitor.college || "";
+        document.getElementById("reg-student-company").value = visitor.studentCompany || "";
+        document.getElementById("reg-student-dept").value = visitor.department || "";
+        document.getElementById("reg-student-rollno").value = visitor.rollNumber || "";
+        document.getElementById("reg-student-id-type").value = visitor.idType || "";
+        document.getElementById("reg-student-id-number").value = visitor.idNumber || "";
+        document.getElementById("reg-student-address").value = visitor.address || "";
+        document.getElementById("reg-student-purpose").value = visitor.purpose || "Student";
+        document.getElementById("reg-student-host").value = visitor.hostName || "";
+        document.getElementById("reg-student-visit-date").value = visitor.visitDate || "";
+        document.getElementById("reg-student-expected-exit").value = visitor.expectedExit || "";
+        document.getElementById("reg-student-start-date").value = visitor.startDate || "";
+        document.getElementById("reg-student-end-date").value = visitor.endDate || "";
+        document.getElementById("reg-student-visitor-id").value = visitor.masterId || "";
+    } else if (category === "customer") {
+        document.getElementById("reg-customer-name").value = visitor.name || "";
+        document.getElementById("reg-customer-phone").value = visitor.phone || "";
+        document.getElementById("reg-customer-email").value = visitor.email || "";
+        document.getElementById("reg-customer-company").value = visitor.company || "";
+        document.getElementById("reg-customer-college").value = visitor.college || "";
+        document.getElementById("reg-customer-dept").value = visitor.department || "";
+        document.getElementById("reg-customer-id").value = visitor.masterId || "";
+        document.getElementById("reg-customer-aadhaar").value = visitor.aadhaar || "";
+        document.getElementById("reg-customer-address").value = visitor.address || "";
+        document.getElementById("reg-customer-purpose").value = visitor.purpose || "Customer";
+        document.getElementById("reg-customer-id-type").value = visitor.idType || "";
+        document.getElementById("reg-customer-id-number").value = visitor.idNumber || "";
+        document.getElementById("reg-customer-vehicle").value = visitor.vehicle || "";
+        document.getElementById("reg-customer-host").value = visitor.hostName || "";
+        document.getElementById("reg-customer-visit-date").value = visitor.visitDate || "";
+        document.getElementById("reg-customer-expected-exit").value = visitor.expectedExit || "";
+    } else if (category === "vendor") {
+        document.getElementById("reg-vendor-name").value = visitor.name || "";
+        document.getElementById("reg-vendor-phone").value = visitor.phone || "";
+        document.getElementById("reg-vendor-email").value = visitor.email || "";
+        document.getElementById("reg-vendor-company").value = visitor.company || "";
+        document.getElementById("reg-vendor-college").value = visitor.college || "";
+        document.getElementById("reg-vendor-dept").value = visitor.department || "";
+        document.getElementById("reg-vendor-visitor-id").value = visitor.masterId || "";
+        document.getElementById("reg-vendor-invoice").value = visitor.invoice || "";
+        document.getElementById("reg-vendor-aadhaar").value = visitor.aadhaar || "";
+        document.getElementById("reg-vendor-address").value = visitor.address || "";
+        document.getElementById("reg-vendor-id-type").value = visitor.idType || "";
+        document.getElementById("reg-vendor-id-number").value = visitor.idNumber || "";
+        document.getElementById("reg-vendor-vehicle").value = visitor.vehicle || "";
+        document.getElementById("reg-vendor-host").value = visitor.hostName || "";
+        document.getElementById("reg-vendor-visit-date").value = visitor.visitDate || "";
+        document.getElementById("reg-vendor-expected-exit").value = visitor.expectedExit || "";
+    }
+};
+
+window.liveTableAction = function (category, action) {
+    if (action === 'refresh') {
+        window.refreshAllDataViews();
+        showToast("Table Refreshed", "Data updated from latest sync.", "info");
+        return;
+    }
+
+    state.liveTables = state.liveTables || {};
+    if (!state.liveTables[category]) {
+        state.liveTables[category] = { currentPage: 1, searchQuery: "", statusFilter: "", dateFilter: "" };
+    }
+    const tableState = state.liveTables[category];
+
+    // Get currently filtered records
+    const filtered = (state.visitors || []).filter(v => {
+        const vCat = (v.visitorCategory || "").toLowerCase() || (v.purpose === "Student" ? "student" : v.purpose === "Customer" ? "customer" : v.purpose === "Vendor" ? "vendor" : "");
+        if (vCat !== category) return false;
+
+        // Status Filter
+        if (tableState.statusFilter && v.status !== tableState.statusFilter) return false;
+
+        // Date Filter
+        if (tableState.dateFilter) {
+            const vDate = v.visitDate || "";
+            if (vDate !== tableState.dateFilter) return false;
+        }
+
+        // Search Filter
+        if (tableState.searchQuery) {
+            const query = tableState.searchQuery;
+            const nameMatch = (v.name || "").toLowerCase().includes(query);
+            const phoneMatch = (v.phone || "").toLowerCase().includes(query);
+            const idMatch = (v.id || "").toLowerCase().includes(query);
+            const masterIdMatch = (v.masterId || "").toLowerCase().includes(query);
+            
+            let companyMatch = false;
+            let otherMatch = false;
+            if (category === "student") {
+                companyMatch = (v.college || "").toLowerCase().includes(query);
+            } else if (category === "customer") {
+                companyMatch = (v.company || "").toLowerCase().includes(query);
+            } else if (category === "vendor") {
+                companyMatch = (v.company || "").toLowerCase().includes(query);
+                otherMatch = (v.department || "").toLowerCase().includes(query);
+            }
+
+            if (!nameMatch && !phoneMatch && !idMatch && !masterIdMatch && !companyMatch && !otherMatch) {
+                return false;
+            }
+        }
+
+        return true;
     });
 
     filtered.sort((a, b) => {
@@ -11616,47 +12059,78 @@ window.renderLiveRegistrationTable = function (category) {
         return dateB.localeCompare(dateA);
     });
 
-    if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 2rem; color: var(--text-secondary);">No active ${category} registrations today.</td></tr>`;
-        return;
-    }
+    const headers = category === 'student'
+        ? ["Visitor ID", "Student Name", "Mobile Number", "College/University", "Host Employee", "Visit Date", "Valid Until", "Status"]
+        : category === 'customer'
+        ? ["Visitor ID", "Customer Name", "Company Name", "Mobile Number", "Host Employee", "Visit Date", "Status"]
+        : ["Visitor ID", "Vendor Company", "Contact Person", "Mobile Number", "Service Type", "Host Employee", "Visit Date", "Status"];
 
-    filtered.forEach(v => {
-        const tr = document.createElement("tr");
-        tr.style.borderBottom = "1px solid var(--border-color)";
-
-        const photoSrc = v.photo || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><circle cx='12' cy='8' r='4'/><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/></svg>";
-        const checkInFormatted = v.checkIn ? new Date(v.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "-";
-        const checkOutFormatted = v.checkOut ? new Date(v.checkOut).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "-";
-        const statusClass = v.status.toLowerCase().replace(/ /g, "-");
-        const vCat = v.visitorCategory || category.charAt(0).toUpperCase() + category.slice(1);
-
-        let actionBtn = "";
-        if (v.status === "Pending") {
-            actionBtn = `<span class="badge-status pending" style="font-size:0.65rem;">Awaiting Approval</span>`;
-        } else if (v.status === "Approved") {
-            actionBtn = `<button type="button" class="btn btn-accent btn-xs" onclick="window.checkinApprovedVisitor('${v.id}')">Check-In</button>`;
-        } else if (v.status === "Checked In") {
-            actionBtn = `<button type="button" class="btn btn-danger btn-xs" onclick="checkoutVisitorFromList('${v.id}')">Check-Out</button>`;
+    const rows = filtered.map(v => {
+        if (category === 'student') {
+            return [v.id, v.name, v.phone, v.college, v.hostName, v.visitDate, v.endDate || v.visitDate, v.status];
+        } else if (category === 'customer') {
+            return [v.id, v.name, v.company, v.phone, v.hostName, v.visitDate, v.status];
         } else {
-            actionBtn = `<button type="button" class="btn btn-secondary btn-xs" disabled style="opacity: 0.5; cursor: not-allowed;">Checked Out</button>`;
+            return [v.id, v.company, v.name, v.phone, v.department, v.hostName, v.visitDate, v.status];
         }
-
-        tr.innerHTML = `
-            <td style="padding: 8px 10px;"><img src="${photoSrc}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;"></td>
-            <td style="padding: 8px 10px;"><code>${v.id}</code></td>
-            <td style="padding: 8px 10px; font-weight: 600;">${v.name}</td>
-            <td style="padding: 8px 10px;">${v.phone || "-"}</td>
-            <td style="padding: 8px 10px;"><span class="badge-status ${category}">${vCat}</span></td>
-            <td style="padding: 8px 10px;">${v.company || v.college || "-"}</td>
-            <td style="padding: 8px 10px;">${v.hostName || "-"}</td>
-            <td style="padding: 8px 10px;">${checkInFormatted}</td>
-            <td style="padding: 8px 10px;">${checkOutFormatted}</td>
-            <td style="padding: 8px 10px;"><span class="badge-status ${statusClass}">${v.status}</span></td>
-            <td style="padding: 8px 10px;">${actionBtn}</td>
-        `;
-        tbody.appendChild(tr);
     });
+
+    if (action === 'excel') {
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF" 
+            + headers.map(h => `"${h.replace(/'/g, "''").replace(/"/g, '""')}"`).join(",") + "\n"
+            + rows.map(r => r.map(val => `"${(val || "").toString().replace(/'/g, "''").replace(/"/g, '""')}"`).join(",")).join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `${category}_registrations_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast("Export Successful", `Downloaded CSV for ${filtered.length} records.`, "success");
+    } else if (action === 'pdf' || action === 'print') {
+        const printWindow = window.open('', '_blank');
+        let html = `
+            <html>
+            <head>
+                <title>${category.toUpperCase()} Registrations Report</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; color: #333; }
+                    h1 { font-size: 1.5rem; margin-bottom: 20px; color: #1e293b; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+                    th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
+                    th { background-color: #f1f5f9; font-weight: 700; }
+                    tr:nth-child(even) { background-color: #f8fafc; }
+                </style>
+            </head>
+            <body>
+                <h1>Barani Hydraulics - ${category.toUpperCase()} Registrations (${new Date().toLocaleDateString()})</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            ${headers.map(h => `<th>${h}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows.map(r => `
+                            <tr>
+                                ${r.map(val => `<td>${val || "-"}</td>`).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <script>
+                    window.onload = function() {
+                        window.print();
+                        setTimeout(() => window.close(), 500);
+                    }
+                </script>
+            </body>
+            </html>
+        `;
+        printWindow.document.write(html);
+        printWindow.document.close();
+    }
 };
 
 window.reportsFilterChanged = function () {
@@ -12206,17 +12680,34 @@ window.executeFinalVisitorApprovalFlow = async function (preOpenedWindow = null)
         pendingRegistrationObj.hostDept = hostEmp.dept;
     }
 
-    pendingRegistrationObj.status = "Pending";
-    pendingRegistrationObj.checkIn = null;
-    pendingRegistrationObj.approveToken = Math.random().toString(36).substring(2, 15);
-    pendingRegistrationObj.rejectToken = Math.random().toString(36).substring(2, 15);
+    if (!state.editingVisitId) {
+        pendingRegistrationObj.status = "Pending";
+        pendingRegistrationObj.checkIn = null;
+    }
+    pendingRegistrationObj.approveToken = pendingRegistrationObj.approveToken || Math.random().toString(36).substring(2, 15);
+    pendingRegistrationObj.rejectToken = pendingRegistrationObj.rejectToken || Math.random().toString(36).substring(2, 15);
 
-    state.visitors.unshift(pendingRegistrationObj);
+    const existingIdx = state.visitors.findIndex(v => v.id === pendingRegistrationObj.id);
+    if (existingIdx !== -1) {
+        state.visitors[existingIdx] = pendingRegistrationObj;
+    } else {
+        state.visitors.unshift(pendingRegistrationObj);
+    }
     saveState();
     await syncSingleVisitorToCloud(pendingRegistrationObj);
     refreshAllDataViews();
 
-    showToast("Approval Requested", `Notification sent to host employee ${pendingRegistrationObj.hostName}.`, "info");
+    if (state.editingVisitId) {
+        state.editingVisitId = null;
+        // Restore submit button text for all forms
+        document.querySelectorAll('form[id$="-registration-form"] button[type="submit"]').forEach(btn => {
+            const cat = btn.closest('form').id.split('-')[1];
+            btn.textContent = `Register ${cat.charAt(0).toUpperCase() + cat.slice(1)}`;
+        });
+        showToast("Record Updated", "Visitor details updated successfully.", "success");
+    } else {
+        showToast("Approval Requested", `Notification sent to host employee ${pendingRegistrationObj.hostName}.`, "info");
+    }
 
     addNotificationAlert("Approval Needed", `[Reception] Visitor Waiting: ${pendingRegistrationObj.name} registered. Waiting for host approval.`, "warning");
     addNotificationAlert("Visitor Registered", `[Host] Visitor Waiting: Guest ${pendingRegistrationObj.name} from ${pendingRegistrationObj.company || 'Independent'} is waiting for your clearance.`, "warning");

@@ -395,6 +395,31 @@
                                     the visitor category to register.</p>
                             </div>
 
+                            <!-- Dashboard Stats Cards -->
+                            <div class="top-summary-bar no-print" style="box-shadow: none; border-bottom: none; background: transparent; padding: 0; margin-bottom: 2.5rem; justify-content: space-between; gap: 1.5rem;">
+                                <div class="summary-item" style="padding: 0.75rem 1.25rem;">
+                                    <span class="summary-icon" style="font-size: 1.75rem;">📤</span>
+                                    <div class="summary-details">
+                                        <span class="summary-label" style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; display: block;">Checked Out</span>
+                                        <span class="summary-value checked-out" id="dashboard-stat-checked-out" style="font-size: 1.4rem; font-weight: 800; color: var(--text-primary);">0</span>
+                                    </div>
+                                </div>
+                                <div class="summary-item" style="padding: 0.75rem 1.25rem;">
+                                    <span class="summary-icon" style="font-size: 1.75rem;">📅</span>
+                                    <div class="summary-details">
+                                        <span class="summary-label" style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; display: block;">Visitors Today</span>
+                                        <span class="summary-value visitors-today" id="dashboard-stat-visitors-today" style="font-size: 1.4rem; font-weight: 800; color: var(--accent-primary);">0</span>
+                                    </div>
+                                </div>
+                                <div class="summary-item" style="padding: 0.75rem 1.25rem;">
+                                    <span class="summary-icon" style="font-size: 1.75rem;">🏢</span>
+                                    <div class="summary-details">
+                                        <span class="summary-label" style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; display: block;">Currently In Campus</span>
+                                        <span class="summary-value in-campus" id="dashboard-stat-in-campus" style="font-size: 1.4rem; font-weight: 800; color: var(--accent-success);">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="registration-dashboard-grid">
                                 <!-- 1. Student Card -->
                                 <div class="registration-card"
@@ -584,12 +609,22 @@
                                             </div>
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
-                                            <div class="form-group col-6">
-                                                <label for="reg-student-aadhaar">Aadhaar Number *</label>
-                                                <input type="text" id="reg-student-aadhaar"
-                                                    placeholder="12-digit Aadhaar Number" required autocomplete="off">
+                                            <div class="form-group col-4">
+                                                <label for="reg-student-id-type">ID Proof Type *</label>
+                                                <select id="reg-student-id-type" required>
+                                                    <option value="">Select ID Type</option>
+                                                    <option value="Aadhaar Card">Aadhaar Card</option>
+                                                    <option value="College ID">College ID</option>
+                                                    <option value="Passport">Passport</option>
+                                                    <option value="Driving License">Driving License</option>
+                                                </select>
                                             </div>
-                                            <div class="form-group col-6">
+                                            <div class="form-group col-4">
+                                                <label for="reg-student-id-number">ID Proof Number *</label>
+                                                <input type="text" id="reg-student-id-number"
+                                                    placeholder="ID Card Number" required autocomplete="off">
+                                            </div>
+                                            <div class="form-group col-4">
                                                 <label for="reg-student-category">Visitor Category</label>
                                                 <input type="text" id="reg-student-category" value="Student" readonly
                                                     autocomplete="off">
@@ -749,9 +784,27 @@
                         <!-- Live Visitor Registration Table -->
                         <div class="dashboard-card" id="live-registration-student-wrapper" style="margin-top: 1.5rem;">
                             <div class="card-header"
-                                style="display: flex; justify-content: space-between; align-items: center;">
-                                <h2 style="font-size: 1rem; font-weight: 700; color: var(--accent-primary);">📅 Live
-                                    Student Registrations</h2>
+                                style="display: flex; flex-direction: column; gap: 0.75rem; align-items: stretch; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                    <h2 style="font-size: 1rem; font-weight: 700; color: var(--accent-primary);">📅 Live Student Registrations</h2>
+                                    <div style="display: flex; gap: 0.35rem; align-items: center;" class="no-print">
+                                        <button type="button" class="btn btn-secondary btn-xs" onclick="window.liveTableAction('student', 'refresh')" title="Refresh Table">🔄 Refresh</button>
+                                        <button type="button" class="btn btn-secondary btn-xs" onclick="window.liveTableAction('student', 'excel')" title="Export to Excel">Excel</button>
+                                        <button type="button" class="btn btn-secondary btn-xs" onclick="window.liveTableAction('student', 'pdf')" title="Export to PDF">PDF</button>
+                                        <button type="button" class="btn btn-secondary btn-xs" onclick="window.liveTableAction('student', 'print')" title="Print Table">Print</button>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; width: 100%; flex-wrap: wrap;" class="no-print">
+                                    <input type="text" id="live-search-student" placeholder="Search name, phone, ID..." oninput="window.liveTableFilterChanged('student')" style="font-size: 0.75rem; padding: 0.35rem 0.5rem; flex: 1; min-width: 150px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                    <select id="live-status-student" onchange="window.liveTableFilterChanged('student')" style="font-size: 0.75rem; padding: 0.35rem 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                        <option value="">All Statuses</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Checked In">Checked In</option>
+                                        <option value="Checked Out">Checked Out</option>
+                                    </select>
+                                    <input type="date" id="live-date-student" onchange="window.liveTableFilterChanged('student')" style="font-size: 0.75rem; padding: 0.35rem 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                </div>
                             </div>
                             <div class="table-container" style="max-height: 350px; overflow-y: auto; width: 100%;">
                                 <table class="data-table"
@@ -761,13 +814,12 @@
                                             style="border-bottom: 2px solid var(--border-color); background: var(--bg-app); font-weight: 700; color: var(--text-secondary);">
                                             <th style="padding: 10px;">Photo</th>
                                             <th style="padding: 10px;">Visitor ID</th>
-                                            <th style="padding: 10px;">Name</th>
-                                            <th style="padding: 10px;">Mobile</th>
-                                            <th style="padding: 10px;">Visitor Type</th>
-                                            <th style="padding: 10px;">Company/College</th>
+                                            <th style="padding: 10px;">Student Name</th>
+                                            <th style="padding: 10px;">Mobile Number</th>
+                                            <th style="padding: 10px;">College / University</th>
                                             <th style="padding: 10px;">Host Employee</th>
-                                            <th style="padding: 10px;">Check-In Time</th>
-                                            <th style="padding: 10px;">Check-Out Time</th>
+                                            <th style="padding: 10px;">Visit Date</th>
+                                            <th style="padding: 10px;">Valid Until</th>
                                             <th style="padding: 10px;">Status</th>
                                             <th style="padding: 10px;">Actions</th>
                                         </tr>
@@ -776,6 +828,9 @@
                                         <!-- Dynamic student visits -->
                                     </tbody>
                                 </table>
+                            </div>
+                            <div id="live-pagination-student" class="table-pagination-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1rem; border-top: 1px solid var(--border-color); font-size: 0.75rem; color: var(--text-secondary);">
+                                <!-- Dynamic pagination for Student -->
                             </div>
                         </div>
                     </div>
@@ -893,20 +948,19 @@
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-4">
-                                                <label for="reg-customer-id-type">ID Card Proof (Optional)</label>
-                                                <select id="reg-customer-id-type">
+                                                <label for="reg-customer-id-type">ID Proof Type *</label>
+                                                <select id="reg-customer-id-type" required>
                                                     <option value="">Select ID Type</option>
-                                                    <option value="Aadhaar">Aadhaar Card</option>
+                                                    <option value="Aadhaar Card">Aadhaar Card</option>
                                                     <option value="PAN Card">PAN Card</option>
                                                     <option value="Passport">Passport</option>
-                                                    <option value="Driver License">Driver License</option>
-                                                    <option value="Company ID">Company ID</option>
+                                                    <option value="Driving License">Driving License</option>
                                                 </select>
                                             </div>
                                             <div class="form-group col-4">
-                                                <label for="reg-customer-id-number">ID Number (Optional)</label>
+                                                <label for="reg-customer-id-number">ID Proof Number *</label>
                                                 <input type="text" id="reg-customer-id-number"
-                                                    placeholder="ID Card Number" autocomplete="off">
+                                                    placeholder="ID Card Number" required autocomplete="off">
                                             </div>
                                             <div class="form-group col-4">
                                                 <label for="reg-customer-vehicle">Vehicle Number</label>
@@ -1025,9 +1079,27 @@
                         <!-- Live Visitor Registration Table -->
                         <div class="dashboard-card" id="live-registration-customer-wrapper" style="margin-top: 1.5rem;">
                             <div class="card-header"
-                                style="display: flex; justify-content: space-between; align-items: center;">
-                                <h2 style="font-size: 1rem; font-weight: 700; color: var(--accent-primary);">📅 Live
-                                    Customer Registrations</h2>
+                                style="display: flex; flex-direction: column; gap: 0.75rem; align-items: stretch; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                    <h2 style="font-size: 1rem; font-weight: 700; color: var(--accent-primary);">📅 Live Customer Registrations</h2>
+                                    <div style="display: flex; gap: 0.35rem; align-items: center;" class="no-print">
+                                        <button type="button" class="btn btn-secondary btn-xs" onclick="window.liveTableAction('customer', 'refresh')" title="Refresh Table">🔄 Refresh</button>
+                                        <button type="button" class="btn btn-secondary btn-xs" onclick="window.liveTableAction('customer', 'excel')" title="Export to Excel">Excel</button>
+                                        <button type="button" class="btn btn-secondary btn-xs" onclick="window.liveTableAction('customer', 'pdf')" title="Export to PDF">PDF</button>
+                                        <button type="button" class="btn btn-secondary btn-xs" onclick="window.liveTableAction('customer', 'print')" title="Print Table">Print</button>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; width: 100%; flex-wrap: wrap;" class="no-print">
+                                    <input type="text" id="live-search-customer" placeholder="Search name, company, phone, ID..." oninput="window.liveTableFilterChanged('customer')" style="font-size: 0.75rem; padding: 0.35rem 0.5rem; flex: 1; min-width: 150px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                    <select id="live-status-customer" onchange="window.liveTableFilterChanged('customer')" style="font-size: 0.75rem; padding: 0.35rem 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                        <option value="">All Statuses</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Checked In">Checked In</option>
+                                        <option value="Checked Out">Checked Out</option>
+                                    </select>
+                                    <input type="date" id="live-date-customer" onchange="window.liveTableFilterChanged('customer')" style="font-size: 0.75rem; padding: 0.35rem 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                </div>
                             </div>
                             <div class="table-container" style="max-height: 350px; overflow-y: auto; width: 100%;">
                                 <table class="data-table"
@@ -1037,13 +1109,11 @@
                                             style="border-bottom: 2px solid var(--border-color); background: var(--bg-app); font-weight: 700; color: var(--text-secondary);">
                                             <th style="padding: 10px;">Photo</th>
                                             <th style="padding: 10px;">Visitor ID</th>
-                                            <th style="padding: 10px;">Name</th>
-                                            <th style="padding: 10px;">Mobile</th>
-                                            <th style="padding: 10px;">Visitor Type</th>
-                                            <th style="padding: 10px;">Company/College</th>
+                                            <th style="padding: 10px;">Customer Name</th>
+                                            <th style="padding: 10px;">Company Name</th>
+                                            <th style="padding: 10px;">Mobile Number</th>
                                             <th style="padding: 10px;">Host Employee</th>
-                                            <th style="padding: 10px;">Check-In Time</th>
-                                            <th style="padding: 10px;">Check-Out Time</th>
+                                            <th style="padding: 10px;">Visit Date</th>
                                             <th style="padding: 10px;">Status</th>
                                             <th style="padding: 10px;">Actions</th>
                                         </tr>
@@ -1052,6 +1122,9 @@
                                         <!-- Dynamic customer visits -->
                                     </tbody>
                                 </table>
+                            </div>
+                            <div id="live-pagination-customer" class="table-pagination-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1rem; border-top: 1px solid var(--border-color); font-size: 0.75rem; color: var(--text-secondary);">
+                                <!-- Dynamic pagination for Customer -->
                             </div>
                         </div>
                     </div>
@@ -1119,7 +1192,7 @@
                                                     autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-dept">Department *</label>
+                                                <label for="reg-vendor-dept">Service Type / Purpose of Visit *</label>
                                                 <input type="text" id="reg-vendor-dept"
                                                     placeholder="e.g. Purchase / Inventory" required autocomplete="off">
                                             </div>
@@ -1159,20 +1232,19 @@
                                         </div>
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-4">
-                                                <label for="reg-vendor-id-type">ID Card Proof (Optional)</label>
-                                                <select id="reg-vendor-id-type">
+                                                <label for="reg-vendor-id-type">ID Proof Type *</label>
+                                                <select id="reg-vendor-id-type" required>
                                                     <option value="">Select ID Type</option>
-                                                    <option value="Aadhaar">Aadhaar Card</option>
+                                                    <option value="Aadhaar Card">Aadhaar Card</option>
                                                     <option value="PAN Card">PAN Card</option>
                                                     <option value="Passport">Passport</option>
-                                                    <option value="Driver License">Driver License</option>
-                                                    <option value="Company ID">Company ID</option>
+                                                    <option value="Driving License">Driving License</option>
                                                 </select>
                                             </div>
                                             <div class="form-group col-4">
-                                                <label for="reg-vendor-id-number">ID Number (Optional)</label>
+                                                <label for="reg-vendor-id-number">ID Proof Number *</label>
                                                 <input type="text" id="reg-vendor-id-number"
-                                                    placeholder="ID Card Number" autocomplete="off">
+                                                    placeholder="ID Card Number" required autocomplete="off">
                                             </div>
                                             <div class="form-group col-4">
                                                 <label for="reg-vendor-vehicle">Vehicle Number</label>
@@ -1290,9 +1362,27 @@
                         <!-- Live Visitor Registration Table -->
                         <div class="dashboard-card" id="live-registration-vendor-wrapper" style="margin-top: 1.5rem;">
                             <div class="card-header"
-                                style="display: flex; justify-content: space-between; align-items: center;">
-                                <h2 style="font-size: 1rem; font-weight: 700; color: var(--accent-primary);">📅 Live
-                                    Vendor Registrations</h2>
+                                style="display: flex; flex-direction: column; gap: 0.75rem; align-items: stretch; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                    <h2 style="font-size: 1rem; font-weight: 700; color: var(--accent-primary);">📅 Live Vendor Registrations</h2>
+                                    <div style="display: flex; gap: 0.35rem; align-items: center;" class="no-print">
+                                        <button type="button" class="btn btn-secondary btn-xs" onclick="window.liveTableAction('vendor', 'refresh')" title="Refresh Table">🔄 Refresh</button>
+                                        <button type="button" class="btn btn-secondary btn-xs" onclick="window.liveTableAction('vendor', 'excel')" title="Export to Excel">Excel</button>
+                                        <button type="button" class="btn btn-secondary btn-xs" onclick="window.liveTableAction('vendor', 'pdf')" title="Export to PDF">PDF</button>
+                                        <button type="button" class="btn btn-secondary btn-xs" onclick="window.liveTableAction('vendor', 'print')" title="Print Table">Print</button>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; width: 100%; flex-wrap: wrap;" class="no-print">
+                                    <input type="text" id="live-search-vendor" placeholder="Search contact, company, phone, ID..." oninput="window.liveTableFilterChanged('vendor')" style="font-size: 0.75rem; padding: 0.35rem 0.5rem; flex: 1; min-width: 150px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                    <select id="live-status-vendor" onchange="window.liveTableFilterChanged('vendor')" style="font-size: 0.75rem; padding: 0.35rem 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                        <option value="">All Statuses</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Checked In">Checked In</option>
+                                        <option value="Checked Out">Checked Out</option>
+                                    </select>
+                                    <input type="date" id="live-date-vendor" onchange="window.liveTableFilterChanged('vendor')" style="font-size: 0.75rem; padding: 0.35rem 0.5rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background: var(--bg-card); color: var(--text-primary);">
+                                </div>
                             </div>
                             <div class="table-container" style="max-height: 350px; overflow-y: auto; width: 100%;">
                                 <table class="data-table"
@@ -1301,14 +1391,13 @@
                                         <tr
                                             style="border-bottom: 2px solid var(--border-color); background: var(--bg-app); font-weight: 700; color: var(--text-secondary);">
                                             <th style="padding: 10px;">Photo</th>
-                                            <th style="padding: 10px;">Visitor ID</th>
-                                            <th style="padding: 10px;">Name</th>
-                                            <th style="padding: 10px;">Mobile</th>
-                                            <th style="padding: 10px;">Visitor Type</th>
-                                            <th style="padding: 10px;">Company/College</th>
+                                            <th style="padding: 10px;">Vendor ID</th>
+                                            <th style="padding: 10px;">Vendor Company</th>
+                                            <th style="padding: 10px;">Contact Person</th>
+                                            <th style="padding: 10px;">Mobile Number</th>
+                                            <th style="padding: 10px;">Service Type</th>
                                             <th style="padding: 10px;">Host Employee</th>
-                                            <th style="padding: 10px;">Check-In Time</th>
-                                            <th style="padding: 10px;">Check-Out Time</th>
+                                            <th style="padding: 10px;">Visit Date</th>
                                             <th style="padding: 10px;">Status</th>
                                             <th style="padding: 10px;">Actions</th>
                                         </tr>
@@ -1317,6 +1406,9 @@
                                         <!-- Dynamic vendor visits -->
                                     </tbody>
                                 </table>
+                            </div>
+                            <div id="live-pagination-vendor" class="table-pagination-footer" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1rem; border-top: 1px solid var(--border-color); font-size: 0.75rem; color: var(--text-secondary);">
+                                <!-- Dynamic pagination for Vendor -->
                             </div>
                         </div>
                     </div>
