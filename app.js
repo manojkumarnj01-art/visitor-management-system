@@ -2031,6 +2031,7 @@ function setupEventListeners() {
                 "reg-vendor": "/vendor-registration",
                 "view-reports": "/reports",
                 "view-data-management": "/data-management",
+                "view-work-permit": "/work-permit",
                 "view-employee-search": "/employee-search",
                 "view-checkout": "/checkout",
                 "view-purchase-manual": "/purchase-manual",
