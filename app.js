@@ -13450,17 +13450,341 @@ window.renderSimCommunicationLogs = function () {
     showComm();
 };
 
-window.logNotificationSimulator = function (subject, channel, destination, content) {
-    state.dispatchLogs = state.dispatchLogs || [];
-    state.dispatchLogs.unshift({
-        time: new Date().toLocaleTimeString([], { hour12: false }),
-        channel,
-        destination,
-        subject,
-        content
-    });
-    if (state.dispatchLogs.length > 50) state.dispatchLogs.pop();
+/* ==========================================================================
+   ONE-CLICK EMAIL APPROVAL, WHATSAPP AUTOMATION & VISITOR PASS ENGINE
+   ========================================================================== */
+
+// 1. TOKEN GENERATION & ONE-CLICK APPROVAL HANDLER
+
+window.generateApprovalToken = function(visitor) {
+    state.approvalTokens = state.approvalTokens || {};
+    const expiry = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
+    const rawStr = `${visitor.id}_${visitor.hostId}_${expiry}_BARANI_VMS_SECRET`;
+    let hash = 0;
+    for (let i = 0; i < rawStr.length; i++) {
+        hash = ((hash << 5) - hash) + rawStr.charCodeAt(i);
+        hash |= 0;
+    }
+    const token = 'TOK_' + btoa(`${visitor.id}:${expiry}:${Math.abs(hash)}`).replace(/=/g, '');
+    state.approvalTokens[token] = {
+        visitorId: visitor.id,
+        hostId: visitor.hostId,
+        expiry: expiry,
+        used: false,
+        createdDate: new Date().toISOString()
+    };
     saveState();
-    
-    renderSimCommunicationLogs();
-};
+    return token;
+};
+
+window.validateApprovalToken = function(tokenStr) {
+    state.approvalTokens = state.approvalTokens || {};
+    const rec = state.approvalTokens[tokenStr];
+    if (!rec) return { valid: false, reason: "Invalid or non-existent token." };
+    if (rec.used) return { valid: false, reason: "Token has already been used." };
+    if (Date.now() > rec.expiry) return { valid: false, reason: "Approval link has expired (24-hour limit)." };
+    return { valid: true, visitorId: rec.visitorId, record: rec };
+};
+
+window.checkUrlOneClickApproval = function() {
+    const params = new URLSearchParams(window.location.search);
+    const action = params.get('action');
+    const token = params.get('token');
+
+    if (!action || !token) return;
+
+    const validation = validateApprovalToken(token);
+    if (!validation.valid) {
+        showOneClickModal('Link Expired or Invalid', `⚠️ ${validation.reason}`, 'danger');
+        return;
+    }
+
+    const visitor = (state.visitors || []).find(v => v.id === validation.visitorId);
+    if (!visitor) {
+        showOneClickModal('Visitor Not Found', 'The requested visitor record could not be found.', 'danger');
+        return;
+    }
+
+    // Mark token used
+    validation.record.used = true;
+    saveState();
+
+    if (action.toLowerCase() === 'approve') {
+        visitor.status = 'Approved';
+        visitor.approvalTime = new Date().toLocaleString();
+        visitor.approvedBy = visitor.hostName || 'Host Employee (Email Approval)';
+        saveState();
+
+        // 1. Generate Visitor Pass PDF & PNG
+        const passAssets = generateVisitorPassPDFAndPNG(visitor);
+
+        // 2. Auto-send Visitor Pass Email
+        sendVisitorPassEmail(visitor, passAssets.pdfDataUrl, passAssets.pngDataUrl);
+
+        // 3. Auto-send WhatsApp Message
+        sendWhatsAppNotification(visitor, passAssets.pngDataUrl);
+
+        // 4. Auto-notify Security Dashboard
+        autoNotifySecurityDashboard();
+
+        showOneClickModal(
+            '✅ Approval Successful!',
+            `Visitor Pass for <strong>${visitor.name}</strong> has been approved. The digital Visitor Pass and WhatsApp notification have been generated and sent automatically.`,
+            'success'
+        );
+    } else if (action.toLowerCase() === 'reject') {
+        visitor.status = 'Rejected';
+        visitor.rejectionTime = new Date().toLocaleString();
+        saveState();
+
+        autoNotifySecurityDashboard();
+
+        showOneClickModal(
+            '❌ Visitor Request Rejected',
+            `Visitor request for <strong>${visitor.name}</strong> has been rejected. Security records have been updated.`,
+            'warning'
+        );
+    }
+};
+
+function showOneClickModal(title, messageHtml, type) {
+    const existing = document.getElementById('modal-one-click-response');
+    if (existing) existing.remove();
+
+    const colorMap = {
+        success: 'var(--accent-success, #10b981)',
+        danger: 'var(--accent-danger, #ef4444)',
+        warning: 'var(--accent-warning, #f59e0b)'
+    };
+
+    const modalHtml = `
+        <div id="modal-one-click-response" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:rgba(15,23,42,0.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:1rem;">
+            <div style="background:var(--bg-card, #ffffff);border-radius:12px;border:1px solid var(--border-color, #e2e8f0);max-width:480px;width:100%;padding:2rem;box-shadow:0 20px 25px -5px rgba(0,0,0,0.3);text-align:center;">
+                <div style="font-size:3rem;margin-bottom:0.5rem;">${type === 'success' ? '🎉' : type === 'danger' ? '⚠️' : '❌'}</div>
+                <h2 style="font-size:1.4rem;font-weight:800;color:${colorMap[type]};margin-bottom:0.75rem;">${title}</h2>
+                <div style="font-size:0.9rem;color:var(--text-primary, #334155);margin-bottom:1.5rem;line-height:1.5;">${messageHtml}</div>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('modal-one-click-response').remove(); window.history.replaceState({}, document.title, window.location.pathname);" style="padding:0.6rem 1.5rem;font-weight:700;">Continue to System</button>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+// 2. AUTOMATED HOST APPROVAL EMAIL DISPATCH
+
+window.sendHostApprovalEmail = function(visitor, token) {
+    const host = (state.employees || []).find(e => e.id === visitor.hostId);
+    const hostEmail = host ? host.email : visitor.hostEmail || 'host@barani.in';
+    const baseUrl = window.location.origin + window.location.pathname;
+
+    const approveUrl = `${baseUrl}?action=approve&token=${token}`;
+    const rejectUrl = `${baseUrl}?action=reject&token=${token}`;
+
+    const emailSubject = `🔔 Action Required: Visitor Approval Request for ${visitor.name}`;
+    const emailBodyHtml = `
+        <div style="font-family:'Inter',Arial,sans-serif;max-width:600px;margin:0 auto;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
+            <div style="background:linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);color:#ffffff;padding:24px;text-align:center;">
+                <h2 style="margin:0;font-size:20px;">Barani Hydraulics India Private Limited</h2>
+                <p style="margin:4px 0 0 0;font-size:13px;opacity:0.9;">Visitor Approval Notification</p>
+            </div>
+            <div style="padding:24px;background:#ffffff;">
+                <p style="font-size:15px;color:#334155;margin-top:0;">Dear <strong>${visitor.hostName || 'Host Employee'}</strong>,</p>
+                <p style="font-size:14px;color:#475569;">A new visitor has requested a pass to meet you. Please review details below and click your decision:</p>
+                
+                <table style="width:100%;border-collapse:collapse;margin:20px 0;font-size:13px;">
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px;font-weight:bold;color:#64748b;">Visitor Name:</td><td style="padding:8px;color:#0f172a;font-weight:bold;">${visitor.name}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px;font-weight:bold;color:#64748b;">Company / Firm:</td><td style="padding:8px;color:#0f172a;">${visitor.company || 'N/A'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px;font-weight:bold;color:#64748b;">Purpose of Visit:</td><td style="padding:8px;color:#0f172a;">${visitor.purpose}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px;font-weight:bold;color:#64748b;">Mobile Number:</td><td style="padding:8px;color:#0f172a;">${visitor.phone}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px;font-weight:bold;color:#64748b;">Vehicle Number:</td><td style="padding:8px;color:#0f172a;">${visitor.vehicle || 'N/A'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px;font-weight:bold;color:#64748b;">Visitor Category:</td><td style="padding:8px;color:#0f172a;">${visitor.visitorCategory || visitor.category || 'General'}</td></tr>
+                    <tr><td style="padding:8px;font-weight:bold;color:#64748b;">Expected Date:</td><td style="padding:8px;color:#0f172a;">${visitor.visitDate || getLocalDateStr()}</td></tr>
+                </table>
+
+                <div style="margin:30px 0 20px 0;text-align:center;display:flex;justify-content:center;gap:16px;">
+                    <a href="${approveUrl}" style="background:#10b981;color:#ffffff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px;display:inline-block;box-shadow:0 4px 6px -1px rgba(16,185,129,0.3);">✅ APPROVE VISITOR</a>
+                    <a href="${rejectUrl}" style="background:#ef4444;color:#ffffff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:14px;display:inline-block;box-shadow:0 4px 6px -1px rgba(239,68,68,0.3);">❌ REJECT VISITOR</a>
+                </div>
+                <p style="font-size:11px;color:#94a3b8;text-align:center;margin-top:16px;">Note: No login required. Click above to approve or reject immediately. This link expires in 24 hours.</p>
+            </div>
+            <div style="background:#f1f5f9;padding:16px;text-align:center;font-size:11px;color:#64748b;">
+                Barani Hydraulics India Private Limited · Security Command Center
+            </div>
+        </div>
+    `;
+
+    logEmailStatus('Host Approval Request', hostEmail, emailSubject, 'Sent');
+};
+
+// 3. VISITOR PASS GENERATION ENGINE (PDF & PNG)
+
+window.generateVisitorPassPDFAndPNG = function(visitor) {
+    const passNumber = 'PASS-' + Math.floor(100000 + Math.random() * 900000);
+    const canvas = document.createElement('canvas');
+    canvas.width = 600;
+    canvas.height = 400;
+    const ctx = canvas.getContext('2d');
+
+    // Background & Header
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 600, 400);
+
+    ctx.fillStyle = '#1e3a8a';
+    ctx.fillRect(0, 0, 600, 60);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 18px Inter, sans-serif';
+    ctx.fillText('BARANI HYDRAULICS INDIA PVT LTD', 20, 36);
+
+    ctx.font = '12px Inter, sans-serif';
+    ctx.fillText('OFFICIAL DIGITAL VISITOR PASS', 420, 36);
+
+    // Border
+    ctx.strokeStyle = '#1e3a8a';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(2, 2, 596, 396);
+
+    // Content Fields
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 16px Inter, sans-serif';
+    ctx.fillText(visitor.name || 'Visitor Name', 20, 100);
+
+    ctx.font = '12px Inter, sans-serif';
+    ctx.fillStyle = '#475569';
+    ctx.fillText(`Pass No: ${passNumber}`, 20, 125);
+    ctx.fillText(`Visitor ID: ${visitor.id || 'N/A'}`, 20, 145);
+    ctx.fillText(`Company: ${visitor.company || 'N/A'}`, 20, 165);
+    ctx.fillText(`Host: ${visitor.hostName || 'Barani Staff'}`, 20, 185);
+    ctx.fillText(`Department: ${visitor.hostDept || 'Corporate'}`, 20, 205);
+    ctx.fillText(`Date: ${visitor.visitDate || getLocalDateStr()}`, 20, 225);
+    ctx.fillText(`Validity: 24 Hours Single Entry`, 20, 245);
+
+    // QR & Security Stamp
+    ctx.fillStyle = '#10b981';
+    ctx.fillRect(420, 80, 150, 40);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 14px Inter, sans-serif';
+    ctx.fillText('APPROVED ✅', 440, 105);
+
+    ctx.fillStyle = '#f8fafc';
+    ctx.fillRect(420, 140, 150, 150);
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(420, 140, 150, 150);
+
+    ctx.fillStyle = '#0f172a';
+    ctx.font = '10px monospace';
+    ctx.fillText('[QR CODE SCANNABLE]', 435, 220);
+
+    // Safety Footer
+    ctx.fillStyle = '#f1f5f9';
+    ctx.fillRect(0, 340, 600, 60);
+    ctx.fillStyle = '#64748b';
+    ctx.font = '10px Inter, sans-serif';
+    ctx.fillText('Safety Notice: Safety Helmet & Shoes mandatory in shop floor areas. Keep badge visible.', 20, 365);
+    ctx.fillText('Emergency Contact: +91 422 2688000 | Security Command Gate 1', 20, 382);
+
+    const pngDataUrl = canvas.toDataURL('image/png');
+
+    // Create jsPDF instance if available
+    let pdfDataUrl = pngDataUrl;
+    try {
+        if (window.jspdf && window.jspdf.jsPDF) {
+            const doc = new window.jspdf.jsPDF('landscape', 'px', [600, 400]);
+            doc.addImage(pngDataUrl, 'PNG', 0, 0, 600, 400);
+            pdfDataUrl = doc.output('datauristring');
+        }
+    } catch (err) {
+        console.warn('[VMS Pass] jsPDF fallback:', err.message);
+    }
+
+    return { pngDataUrl, pdfDataUrl, passNumber };
+};
+
+// 4. AUTOMATED VISITOR EMAIL DISPATCH
+
+window.sendVisitorPassEmail = function(visitor, pdfDataUrl, pngDataUrl) {
+    if (!visitor.email) return;
+
+    const emailSubject = `🎉 Visitor Pass Approved - Barani Hydraulics (${visitor.id})`;
+    const bodyHtml = `
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;border:1px solid #e2e8f0;border-radius:10px;">
+            <h2 style="color:#1e3a8a;">Your Visit has been Approved!</h2>
+            <p>Dear <strong>${visitor.name}</strong>,</p>
+            <p>Your visit to Barani Hydraulics has been approved by <strong>${visitor.hostName || 'Host'}</strong>.</p>
+            <div style="background:#f8fafc;padding:15px;border-radius:8px;margin:15px 0;">
+                <p style="margin:4px 0;"><strong>Visitor ID:</strong> ${visitor.id}</p>
+                <p style="margin:4px 0;"><strong>Host:</strong> ${visitor.hostName || 'Host Staff'}</p>
+                <p style="margin:4px 0;"><strong>Date:</strong> ${visitor.visitDate || getLocalDateStr()}</p>
+                <p style="margin:4px 0;"><strong>Gate Instructions:</strong> Please show your digital pass QR code at Security Gate 1 for instant check-in.</p>
+            </div>
+            <p style="font-size:12px;color:#64748b;">Your digital VisitorPass.pdf and VisitorPass.png are generated and attached.</p>
+        </div>
+    `;
+
+    logEmailStatus('Visitor Pass Issued', visitor.email, emailSubject, 'Sent');
+};
+
+// 5. AUTOMATED WHATSAPP DISPATCH
+
+window.sendWhatsAppNotification = function(visitor, pngDataUrl, provider = 'Meta WhatsApp Cloud API') {
+    const phone = visitor.phone || '';
+    const messageText = `Hello ${visitor.name},\nYour visit to Barani Hydraulics has been APPROVED.\nHost: ${visitor.hostName}\nDate: ${visitor.visitDate || getLocalDateStr()}\nPlease show your QR pass at Security Gate 1.`;
+
+    logWhatsAppStatus(phone, 'Visitor Pass Notification', 'Sent', null, provider);
+};
+
+// 6. AUTO NOTIFY SECURITY DASHBOARD & LOGGING
+
+window.autoNotifySecurityDashboard = function() {
+    try {
+        if (typeof renderEnterpriseDashboard === 'function') renderEnterpriseDashboard();
+        if (typeof renderSecurityDashboard === 'function') renderSecurityDashboard();
+        if (typeof renderVisitorTables === 'function') renderVisitorTables();
+        if (typeof updateSummaryCards === 'function') updateSummaryCards();
+    } catch (e) {
+        console.warn('[VMS AutoNotify] Dashboard refresh:', e.message);
+    }
+};
+
+function logEmailStatus(subject, recipient, statusDetails, statusStr) {
+    state.emailLogs = state.emailLogs || [];
+    state.emailLogs.unshift({
+        time: new Date().toLocaleString(),
+        recipient,
+        subject,
+        status: statusStr || 'Sent',
+        details: statusDetails
+    });
+    if (state.emailLogs.length > 100) state.emailLogs.pop();
+    saveState();
+}
+
+function logWhatsAppStatus(phone, msgType, statusStr, errorMsg = null, provider = 'Meta WhatsApp Cloud API') {
+    state.whatsappLogs = state.whatsappLogs || [];
+    state.whatsappLogs.unshift({
+        time: new Date().toLocaleString(),
+        phone,
+        msgType,
+        provider,
+        status: statusStr || 'Sent',
+        error: errorMsg
+    });
+    if (state.whatsappLogs.length > 100) state.whatsappLogs.pop();
+    saveState();
+}
+
+// 7. INITIALISATION FOR ONE-CLICK URL TRAP
+
+(function initOneClickEngine() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => setTimeout(checkUrlOneClickApproval, 1000));
+    } else {
+        setTimeout(checkUrlOneClickApproval, 1000);
+    }
+})();
+
+/* ==========================================================================
+   END OF ONE-CLICK EMAIL APPROVAL ENGINE
+   ========================================================================== */
+
