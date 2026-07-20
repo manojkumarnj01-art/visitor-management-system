@@ -6843,6 +6843,11 @@ function loadSettingsIntoForm() {
 
     if (document.getElementById("cfg-wa-method")) document.getElementById("cfg-wa-method").value = s.waMethod || "url-local";
     if (document.getElementById("cfg-auto-send-wa")) document.getElementById("cfg-auto-send-wa").checked = s.autoSendWhatsApp !== false;
+
+    // EmailJS credentials
+    if (document.getElementById("cfg-emailjs-service-id")) document.getElementById("cfg-emailjs-service-id").value = s.emailjsServiceId || "";
+    if (document.getElementById("cfg-emailjs-template-id")) document.getElementById("cfg-emailjs-template-id").value = s.emailjsTemplateHost || "";
+    if (document.getElementById("cfg-emailjs-public-key")) document.getElementById("cfg-emailjs-public-key").value = s.emailjsPublicKey || "";
 }
 
 function initializeCloudSettings() {
@@ -6855,13 +6860,20 @@ function initializeCloudSettings() {
         "cfg-smtp-host", "cfg-smtp-port", "cfg-terminal-gate",
         "cfg-supabase-url", "cfg-supabase-key", "cfg-supabase-bucket",
         "cfg-gcp-backend-url", "cfg-gcp-ai-url", "cfg-public-web-url",
-        "cfg-wa-method"
+        "cfg-wa-method",
+        "cfg-emailjs-service-id", "cfg-emailjs-template-id", "cfg-emailjs-public-key"
     ];
     cloudInputs.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.addEventListener("change", (e) => {
-                const prop = id.replace('cfg-', '').replace(/-([a-z])/g, g => g[1].toUpperCase());
+                // Explicit EmailJS key overrides to ensure correct property names
+                const explicitKeyMap = {
+                    "cfg-emailjs-service-id": "emailjsServiceId",
+                    "cfg-emailjs-template-id": "emailjsTemplateHost",
+                    "cfg-emailjs-public-key": "emailjsPublicKey"
+                };
+                const prop = explicitKeyMap[id] || id.replace('cfg-', '').replace(/-([a-z])/g, g => g[1].toUpperCase());
                 state.settings = state.settings || {};
                 state.settings[prop] = el.value;
                 localStorage.setItem("gk_settings", JSON.stringify(state.settings));
@@ -6871,7 +6883,13 @@ function initializeCloudSettings() {
                     initSupabase();
                 }
 
-                showToast("Settings Updated", `Configured value saved for ${id.replace('cfg-', '').toUpperCase()}`, "success");
+                // Re-initialize EmailJS when public key is saved
+                if (prop === "emailjsPublicKey" && el.value && window.emailjs) {
+                    emailjs.init(el.value);
+                    showToast("EmailJS Initialized", "EmailJS is now ready to send host approval emails.", "success");
+                } else {
+                    showToast("Settings Updated", `Configured value saved for ${id.replace('cfg-', '').toUpperCase()}`, "success");
+                }
                 addAuditLog("Update System Config", "Settings", `Modified configuration parameter: ${id}`);
             });
         }
@@ -6903,6 +6921,12 @@ function initializeCloudSettings() {
 
     // Initialize Supabase Client
     initSupabase();
+
+    // Auto-initialize EmailJS if credentials already configured
+    if (window.emailjs && state.settings && state.settings.emailjsPublicKey) {
+        emailjs.init(state.settings.emailjsPublicKey);
+        console.log("[EmailJS] Auto-initialized with stored public key.");
+    }
 
     // Trigger sync
     state.activeDMTab = "dm-tab-students";
@@ -13511,6 +13535,7 @@ window.checkUrlOneClickApproval = function() {
         visitor.rejectionTime = new Date().toLocaleString();
         saveState();
 
+        sendVisitorRejectionEmail(visitor);
         autoNotifySecurityDashboard();
 
         showOneClickModal(
@@ -13544,11 +13569,34 @@ function showOneClickModal(title, messageHtml, type) {
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
+// 1b. TRIGGER HOST APPROVAL NOTIFICATION DISPATCHER
+
+window.triggerHostApprovalNotification = function(visitor) {
+    if (!visitor) return;
+    const token = generateApprovalToken(visitor);
+    const hostEmp = (state.employees || []).find(e => e.id === visitor.hostId || e.name === visitor.hostName);
+    const hostEmail = hostEmp ? hostEmp.email : (visitor.hostEmail || "manojkumarnj01@gmail.com");
+
+    if (!hostEmail || hostEmail.trim() === "") {
+        showToast("Host Email Missing", `Host employee ${visitor.hostName || ''} has no configured email address.`, "warning");
+        logEmailStatus('Host Approval Dispatch Failed', 'N/A', `Host ${visitor.hostName} email missing`, 'Failed');
+        return;
+    }
+
+    sendHostApprovalEmail(visitor, token, hostEmail);
+};
+
+window.sendVisitorRejectionEmail = function(visitor) {
+    if (!visitor.email) return;
+    const emailSubject = `Notice: Visit Request Update - Barani Hydraulics (${visitor.id})`;
+    logEmailStatus('Visitor Rejection Notice', visitor.email, emailSubject, 'Sent');
+};
+
 // 2. AUTOMATED HOST APPROVAL EMAIL DISPATCH
 
-window.sendHostApprovalEmail = function(visitor, token) {
-    const host = (state.employees || []).find(e => e.id === visitor.hostId);
-    const hostEmail = host ? host.email : visitor.hostEmail || 'host@barani.in';
+window.sendHostApprovalEmail = function(visitor, token, overrideHostEmail = null) {
+    const host = (state.employees || []).find(e => e.id === visitor.hostId || e.name === visitor.hostName);
+    const hostEmail = overrideHostEmail || (host ? host.email : visitor.hostEmail || 'host@barani.in');
     const baseUrl = window.location.origin + window.location.pathname;
 
     const approveUrl = `${baseUrl}?action=approve&token=${token}`;
