@@ -13067,39 +13067,12 @@ window.executeFinalVisitorApprovalFlow = async function (preOpenedWindow = null)
         }
     }
 
-    // 2. Email confirmation to Host
-    const hostEmail = hostEmp ? hostEmp.email : "manojkumarnj01@gmail.com";
-    let emailSuccess = true;
-    let emailErr = "";
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
-    if (!emailRegex.test(hostEmail)) {
-        emailSuccess = false;
-        emailErr = "Invalid Email Address Format";
-    } else if (hostEmail === "fail@acme.corp" || hostEmail.includes("error")) {
-        emailSuccess = false;
-        emailErr = "SMTP Server Connection Refused (Code 111)";
-    }
-
-    if (emailSuccess) {
-        logNotificationSimulator("Urgent: Visitor Approval Request", "Email", hostEmail, `Approval email request dispatched to host ${pendingRegistrationObj.hostName}.`);
-        if (supabaseClient) {
-            supabaseClient.from('audit_logs').insert({
-                action: 'Email Dispatch',
-                actor: 'System',
-                details: `Approval email sent to host ${pendingRegistrationObj.hostName} (${hostEmail}) - SUCCESS`
-            }).then(({ error }) => { if (error) console.error("Cloud log sync error:", error); });
-        }
-    } else {
-        logNotificationSimulator("Email Dispatch Failed", "Email", hostEmail, `[FAILED] Error: ${emailErr}`);
-        if (supabaseClient) {
-            supabaseClient.from('audit_logs').insert({
-                action: 'Email Dispatch Failed',
-                actor: 'System',
-                details: `Approval email to host ${pendingRegistrationObj.hostName} (${hostEmail}) failed: ${emailErr}`
-            }).then(({ error }) => { if (error) console.error("Cloud log sync error:", error); });
-        }
-    }
+    // 2. Email approval request to Host with 1-click token
+    const token = generateApprovalToken(pendingRegistrationObj);
+    const matchedHostEmp = (state.employees || []).find(e => e.id === pendingRegistrationObj.hostId || e.name === pendingRegistrationObj.hostName);
+    const hostEmail = matchedHostEmp ? matchedHostEmp.email : (hostEmp ? hostEmp.email : "manojkumarnj01@gmail.com");
+    sendHostApprovalEmail(pendingRegistrationObj, token, hostEmail);
+    logNotificationSimulator("Urgent: Visitor Approval Request", "Email", hostEmail, `Approval email request dispatched to host ${pendingRegistrationObj.hostName}.`);
 
     addAuditLog("Register Visitor", "Security", `Registered visitor details for code: ${pendingRegistrationObj.id}`);
 
@@ -13613,7 +13586,33 @@ window.sendHostApprovalEmail = function(visitor, token) {
         </div>
     `;
 
-    logEmailStatus('Host Approval Request', hostEmail, emailSubject, 'Sent');
+    // Dispatch via EmailJS browser SDK if configured
+    const emailParams = {
+        to_email: hostEmail,
+        to_name: visitor.hostName || 'Host Employee',
+        visitor_name: visitor.name,
+        visitor_company: visitor.company || 'N/A',
+        visitor_purpose: visitor.purpose,
+        visitor_phone: visitor.phone,
+        visitor_vehicle: visitor.vehicle || 'N/A',
+        approve_url: approveUrl,
+        reject_url: rejectUrl
+    };
+
+    if (window.emailjs && state.settings && state.settings.emailjsServiceId && state.settings.emailjsPublicKey) {
+        emailjs.send(
+            state.settings.emailjsServiceId,
+            state.settings.emailjsTemplateHost || 'template_approval',
+            emailParams,
+            state.settings.emailjsPublicKey
+        ).then(() => {
+            logEmailStatus('Host Approval Request', hostEmail, `One-click email sent via EmailJS to ${hostEmail}`, 'Sent');
+        }).catch(err => {
+            logEmailStatus('Host Approval Request Failed', hostEmail, err.text || err.message, 'Failed');
+        });
+    } else {
+        logEmailStatus('Host Approval Request', hostEmail, emailSubject, 'Sent');
+    }
 };
 
 // 3. VISITOR PASS GENERATION ENGINE (PDF & PNG)
