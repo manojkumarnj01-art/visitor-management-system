@@ -414,7 +414,125 @@ const TRANSLATIONS = {
         "title-purchase-manual": "Purchase Manual Management",
         "sub-purchase-manual": "Draft, submit, and manage facility purchase manual registers",
         "title-work-permit": "Work Permit & Access Clearance",
-        "sub-work-permit": "Submit and authorize high-risk activity permits linked to approved manuals"
+        "sub-work-permit": "Submit and authorize high-risk activity permits linked to approved manuals",
+
+        // Branch Dropdown
+        "branch-all": "All Branches",
+        "branch-unit1": "Unit 1",
+        "branch-unit2": "Unit 2",
+
+        // Sidebar Navigation (new items)
+        "nav-pending-approvals": "Pending Approvals",
+        "nav-student-reg": "Student Registration",
+        "nav-customer-reg": "Customer Registration",
+        "nav-vendor-reg": "Vendor Registration",
+        "nav-data-mgmt": "Data Management",
+
+        // Dashboard Registration Cards
+        "dash-visitor-reg-hdr": "Visitor Registration",
+        "dash-visitor-reg-desc": "Choose the visitor category to register.",
+        "dash-student-desc": "Register students visiting the organization.",
+        "dash-customer-desc": "Register customers and clients.",
+        "dash-vendor-desc": "Register vendors, suppliers and contractors.",
+        "dash-checkout-desc": "Process visitor departures and exit logs.",
+        "dash-register-student-btn": "Register Student",
+        "dash-register-customer-btn": "Register Customer",
+        "dash-register-vendor-btn": "Register Vendor",
+
+        // Dynamic status labels
+        "status-pending": "Pending",
+        "status-pending-approval": "Pending Approval",
+        "status-approved": "Approved",
+        "status-rejected": "Rejected",
+        "status-checked-in": "Checked In",
+        "status-checked-out": "Checked Out",
+
+        // Dynamic table/button text
+        "btn-view": "View",
+        "btn-approve": "Approve",
+        "btn-reject": "Reject",
+        "btn-check-in": "Check-In",
+        "btn-check-out": "Check-Out",
+        "btn-pdf": "PDF",
+        "btn-wa": "WA",
+        "btn-email": "Email",
+        "btn-pass": "Pass",
+        "btn-excel": "Excel",
+        "btn-print": "Print",
+        "btn-previous": "Previous",
+        "btn-next": "Next",
+        "btn-reset": "Reset",
+        "btn-register-visitor": "Register Visitor",
+
+        // Pagination
+        "showing-x-to-y-of-z": "Showing {start} to {end} of {total} entries",
+
+        // Dashboard table headers
+        "tbl-visitor-name": "Visitor Name",
+        "tbl-mobile": "Mobile",
+        "tbl-company": "Company",
+        "tbl-purpose": "Purpose",
+        "tbl-visit-date": "Visit Date",
+        "tbl-host-employee": "Host Employee",
+        "tbl-in-time": "In Time",
+        "tbl-out-time": "Out Time",
+        "tbl-photo": "Photo",
+        "tbl-visitor-id": "Visitor ID",
+        "tbl-category": "Category",
+        "tbl-company-college": "Company/College",
+        "tbl-last-visit": "Last Visit",
+        "tbl-valid-until": "Valid Until",
+        "tbl-id-number": "ID Number",
+
+        // Common form labels
+        "lbl-full-name": "Full Name *",
+        "lbl-mobile-number": "Mobile Number *",
+        "lbl-email": "Email",
+        "lbl-email-required": "Email *",
+        "lbl-company-name": "Company Name",
+        "lbl-company-name-required": "Company Name *",
+        "lbl-designation": "Designation",
+        "lbl-purpose-of-visit": "Purpose of Visit *",
+        "lbl-host-employee": "Host Employee *",
+        "lbl-visit-date": "Visit Date *",
+        "lbl-valid-until": "Valid Until *",
+        "lbl-id-proof-type": "ID Proof Type *",
+        "lbl-id-proof-number": "ID Proof Number *",
+        "lbl-profile-photo": "Profile Photo *",
+        "lbl-college-university": "College / University *",
+        "lbl-select-id-type": "Select ID Type",
+
+        // Category names
+        "cat-student": "Student",
+        "cat-customer": "Customer",
+        "cat-vendor": "Vendor",
+        "cat-contractor": "Contractor",
+        "cat-delivery": "Delivery",
+        "cat-service-engineer": "Service Engineer",
+        "cat-visitor": "Visitor",
+
+        // Camera / Photo
+        "camera-inactive": "Camera Inactive",
+        "btn-enable-camera": "Enable Camera",
+        "btn-capture": "Capture",
+        "btn-retake": "Retake",
+        "upload-photo-hint-text": "Or upload a photo file",
+        "btn-upload-image": "Upload Image",
+
+        // Search existing visitor
+        "search-existing-visitor": "Search Existing Visitor",
+        "search-existing-customer": "Search Existing Customer",
+        "search-by-mobile-or-id": "Search by Mobile Number or Visitor ID to auto-fill details",
+
+        // Misc dynamic strings
+        "no-matching-visitors": "No matching registered visitors found.",
+        "no-reports-found": "No reports found matching filters.",
+        "no-visitors-awaiting": "No visitors awaiting approval.",
+        "all-statuses": "All Statuses",
+        "logged-in-as": "Logged in as {name}",
+        "status-lbl": "Status",
+        "actions-lbl": "Actions",
+        "lbl-department": "Department"
     },
     ta: {
         // Login Card
@@ -719,7 +837,125 @@ const TRANSLATIONS = {
         "title-purchase-manual": "கொள்முதல் கையேடு மேலாண்மை",
         "sub-purchase-manual": "கொள்முதல் கையேடுகளை வரைவு செய்ய, சமர்ப்பிக்க மற்றும் நிர்வகிக்க",
         "title-work-permit": "வேலை அனுமதிச்சீட்டு & அணுகல் அனுமதி",
-        "sub-work-permit": "அங்கீகரிக்கப்பட்ட கையேடுகளுடன் இணைக்கப்பட்ட வேலை அனுமதிச்சீட்டுகளைச் சமர்ப்பித்து அங்கீகரிக்க"
+        "sub-work-permit": "அங்கீகரிக்கப்பட்ட கையேடுகளுடன் இணைக்கப்பட்ட வேலை அனுமதிச்சீட்டுகளைச் சமர்ப்பித்து அங்கீகரிக்க",
+
+        // Branch Dropdown
+        "branch-all": "அனைத்து பிரிவுகளும்",
+        "branch-unit1": "அலகு 1",
+        "branch-unit2": "அலகு 2",
+        "status-lbl": "நிலை",
+        "actions-lbl": "செயல்கள்",
+        "lbl-department": "துறை",
+
+        // Sidebar Navigation (new items)
+        "nav-pending-approvals": "நிலுவையில் உள்ள ஒப்புதல்கள்",
+        "nav-student-reg": "மாணவர் பதிவு",
+        "nav-customer-reg": "வாடிக்கையாளர் பதிவு",
+        "nav-vendor-reg": "விற்பனையாளர் பதிவு",
+        "nav-data-mgmt": "தரவு மேலாண்மை",
+
+        // Dashboard Registration Cards
+        "dash-visitor-reg-hdr": "வருகையாளர் பதிவு",
+        "dash-visitor-reg-desc": "பதிவு செய்ய வருகையாளர் வகையைத் தேர்ந்தெடுக்கவும்.",
+        "dash-student-desc": "நிறுவனத்திற்கு வரும் மாணவர்களை பதிவு செய்யவும்.",
+        "dash-customer-desc": "வாடிக்கையாளர்களையும் வணிகர்களையும் பதிவு செய்யவும்.",
+        "dash-vendor-desc": "விற்பனையாளர்கள், சப்ளையர்கள் மற்றும் ஒப்பந்தக்காரர்களை பதிவு செய்யவும்.",
+        "dash-checkout-desc": "வருகையாளர் வெளியேற்றம் மற்றும் வெளியேறும் பதிவுகளை செயலாக்கவும்.",
+        "dash-register-student-btn": "மாணவர் பதிவு",
+        "dash-register-customer-btn": "வாடிக்கையாளர் பதிவு",
+        "dash-register-vendor-btn": "விற்பனையாளர் பதிவு",
+
+        // Dynamic status labels
+        "status-pending": "நிலுவையில்",
+        "status-pending-approval": "ஒப்புதல் நிலுவையில்",
+        "status-approved": "அங்கீகரிக்கப்பட்டது",
+        "status-rejected": "நிராகரிக்கப்பட்டது",
+        "status-checked-in": "உள்நுழைந்தது",
+        "status-checked-out": "வெளியேறியது",
+
+        // Dynamic table/button text
+        "btn-view": "பார்",
+        "btn-approve": "ஒப்புக்கொள்",
+        "btn-reject": "நிராகரி",
+        "btn-check-in": "உள்நுழைவு",
+        "btn-check-out": "வெளியேற்றம்",
+        "btn-pdf": "PDF",
+        "btn-wa": "WA",
+        "btn-email": "மின்னஞ்சல்",
+        "btn-pass": "பாஸ்",
+        "btn-excel": "எக்செல்",
+        "btn-print": "அச்சிடு",
+        "btn-previous": "முந்தையது",
+        "btn-next": "அடுத்தது",
+        "btn-reset": "மீட்டமை",
+        "btn-register-visitor": "வருகையாளர் பதிவு",
+
+        // Pagination
+        "showing-x-to-y-of-z": "{start} முதல் {end} வரை {total} பதிவுகளில் காண்பிக்கப்படுகிறது",
+
+        // Dashboard table headers
+        "tbl-visitor-name": "வருகையாளர் பெயர்",
+        "tbl-mobile": "கைபேசி",
+        "tbl-company": "நிறுவனம்",
+        "tbl-purpose": "நோக்கம்",
+        "tbl-visit-date": "வருகை தேதி",
+        "tbl-host-employee": "சந்திக்கவேண்டிய பணியாளர்",
+        "tbl-in-time": "உள்நுழைவு நேரம்",
+        "tbl-out-time": "வெளியேறும் நேரம்",
+        "tbl-photo": "புகைப்படம்",
+        "tbl-visitor-id": "வருகையாளர் ஐடி",
+        "tbl-category": "வகை",
+        "tbl-company-college": "நிறுவனம்/கல்லூரி",
+        "tbl-last-visit": "கடைசி வருகை",
+        "tbl-valid-until": "செல்லும் நாள் வரை",
+        "tbl-id-number": "அடையாள எண்",
+
+        // Common form labels
+        "lbl-full-name": "முழு பெயர் *",
+        "lbl-mobile-number": "கைபேசி எண் *",
+        "lbl-email": "மின்னஞ்சல்",
+        "lbl-email-required": "மின்னஞ்சல் *",
+        "lbl-company-name": "நிறுவனத்தின் பெயர்",
+        "lbl-company-name-required": "நிறுவனத்தின் பெயர் *",
+        "lbl-designation": "பதவி",
+        "lbl-purpose-of-visit": "வருகையின் நோக்கம் *",
+        "lbl-host-employee": "சந்திக்கவேண்டிய பணியாளர் *",
+        "lbl-visit-date": "வருகை தேதி *",
+        "lbl-valid-until": "செல்லும் நாள் வரை *",
+        "lbl-id-proof-type": "அடையாள ஆவண வகை *",
+        "lbl-id-proof-number": "அடையாள ஆவண எண் *",
+        "lbl-profile-photo": "சுயவிவர புகைப்படம் *",
+        "lbl-college-university": "கல்லூரி / பல்கலைக்கழகம் *",
+        "lbl-select-id-type": "அடையாள வகையைத் தேர்ந்தெடுக்கவும்",
+
+        // Category names
+        "cat-student": "மாணவர்",
+        "cat-customer": "வாடிக்கையாளர்",
+        "cat-vendor": "விற்பனையாளர்",
+        "cat-contractor": "ஒப்பந்தக்காரர்",
+        "cat-delivery": "விநியோகம்",
+        "cat-service-engineer": "சேவை பொறியாளர்",
+        "cat-visitor": "வருகையாளர்",
+
+        // Camera / Photo
+        "camera-inactive": "கேமரா செயலற்றது",
+        "btn-enable-camera": "கேமரா இயக்கு",
+        "btn-capture": "படம் எடு",
+        "btn-retake": "மீண்டும் எடு",
+        "upload-photo-hint-text": "அல்லது ஒரு படக்கோப்பை பதிவேற்றவும்",
+        "btn-upload-image": "படம் பதிவேற்று",
+
+        // Search existing visitor
+        "search-existing-visitor": "ஏற்கனவே உள்ள வருகையாளரைத் தேடு",
+        "search-existing-customer": "ஏற்கனவே உள்ள வாடிக்கையாளரைத் தேடு",
+        "search-by-mobile-or-id": "விவரங்களை தானாக நிரப்ப கைபேசி எண் அல்லது வருகையாளர் ஐடி மூலம் தேடவும்",
+
+        // Misc dynamic strings
+        "no-matching-visitors": "பொருந்தும் பதிவு செய்யப்பட்ட வருகையாளர்கள் இல்லை.",
+        "no-reports-found": "வடிப்பான்களுடன் பொருந்தும் அறிக்கைகள் இல்லை.",
+        "no-visitors-awaiting": "ஒப்புதலுக்கு காத்திருக்கும் வருகையாளர்கள் இல்லை.",
+        "all-statuses": "அனைத்து நிலைகள்",
+        "logged-in-as": "{name} ஆக உள்நுழைந்துள்ளீர்கள்"
     }
 };
 
@@ -1111,6 +1347,11 @@ function getTranslatedText(key, defaultVal = "") {
         return TRANSLATIONS[lang][key];
     }
     return defaultVal;
+}
+
+function getPaginationText(start, end, total) {
+    const template = getTranslatedText("showing-x-to-y-of-z", `Showing ${start} to ${end} of ${total} entries`);
+    return template.replace("{start}", start).replace("{end}", end).replace("{total}", total);
 }
 
 function translatePage() {
@@ -3634,7 +3875,7 @@ function renderHistoryView() {
     }
 
     if (totalRecords === 0) {
-        pagEl.innerHTML = `<span>Showing 0 to 0 of 0 entries</span>`;
+        pagEl.innerHTML = `<span>${getPaginationText(0, 0, 0)}</span>`;
         tableBody.innerHTML = `
             <tr>
                 <td colspan="7" class="empty-state">No history transaction archives found matching query.</td>
@@ -3644,10 +3885,10 @@ function renderHistoryView() {
     }
 
     pagEl.innerHTML = `
-        <span>Showing ${startIdx + 1} to ${endIdx} of ${totalRecords} entries</span>
+        <span>${getPaginationText(startIdx + 1, endIdx, totalRecords)}</span>
         <div class="flex gap-1">
-            <button type="button" class="btn btn-secondary btn-sm" id="btn-history-prev" style="padding:2px 8px; font-size:0.7rem; cursor:pointer;">Prev</button>
-            <button type="button" class="btn btn-secondary btn-sm" id="btn-history-next" style="padding:2px 8px; font-size:0.7rem; cursor:pointer;">Next</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-history-prev" style="padding:2px 8px; font-size:0.7rem; cursor:pointer;">${getTranslatedText('btn-previous', 'Prev')}</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-history-next" style="padding:2px 8px; font-size:0.7rem; cursor:pointer;">${getTranslatedText('btn-next', 'Next')}</button>
         </div>
     `;
 
@@ -3945,7 +4186,7 @@ function renderReportsData() {
     }
 
     if (totalRecords === 0) {
-        pagEl.innerHTML = `<span>Showing 0 to 0 of 0 entries</span>`;
+        pagEl.innerHTML = `<span>${getPaginationText(0, 0, 0)}</span>`;
         if (isGatekeeper) {
             tableBody.innerHTML = `<tr><td colspan="7" class="empty-state" style="text-align:center; padding:2rem;">No visitor audit logs match the current query criteria.</td></tr>`;
         } else {
@@ -3953,10 +4194,10 @@ function renderReportsData() {
         }
     } else {
         pagEl.innerHTML = `
-            <span>Showing ${startIdx + 1} to ${endIdx} of ${totalRecords} entries</span>
+            <span>${getPaginationText(startIdx + 1, endIdx, totalRecords)}</span>
             <div class="flex gap-1">
-                <button type="button" class="btn btn-secondary btn-sm" id="btn-reports-prev" style="padding:2px 8px; font-size:0.7rem; cursor:pointer;">Prev</button>
-                <button type="button" class="btn btn-secondary btn-sm" id="btn-reports-next" style="padding:2px 8px; font-size:0.7rem; cursor:pointer;">Next</button>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-reports-prev" style="padding:2px 8px; font-size:0.7rem; cursor:pointer;">${getTranslatedText('btn-previous', 'Prev')}</button>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-reports-next" style="padding:2px 8px; font-size:0.7rem; cursor:pointer;">${getTranslatedText('btn-next', 'Next')}</button>
             </div>
         `;
 
@@ -6489,9 +6730,8 @@ async function pushLocalToSupabase() {
 
         // Upsert branches
         const branchesToPush = [
-            { name: "Chennai HQ", location: "Chennai, Tamil Nadu, India" },
-            { name: "Coimbatore Plant", location: "Coimbatore, Tamil Nadu, India" },
-            { name: "Bangalore R&D", location: "Bangalore, Karnataka, India" }
+            { name: "Unit 1", location: "Chennai, Tamil Nadu, India" },
+            { name: "Unit 2", location: "Coimbatore, Tamil Nadu, India" }
         ];
         await supabaseClient.from('branches').upsert(branchesToPush, { onConflict: 'name' });
 
@@ -7022,7 +7262,7 @@ function renderDataManagementTab(tabId) {
     const displayStart = totalRecords === 0 ? 0 : startIndex + 1;
     const paginationInfo = document.getElementById("dm-pagination-info");
     if (paginationInfo) {
-        paginationInfo.innerText = `Showing ${displayStart} to ${endIndex} of ${totalRecords} entries`;
+        paginationInfo.innerText = getPaginationText(displayStart, endIndex, totalRecords);
     }
 
     // 7. Update Pagination Controls
@@ -10544,9 +10784,9 @@ function renderDrawerTable() {
     const paginationText = document.querySelector("#drawer-pagination-info span");
     if (paginationText) {
         if (totalRecords === 0) {
-            paginationText.innerText = "Showing 0 to 0 of 0 entries";
+            paginationText.innerText = getPaginationText(0, 0, 0);
         } else {
-            paginationText.innerText = `Showing ${startIdx + 1} to ${endIdx} of ${totalRecords} entries`;
+            paginationText.innerText = getPaginationText(startIdx + 1, endIdx, totalRecords);
         }
     }
 
@@ -11882,13 +12122,13 @@ window.renderLiveRegistrationTable = function (category) {
     if (paginationEl) {
         const endRange = Math.min(startIndex + pageSize, totalItems);
         paginationEl.innerHTML = `
-            <div>Showing ${startIndex + 1} to ${endRange} of ${totalItems} entries</div>
+            <div>${getPaginationText(startIndex + 1, endRange, totalItems)}</div>
             <div style="display: flex; gap: 0.25rem;">
-                <button type="button" class="btn btn-secondary btn-xs" ${tableState.currentPage === 1 ? 'disabled' : ''} onclick="window.liveTableGoToPage('${category}', ${tableState.currentPage - 1})">Prev</button>
+                <button type="button" class="btn btn-secondary btn-xs" ${tableState.currentPage === 1 ? 'disabled' : ''} onclick="window.liveTableGoToPage('${category}', ${tableState.currentPage - 1})">${getTranslatedText('btn-previous', 'Prev')}</button>
                 ${Array.from({ length: totalPages }, (_, i) => i + 1).map(p => `
                     <button type="button" class="btn btn-xs ${tableState.currentPage === p ? 'btn-accent' : 'btn-secondary'}" onclick="window.liveTableGoToPage('${category}', ${p})">${p}</button>
                 `).join('')}
-                <button type="button" class="btn btn-secondary btn-xs" ${tableState.currentPage === totalPages ? 'disabled' : ''} onclick="window.liveTableGoToPage('${category}', ${tableState.currentPage + 1})">Next</button>
+                <button type="button" class="btn btn-secondary btn-xs" ${tableState.currentPage === totalPages ? 'disabled' : ''} onclick="window.liveTableGoToPage('${category}', ${tableState.currentPage + 1})">${getTranslatedText('btn-next', 'Next')}</button>
             </div>
         `;
     }
@@ -12334,10 +12574,10 @@ window.renderReportsView = function () {
         const displayStart = totalRecords === 0 ? 0 : startIndex + 1;
         
         footer.innerHTML = `
-            <span>Showing ${displayStart} to ${endIndex} of ${totalRecords} entries</span>
+            <span>${getPaginationText(displayStart, endIndex, totalRecords)}</span>
             <div style="display: flex; gap: 0.5rem;">
-                <button type="button" class="btn btn-secondary btn-xs ${state.reportsCurrentPage === 1 ? "disabled" : ""}" id="btn-rep-prev">Previous</button>
-                <button type="button" class="btn btn-secondary btn-xs ${state.reportsCurrentPage === totalPages ? "disabled" : ""}" id="btn-rep-next">Next</button>
+                <button type="button" class="btn btn-secondary btn-xs ${state.reportsCurrentPage === 1 ? "disabled" : ""}" id="btn-rep-prev">${getTranslatedText('btn-previous', 'Previous')}</button>
+                <button type="button" class="btn btn-secondary btn-xs ${state.reportsCurrentPage === totalPages ? "disabled" : ""}" id="btn-rep-next">${getTranslatedText('btn-next', 'Next')}</button>
             </div>
         `;
 

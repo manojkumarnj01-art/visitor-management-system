@@ -152,7 +152,7 @@
                         <circle cx="12" cy="12" r="10" />
                         <polyline points="12 6 12 12 16 14" />
                     </svg>
-                    <span>Pending Approvals</span>
+                    <span data-i18n="nav-pending-approvals">Pending Approvals</span>
                 </div>
                 <!-- 2. Student Registration -->
                 <div class="nav-link" data-target="reg-student">
@@ -160,7 +160,7 @@
                         <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
                         <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
                     </svg>
-                    <span>Student Registration</span>
+                    <span data-i18n="nav-student-reg">Student Registration</span>
                 </div>
                 <!-- 3. Customer Registration -->
                 <div class="nav-link" data-target="reg-customer">
@@ -168,7 +168,7 @@
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                         <circle cx="12" cy="7" r="4" />
                     </svg>
-                    <span>Customer Registration</span>
+                    <span data-i18n="nav-customer-reg">Customer Registration</span>
                 </div>
                 <!-- 4. Vendor Registration -->
                 <div class="nav-link" data-target="reg-vendor">
@@ -178,7 +178,7 @@
                         <circle cx="5.5" cy="18.5" r="2.5" />
                         <circle cx="18.5" cy="18.5" r="2.5" />
                     </svg>
-                    <span>Vendor Registration</span>
+                    <span data-i18n="nav-vendor-reg">Vendor Registration</span>
                 </div>
                 <!-- 5. Reports -->
                 <div class="nav-link" data-target="view-reports">
@@ -199,7 +199,7 @@
                         <path d="M14 14H8" />
                         <circle cx="6" cy="18" r="2" />
                     </svg>
-                    <span>Data Management</span>
+                    <span data-i18n="nav-data-mgmt">Data Management</span>
                 </div>
                 <!-- 6. Employee Search -->
                 <div class="nav-link" data-target="view-employee-search">
@@ -271,10 +271,9 @@
                         </svg>
                         <select class="branch-select" id="header-branch-select"
                             style="background: none; color: var(--text-primary); border: none; font-size: 0.75rem; font-weight: 500; cursor: pointer; outline: none; padding-right: 4px;">
-                            <option value="all">All Branches</option>
-                            <option value="HQ">Chennai HQ</option>
-                            <option value="Coimbatore">Coimbatore Plant</option>
-                            <option value="Bangalore">Bangalore R&D</option>
+                            <option value="all" data-i18n="branch-all">All Branches</option>
+                            <option value="Unit 1" data-i18n="branch-unit1">Unit 1</option>
+                            <option value="Unit 2" data-i18n="branch-unit2">Unit 2</option>
                         </select>
                     </div>
                     <div class="lang-selector">
@@ -359,21 +358,21 @@
                 <div class="summary-item">
                     <span class="summary-icon">&#x1F4E4;</span>
                     <div class="summary-details">
-                        <span class="summary-label">Checked Out</span>
+                        <span class="summary-label" data-i18n="checked-out">Checked Out</span>
                         <span class="summary-value checked-out" id="summary-checked-out">0</span>
                     </div>
                 </div>
                 <div class="summary-item">
                     <span class="summary-icon">&#x1F4C5;</span>
                     <div class="summary-details">
-                        <span class="summary-label">Visitors Today</span>
+                        <span class="summary-label" data-i18n="visitors-today">Visitors Today</span>
                         <span class="summary-value visitors-today" id="summary-visitors-today">0</span>
                     </div>
                 </div>
                 <div class="summary-item">
                     <span class="summary-icon">&#x1F3E2;</span>
                     <div class="summary-details">
-                        <span class="summary-label">Currently In Campus</span>
+                        <span class="summary-label" data-i18n="inside-campus">Currently In Campus</span>
                         <span class="summary-value in-campus" id="summary-in-campus">0</span>
                     </div>
                 </div>
@@ -388,11 +387,10 @@
                         <!-- Redesigned Registration Dashboard Grid -->
                         <div id="registration-dashboard-wrapper" class="w-full">
                             <div class="text-center mb-6" style="margin-top: 1.5rem; margin-bottom: 2rem;">
-                                <h2
+                                <h2 data-i18n="dash-visitor-reg-hdr"
                                     style="font-size: 1.85rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem; letter-spacing: -0.5px;">
                                     Visitor Registration</h2>
-                                <p style="font-size: 0.95rem; color: var(--text-secondary); font-weight: 500;">Choose
-                                    the visitor category to register.</p>
+                                <p data-i18n="dash-visitor-reg-desc" style="font-size: 0.95rem; color: var(--text-secondary); font-weight: 500;">Choose the visitor category to register.</p>
                             </div>
 
                             <!-- Dashboard Stats Cards -->
@@ -401,9 +399,8 @@
                                 <div class="summary-item" style="padding: 0.75rem 1.25rem;">
                                     <span class="summary-icon" style="font-size: 1.75rem;">&#x1F4E4;</span>
                                         <div class="summary-details">
-                                            <span class="summary-label"
-                                                style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; display: block;">Checked
-                                                Out</span>
+                                            <span class="summary-label" data-i18n="checked-out"
+                                                style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; display: block;">Checked Out</span>
                                         <span class="summary-value checked-out" id="dashboard-stat-checked-out"
                                             style="font-size: 1.4rem; font-weight: 800; color: var(--text-primary);">0</span>
                                     </div>
@@ -411,9 +408,8 @@
                                 <div class="summary-item" style="padding: 0.75rem 1.25rem;">
                                     <span class="summary-icon" style="font-size: 1.75rem;">&#x1F4C5;</span>
                                         <div class="summary-details">
-                                            <span class="summary-label"
-                                                style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; display: block;">Visitors
-                                                Today</span>
+                                            <span class="summary-label" data-i18n="visitors-today"
+                                                style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; display: block;">Visitors Today</span>
                                         <span class="summary-value visitors-today" id="dashboard-stat-visitors-today"
                                             style="font-size: 1.4rem; font-weight: 800; color: var(--accent-primary);">0</span>
                                     </div>
@@ -421,9 +417,8 @@
                                 <div class="summary-item" style="padding: 0.75rem 1.25rem;">
                                     <span class="summary-icon" style="font-size: 1.75rem;">&#x1F3E2;</span>
                                         <div class="summary-details">
-                                            <span class="summary-label"
-                                                style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; display: block;">Currently
-                                                In Campus</span>
+                                            <span class="summary-label" data-i18n="inside-campus"
+                                                style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; display: block;">Currently In Campus</span>
                                         <span class="summary-value in-campus" id="dashboard-stat-in-campus"
                                             style="font-size: 1.4rem; font-weight: 800; color: var(--accent-success);">0</span>
                                     </div>
@@ -436,12 +431,11 @@
                                     style="min-height: 250px; display: flex; flex-direction: column; justify-content: space-between;">
                                     <div>
                                         <div class="card-icon-wrapper" style="margin-bottom: 1rem;">&#x1F393;</div>
-                                        <h3 class="card-title" style="margin-bottom: 0.5rem;">Student Registration</h3>
-                                        <p class="card-description" style="margin-bottom: 1.5rem;">Register students
-                                            visiting the organization.</p>
+                                        <h3 class="card-title" data-i18n="nav-student-reg" style="margin-bottom: 0.5rem;">Student Registration</h3>
+                                        <p class="card-description" data-i18n="dash-student-desc" style="margin-bottom: 1.5rem;">Register students visiting the organization.</p>
                                     </div>
                                     <div class="card-actions" style="margin-top: auto; width: 100%;">
-                                        <button type="button" class="btn btn-primary btn-block"
+                                        <button type="button" class="btn btn-primary btn-block" data-i18n="dash-register-student-btn"
                                             onclick="navigateTo('/student-registration')">Register Student</button>
                                     </div>
                                 </div>
@@ -451,12 +445,11 @@
                                     style="min-height: 250px; display: flex; flex-direction: column; justify-content: space-between;">
                                     <div>
                                         <div class="card-icon-wrapper" style="margin-bottom: 1rem;">&#x1F3E2;</div>
-                                        <h3 class="card-title" style="margin-bottom: 0.5rem;">Customer Registration</h3>
-                                        <p class="card-description" style="margin-bottom: 1.5rem;">Register customers
-                                            and clients.</p>
+                                        <h3 class="card-title" data-i18n="nav-customer-reg" style="margin-bottom: 0.5rem;">Customer Registration</h3>
+                                        <p class="card-description" data-i18n="dash-customer-desc" style="margin-bottom: 1.5rem;">Register customers and clients.</p>
                                     </div>
                                     <div class="card-actions" style="margin-top: auto; width: 100%;">
-                                        <button type="button" class="btn btn-primary btn-block"
+                                        <button type="button" class="btn btn-primary btn-block" data-i18n="dash-register-customer-btn"
                                             onclick="navigateTo('/customer-registration')">Register Customer</button>
                                     </div>
                                 </div>
@@ -466,12 +459,11 @@
                                     style="min-height: 250px; display: flex; flex-direction: column; justify-content: space-between;">
                                     <div>
                                         <div class="card-icon-wrapper" style="margin-bottom: 1rem;">&#x1F69A;</div>
-                                        <h3 class="card-title" style="margin-bottom: 0.5rem;">Vendor Registration</h3>
-                                        <p class="card-description" style="margin-bottom: 1.5rem;">Register vendors,
-                                            suppliers and contractors.</p>
+                                        <h3 class="card-title" data-i18n="nav-vendor-reg" style="margin-bottom: 0.5rem;">Vendor Registration</h3>
+                                        <p class="card-description" data-i18n="dash-vendor-desc" style="margin-bottom: 1.5rem;">Register vendors, suppliers and contractors.</p>
                                     </div>
                                     <div class="card-actions" style="margin-top: auto; width: 100%;">
-                                        <button type="button" class="btn btn-primary btn-block"
+                                        <button type="button" class="btn btn-primary btn-block" data-i18n="dash-register-vendor-btn"
                                             onclick="navigateTo('/vendor-registration')">Register Vendor</button>
                                     </div>
                                 </div>
@@ -481,12 +473,11 @@
                                     style="min-height: 250px; display: flex; flex-direction: column; justify-content: space-between;">
                                     <div>
                                         <div class="card-icon-wrapper" style="margin-bottom: 1rem;">&#x1F6AA;</div>
-                                        <h3 class="card-title" style="margin-bottom: 0.5rem;">Check-Out</h3>
-                                        <p class="card-description" style="margin-bottom: 1.5rem;">Process visitor
-                                            departures and exit logs.</p>
+                                        <h3 class="card-title" data-i18n="nav-checkout" style="margin-bottom: 0.5rem;">Check-Out</h3>
+                                        <p class="card-description" data-i18n="dash-checkout-desc" style="margin-bottom: 1.5rem;">Process visitor departures and exit logs.</p>
                                     </div>
                                     <div class="card-actions" style="margin-top: auto; width: 100%;">
-                                        <button type="button" class="btn btn-primary btn-block"
+                                        <button type="button" class="btn btn-primary btn-block" data-i18n="nav-checkout"
                                             onclick="navigateTo('/checkout')">Check-Out</button>
                                     </div>
                                 </div>
@@ -512,15 +503,15 @@
                                 <thead>
                                     <tr
                                         style="border-bottom: 2px solid var(--border-color); background: var(--bg-app); font-weight: 700; color: var(--text-secondary);">
-                                        <th style="padding: 12px 10px;">Visitor Photo</th>
-                                        <th style="padding: 12px 10px;">Visitor Name</th>
-                                        <th style="padding: 12px 10px;">Mobile</th>
-                                        <th style="padding: 12px 10px;">Company</th>
-                                        <th style="padding: 12px 10px;">Purpose</th>
-                                        <th style="padding: 12px 10px;">Visit Date</th>
-                                        <th style="padding: 12px 10px;">Host Employee</th>
-                                        <th style="padding: 12px 10px;">Status</th>
-                                        <th style="padding: 12px 10px;" class="no-print">Actions</th>
+                                        <th style="padding: 12px 10px;" data-i18n="tbl-photo">Visitor Photo</th>
+                                        <th style="padding: 12px 10px;" data-i18n="tbl-visitor-name">Visitor Name</th>
+                                        <th style="padding: 12px 10px;" data-i18n="tbl-mobile">Mobile</th>
+                                        <th style="padding: 12px 10px;" data-i18n="tbl-company">Company</th>
+                                        <th style="padding: 12px 10px;" data-i18n="tbl-purpose">Purpose</th>
+                                        <th style="padding: 12px 10px;" data-i18n="tbl-visit-date">Visit Date</th>
+                                        <th style="padding: 12px 10px;" data-i18n="tbl-host-employee">Host Employee</th>
+                                        <th style="padding: 12px 10px;" data-i18n="status-lbl">Status</th>
+                                        <th style="padding: 12px 10px;" class="no-print" data-i18n="actions-lbl">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="view-pending-approvals-tbody">
@@ -542,7 +533,7 @@
                         <!-- SECTION 1: Registration Form -->
                         <div class="dashboard-card reg-form-card">
                             <div class="card-header">
-                                <h2>&#x1F393; Student Registration</h2>
+                                <h2 data-i18n="nav-student-reg">&#x1F393; Student Registration</h2>
                             </div>
 
                             <form id="student-registration-form" class="app-form" autocomplete="off">
@@ -552,10 +543,10 @@
                                         <!-- Smart Auto Search Section -->
                                         <div class="search-visitor-box mb-4"
                                             style="background: var(--bg-app); border: 1px solid var(--border-color); padding: 1rem; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-sm);">
-                                            <h3
+                                            <h3 data-i18n="search-existing-visitor"
                                                 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--accent-primary);">
                                                 Search Existing Visitor</h3>
-                                            <p
+                                            <p data-i18n="search-by-mobile-or-id"
                                                 style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
                                                 Search by Mobile Number or Visitor ID to auto-fill details</p>
                                             <input type="text" class="search-visitor-input" id="search-visitor-student"
@@ -581,13 +572,15 @@
                                         <!-- Row 1: Full Name + Mobile -->
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-student-name">Full Name *</label>
+                                                <label for="reg-student-name" data-i18n="lbl-full-name">Full Name *</label>
                                                 <input type="text" id="reg-student-name" placeholder="Full Name"
+                                                    data-i18n-placeholder="lbl-full-name"
                                                     required autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-student-phone">Mobile Number *</label>
+                                                <label for="reg-student-phone" data-i18n="lbl-mobile-number">Mobile Number *</label>
                                                 <input type="tel" id="reg-student-phone" placeholder="Mobile Number"
+                                                    data-i18n-placeholder="lbl-mobile-number"
                                                     required autocomplete="off">
                                             </div>
                                         </div>
@@ -595,12 +588,12 @@
                                         <!-- Row 2: Email + College -->
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-student-email">Email</label>
+                                                <label for="reg-student-email" data-i18n="lbl-email">Email</label>
                                                 <input type="email" id="reg-student-email"
                                                     placeholder="student@college.edu" autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-student-college">College / University *</label>
+                                                <label for="reg-student-college" data-i18n="lbl-college-university">College / University *</label>
                                                 <input type="text" id="reg-student-college" placeholder="College Name"
                                                     required autocomplete="off">
                                             </div>
@@ -614,7 +607,7 @@
                                                     placeholder="e.g. BE Mechanical" autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-student-purpose">Purpose of Visit *</label>
+                                                <label for="reg-student-purpose" data-i18n="lbl-purpose-of-visit">Purpose of Visit *</label>
                                                 <select id="reg-student-purpose" required>
                                                     <option value="">&#x2014; Select Purpose &#x2014;</option>
                                                     <option value="Industrial Visit">Industrial Visit</option>
@@ -630,7 +623,7 @@
                                         <!-- Row 4: Host + Visit Date + Valid Until -->
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-student-host">Host Employee *</label>
+                                                <label for="reg-student-host" data-i18n="lbl-host-employee">Host Employee *</label>
                                                 <div class="autocomplete-container">
                                                     <input type="text" id="reg-student-host"
                                                         placeholder="Type employee name to search..." required
@@ -640,12 +633,12 @@
                                                 </div>
                                             </div>
                                             <div class="form-group col-3">
-                                                <label for="reg-student-visit-date">Visit Date *</label>
+                                                <label for="reg-student-visit-date" data-i18n="lbl-visit-date">Visit Date *</label>
                                                 <input type="date" id="reg-student-visit-date" required
                                                     autocomplete="off">
                                             </div>
                                             <div class="form-group col-3">
-                                                <label for="reg-student-end-date">Valid Until *</label>
+                                                <label for="reg-student-end-date" data-i18n="lbl-valid-until">Valid Until *</label>
                                                 <input type="date" id="reg-student-end-date" required
                                                     autocomplete="off">
                                             </div>
@@ -654,7 +647,7 @@
                                         <!-- Row 5: ID Proof Type + ID Proof Number -->
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-student-id-type">ID Proof Type *</label>
+                                                <label for="reg-student-id-type" data-i18n="lbl-id-proof-type">ID Proof Type *</label>
                                                 <select id="reg-student-id-type" required>
                                                     <option value="">Select ID Type</option>
                                                     <option value="Aadhaar Card">Aadhaar Card</option>
@@ -664,7 +657,7 @@
                                                 </select>
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-student-id-number">ID Proof Number *</label>
+                                                <label for="reg-student-id-number" data-i18n="lbl-id-proof-number">ID Proof Number *</label>
                                                 <input type="text" id="reg-student-id-number"
                                                     placeholder="ID Card Number" required autocomplete="off">
                                             </div>
@@ -675,7 +668,7 @@
                                     <div class="col-4">
                                         <div class="card-header"
                                             style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">
-                                            <h2>Profile Photo *</h2>
+                                            <h2 data-i18n="lbl-profile-photo">Profile Photo *</h2>
                                         </div>
                                         <div class="camera-panel">
                                             <div class="camera-preview-wrapper" style="position: relative;">
@@ -685,7 +678,7 @@
                                                 <img id="photo-preview-student"
                                                     src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>"
                                                     alt="Captured Photo Preview">
-                                                <div class="camera-overlay-info" id="camera-status-student">Camera
+                                                <div class="camera-overlay-info" id="camera-status-student" data-i18n="camera-inactive">Camera
                                                     Inactive</div>
                                                 <div class="photo-options-container hidden" id="photo-options-student">
                                                     <button type="button" class="btn btn-success btn-xs"
@@ -698,24 +691,27 @@
                                                 style="margin-top: 0.5rem; display: flex; gap: 0.5rem; justify-content: center;">
                                                 <button type="button" class="btn btn-secondary btn-sm"
                                                     id="btn-enable-camera-student"
+                                                    data-i18n="btn-enable-camera"
                                                     onclick="initCategoryCamera('student')">Enable Camera</button>
                                                 <button type="button" class="btn btn-primary btn-sm hidden"
                                                     id="btn-capture-student"
+                                                    data-i18n="btn-capture"
                                                     onclick="captureCategoryPhoto('student')">Capture</button>
                                                 <button type="button" class="btn btn-secondary btn-sm hidden"
                                                     id="btn-retake-student"
+                                                    data-i18n="btn-retake"
                                                     onclick="retakeCategoryPhoto('student')">Retake</button>
                                             </div>
                                             <div class="photo-fallback"
                                                 style="margin-top: 0.75rem; text-align: center;">
-                                                <span
+                                                <span data-i18n="upload-photo-hint-text"
                                                     style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Or
                                                     upload a photo file</span>
                                                 <label for="visitor-photo-file-student" class="file-upload-btn"
                                                     style="cursor: pointer; display: inline-block; padding: 0.4rem 0.8rem; font-size: 0.75rem;">
                                                     <input type="file" id="visitor-photo-file-student"
                                                         class="file-upload-input" accept="image/*" autocomplete="off">
-                                                    <span>Upload Image</span>
+                                                    <span data-i18n="btn-upload-image">Upload Image</span>
                                                 </label>
                                             </div>
                                         </div>
@@ -724,8 +720,8 @@
 
                                 <div class="form-actions mt-4"
                                     style="display: flex; gap: 1rem; justify-content: flex-end;">
-                                    <button type="reset" class="btn btn-secondary">Reset</button>
-                                    <button type="submit" class="btn btn-primary btn-lg">Register Visitor</button>
+                                    <button type="reset" class="btn btn-secondary" data-i18n="btn-reset">Reset</button>
+                                    <button type="submit" class="btn btn-primary btn-lg" data-i18n="btn-register-visitor">Register Visitor</button>
                                 </div>
                             </form>
 
@@ -831,7 +827,7 @@
                         <!-- SECTION 1: Registration Form -->
                         <div class="dashboard-card reg-form-card">
                             <div class="card-header">
-                                <h2>&#x1F3E2; Customer Registration</h2>
+                                <h2 data-i18n="nav-customer-reg">&#x1F3E2; Customer Registration</h2>
                             </div>
 
                             <form id="customer-registration-form" class="app-form" autocomplete="off">
@@ -841,10 +837,10 @@
                                         <!-- Smart Auto Search Section -->
                                         <div class="search-visitor-box mb-4"
                                             style="background: var(--bg-app); border: 1px solid var(--border-color); padding: 1rem; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-sm);">
-                                            <h3
+                                            <h3 data-i18n="search-existing-customer"
                                                 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--accent-primary);">
                                                 Search Existing Customer</h3>
-                                            <p
+                                            <p data-i18n="search-by-mobile-or-id"
                                                 style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
                                                 Search by Mobile Number or Visitor ID to auto-fill details</p>
                                             <div style="display: flex; gap: 0.5rem; align-items: center;">
@@ -868,13 +864,15 @@
                                         <!-- Row 1: Full Name + Mobile -->
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-name">Full Name *</label>
+                                                <label for="reg-customer-name" data-i18n="lbl-full-name">Full Name *</label>
                                                 <input type="text" id="reg-customer-name" placeholder="Full Name"
+                                                    data-i18n-placeholder="lbl-full-name"
                                                     required autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-phone">Mobile Number *</label>
+                                                <label for="reg-customer-phone" data-i18n="lbl-mobile-number">Mobile Number *</label>
                                                 <input type="tel" id="reg-customer-phone" placeholder="Phone Number"
+                                                    data-i18n-placeholder="lbl-mobile-number"
                                                     required autocomplete="off">
                                             </div>
                                         </div>
@@ -882,12 +880,12 @@
                                         <!-- Row 2: Email + Company Name -->
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-email">Email *</label>
+                                                <label for="reg-customer-email" data-i18n="lbl-email-required">Email *</label>
                                                 <input type="email" id="reg-customer-email"
                                                     placeholder="name@company.com" required autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-company">Company Name *</label>
+                                                <label for="reg-customer-company" data-i18n="lbl-company-name-required">Company Name *</label>
                                                 <input type="text" id="reg-customer-company"
                                                     placeholder="e.g. Acme Corp" required autocomplete="off">
                                             </div>
@@ -896,12 +894,12 @@
                                         <!-- Row 3: Designation + Purpose -->
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-dept">Designation</label>
+                                                <label for="reg-customer-dept" data-i18n="lbl-designation">Designation</label>
                                                 <input type="text" id="reg-customer-dept"
                                                     placeholder="e.g. Purchase Manager" autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-purpose">Purpose of Visit *</label>
+                                                <label for="reg-customer-purpose" data-i18n="lbl-purpose-of-visit">Purpose of Visit *</label>
                                                 <select id="reg-customer-purpose" required>
                                                     <option value="">&#x2014; Select Purpose &#x2014;</option>
                                                     <option value="Business Meeting">Business Meeting</option>
@@ -916,7 +914,7 @@
                                         <!-- Row 4: Host + Visit Date -->
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-host">Host Employee *</label>
+                                                <label for="reg-customer-host" data-i18n="lbl-host-employee">Host Employee *</label>
                                                 <div class="autocomplete-container">
                                                     <input type="text" id="reg-customer-host"
                                                         placeholder="Type employee name to search..." required
@@ -926,7 +924,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-customer-visit-date">Visit Date *</label>
+                                                <label for="reg-customer-visit-date" data-i18n="lbl-visit-date">Visit Date *</label>
                                                 <input type="date" id="reg-customer-visit-date" required
                                                     autocomplete="off">
                                             </div>
@@ -935,7 +933,7 @@
                                         <!-- Row 5: ID Proof Type + ID Proof Number + Vehicle -->
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-4">
-                                                <label for="reg-customer-id-type">ID Proof Type *</label>
+                                                <label for="reg-customer-id-type" data-i18n="lbl-id-proof-type">ID Proof Type *</label>
                                                 <select id="reg-customer-id-type" required>
                                                     <option value="">Select ID Type</option>
                                                     <option value="Aadhaar Card">Aadhaar Card</option>
@@ -945,7 +943,7 @@
                                                 </select>
                                             </div>
                                             <div class="form-group col-4">
-                                                <label for="reg-customer-id-number">ID Proof Number *</label>
+                                                <label for="reg-customer-id-number" data-i18n="lbl-id-proof-number">ID Proof Number *</label>
                                                 <input type="text" id="reg-customer-id-number"
                                                     placeholder="ID Card Number" required autocomplete="off">
                                             </div>
@@ -961,7 +959,7 @@
                                     <div class="col-4">
                                         <div class="card-header"
                                             style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">
-                                            <h2>Profile Photo *</h2>
+                                            <h2 data-i18n="lbl-profile-photo">Profile Photo *</h2>
                                         </div>
                                         <div class="camera-panel">
                                             <div class="camera-preview-wrapper" style="position: relative;">
@@ -971,7 +969,7 @@
                                                 <img id="photo-preview-customer"
                                                     src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>"
                                                     alt="Captured Photo Preview">
-                                                <div class="camera-overlay-info" id="camera-status-customer">Camera
+                                                <div class="camera-overlay-info" id="camera-status-customer" data-i18n="camera-inactive">Camera
                                                     Inactive</div>
                                                 <div class="photo-options-container hidden" id="photo-options-customer">
                                                     <button type="button" class="btn btn-success btn-xs"
@@ -984,12 +982,15 @@
                                                 style="margin-top: 0.5rem; display: flex; gap: 0.5rem; justify-content: center;">
                                                 <button type="button" class="btn btn-secondary btn-sm"
                                                     id="btn-enable-camera-customer"
+                                                    data-i18n="btn-enable-camera"
                                                     onclick="initCategoryCamera('customer')">Enable Camera</button>
                                                 <button type="button" class="btn btn-primary btn-sm hidden"
                                                     id="btn-capture-customer"
+                                                    data-i18n="btn-capture"
                                                     onclick="captureCategoryPhoto('customer')">Capture</button>
                                                 <button type="button" class="btn btn-secondary btn-sm hidden"
                                                     id="btn-retake-customer"
+                                                    data-i18n="btn-retake"
                                                     onclick="retakeCategoryPhoto('customer')">Retake</button>
                                             </div>
                                             <div class="photo-fallback"
@@ -1010,8 +1011,8 @@
 
                                 <div class="form-actions mt-4"
                                     style="display: flex; gap: 1rem; justify-content: flex-end;">
-                                    <button type="reset" class="btn btn-secondary">Reset</button>
-                                    <button type="submit" class="btn btn-primary btn-lg">Register Customer</button>
+                                    <button type="reset" class="btn btn-secondary" data-i18n="btn-reset">Reset</button>
+                                    <button type="submit" class="btn btn-primary btn-lg" data-i18n="dash-register-customer-btn">Register Customer</button>
                                 </div>
                             </form>
 
@@ -1119,7 +1120,7 @@
                         <!-- SECTION 1: Registration Form -->
                         <div class="dashboard-card reg-form-card">
                             <div class="card-header">
-                                <h2>&#x1F69A; Vendor Registration</h2>
+                                <h2 data-i18n="nav-vendor-reg">&#x1F69A; Vendor Registration</h2>
                             </div>
 
                             <form id="vendor-registration-form" class="app-form" autocomplete="off">
@@ -1129,10 +1130,10 @@
                                         <!-- Smart Auto Search Section -->
                                         <div class="search-visitor-box mb-4"
                                             style="background: var(--bg-app); border: 1px solid var(--border-color); padding: 1rem; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-sm);">
-                                            <h3
+                                            <h3 data-i18n="search-existing-visitor"
                                                 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--accent-primary);">
                                                 Search Existing Vendor</h3>
-                                            <p
+                                            <p data-i18n="search-by-mobile-or-id"
                                                 style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
                                                 Search by Mobile Number or Vendor ID to auto-fill details</p>
                                             <div style="display: flex; gap: 0.5rem; align-items: center;">
@@ -1152,12 +1153,12 @@
                                         <!-- Row 1: Vendor Company + Contact Person -->
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-company">Vendor Company *</label>
+                                                <label for="reg-vendor-company" data-i18n="lbl-company-name-required">Vendor Company *</label>
                                                 <input type="text" id="reg-vendor-company" placeholder="e.g. Tata Steel"
                                                     required autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-name">Contact Person *</label>
+                                                <label for="reg-vendor-name" data-i18n="lbl-full-name">Contact Person *</label>
                                                 <input type="text" id="reg-vendor-name" placeholder="Full Name" required
                                                     autocomplete="off">
                                             </div>
@@ -1166,12 +1167,12 @@
                                         <!-- Row 2: Mobile + Email -->
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-phone">Mobile Number *</label>
+                                                <label for="reg-vendor-phone" data-i18n="lbl-mobile-number">Mobile Number *</label>
                                                 <input type="tel" id="reg-vendor-phone" placeholder="Phone Number"
                                                     required autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-email">Email</label>
+                                                <label for="reg-vendor-email" data-i18n="lbl-email">Email</label>
                                                 <input type="email" id="reg-vendor-email" placeholder="name@vendor.com"
                                                     autocomplete="off">
                                             </div>
@@ -1199,7 +1200,7 @@
                                                     placeholder="Goods / Invoice details" autocomplete="off">
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-purpose">Purpose of Visit *</label>
+                                                <label for="reg-vendor-purpose" data-i18n="lbl-purpose-of-visit">Purpose of Visit *</label>
                                                 <select id="reg-vendor-purpose" required>
                                                     <option value="">&#x2014; Select Purpose &#x2014;</option>
                                                     <option value="Goods Delivery">Goods Delivery</option>
@@ -1213,7 +1214,7 @@
                                         <!-- Row 5: Host + Visit Date -->
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-host">Host Employee *</label>
+                                                <label for="reg-vendor-host" data-i18n="lbl-host-employee">Host Employee *</label>
                                                 <div class="autocomplete-container">
                                                     <input type="text" id="reg-vendor-host"
                                                         placeholder="Type employee name to search..." required
@@ -1223,7 +1224,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-visit-date">Visit Date *</label>
+                                                <label for="reg-vendor-visit-date" data-i18n="lbl-visit-date">Visit Date *</label>
                                                 <input type="date" id="reg-vendor-visit-date" required
                                                     autocomplete="off">
                                             </div>
@@ -1232,7 +1233,7 @@
                                         <!-- Row 6: ID Proof Type + ID Proof Number -->
                                         <div class="form-row" style="margin-bottom: 1rem;">
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-id-type">ID Proof Type *</label>
+                                                <label for="reg-vendor-id-type" data-i18n="lbl-id-proof-type">ID Proof Type *</label>
                                                 <select id="reg-vendor-id-type" required>
                                                     <option value="">Select ID Type</option>
                                                     <option value="Aadhaar Card">Aadhaar Card</option>
@@ -1242,7 +1243,7 @@
                                                 </select>
                                             </div>
                                             <div class="form-group col-6">
-                                                <label for="reg-vendor-id-number">ID Proof Number *</label>
+                                                <label for="reg-vendor-id-number" data-i18n="lbl-id-proof-number">ID Proof Number *</label>
                                                 <input type="text" id="reg-vendor-id-number"
                                                     placeholder="ID Card Number" required autocomplete="off">
                                             </div>
@@ -1253,7 +1254,7 @@
                                     <div class="col-4">
                                         <div class="card-header"
                                             style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">
-                                            <h2>Profile Photo *</h2>
+                                            <h2 data-i18n="lbl-profile-photo">Profile Photo *</h2>
                                         </div>
                                         <div class="camera-panel">
                                             <div class="camera-preview-wrapper" style="position: relative;">
@@ -1263,7 +1264,7 @@
                                                 <img id="photo-preview-vendor"
                                                     src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='1.5'><path d='M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z'/><circle cx='12' cy='13' r='4'/></svg>"
                                                     alt="Captured Photo Preview">
-                                                <div class="camera-overlay-info" id="camera-status-vendor">Camera
+                                                <div class="camera-overlay-info" id="camera-status-vendor" data-i18n="camera-inactive">Camera
                                                     Inactive</div>
                                                 <div class="photo-options-container hidden" id="photo-options-vendor">
                                                     <button type="button" class="btn btn-success btn-xs"
@@ -1276,12 +1277,15 @@
                                                 style="margin-top: 0.5rem; display: flex; gap: 0.5rem; justify-content: center;">
                                                 <button type="button" class="btn btn-secondary btn-sm"
                                                     id="btn-enable-camera-vendor"
+                                                    data-i18n="btn-enable-camera"
                                                     onclick="initCategoryCamera('vendor')">Enable Camera</button>
                                                 <button type="button" class="btn btn-primary btn-sm hidden"
                                                     id="btn-capture-vendor"
+                                                    data-i18n="btn-capture"
                                                     onclick="captureCategoryPhoto('vendor')">Capture</button>
                                                 <button type="button" class="btn btn-secondary btn-sm hidden"
                                                     id="btn-retake-vendor"
+                                                    data-i18n="btn-retake"
                                                     onclick="retakeCategoryPhoto('vendor')">Retake</button>
                                             </div>
                                             <div class="photo-fallback"
@@ -1302,8 +1306,8 @@
 
                                 <div class="form-actions mt-4"
                                     style="display: flex; gap: 1rem; justify-content: flex-end;">
-                                    <button type="reset" class="btn btn-secondary">Reset</button>
-                                    <button type="submit" class="btn btn-primary btn-lg">Register Vendor</button>
+                                    <button type="reset" class="btn btn-secondary" data-i18n="btn-reset">Reset</button>
+                                    <button type="submit" class="btn btn-primary btn-lg" data-i18n="dash-register-vendor-btn">Register Vendor</button>
                                 </div>
                             </form>
 

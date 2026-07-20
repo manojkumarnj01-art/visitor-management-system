@@ -5,9 +5,8 @@
 
 -- Seed Branches
 INSERT INTO branches (name, location) VALUES
-('Chennai HQ', 'Chennai, Tamil Nadu, India'),
-('Coimbatore Plant', 'Coimbatore, Tamil Nadu, India'),
-('Bangalore R&D', 'Bangalore, Karnataka, India')
+('Unit 1', 'Chennai, Tamil Nadu, India'),
+('Unit 2', 'Coimbatore, Tamil Nadu, India')
 ON CONFLICT (name) DO NOTHING;
 
 -- Seed Departments
