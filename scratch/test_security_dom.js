@@ -25,11 +25,11 @@ const allowedTests = [
     "view-vendor-registration",
     "view-checkout",
     "view-reports",
-    "view-pending-approvals",
     "view-employee-search"
 ];
 
 const deniedTests = [
+    "view-pending-approvals",
     "view-settings",
     "view-data-management",
     "view-work-permit",

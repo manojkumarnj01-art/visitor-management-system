@@ -1508,8 +1508,8 @@ async function checkAuthSession() {
                 // Admin has full access to all modules & navigation links
                 link.classList.remove("hidden");
             } else if (isSecurity) {
-                // Security users have access to Dashboard, Pending Approvals, Reports, Employee Search
-                const securityViews = ["view-dashboard", "view-pending-approvals", "view-reports", "view-employee-search"];
+                // Security users have access to Dashboard, Reports, Employee Search
+                const securityViews = ["view-dashboard", "view-reports", "view-employee-search"];
                 if (securityViews.includes(target)) {
                     link.classList.remove("hidden");
                 } else {
@@ -1759,7 +1759,6 @@ function isViewAuthorized(viewId) {
             "view-checkout",
             "view-reports",
             "view-registration",
-            "view-pending-approvals",
             "view-employee-search",
             "view-contractor-registration",
             "view-delivery-registration",
