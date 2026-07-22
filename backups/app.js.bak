@@ -1505,10 +1505,13 @@ async function checkAuthSession() {
         document.querySelectorAll(".nav-link").forEach(link => {
             const target = link.getAttribute("data-target");
             if (isAdmin) {
-                // Admin has full access to all modules & navigation links
-                link.classList.remove("hidden");
+                const adminViews = ["view-dashboard", "view-reports", "view-data-management", "view-work-permit", "view-purchase-manual", "view-settings"];
+                if (adminViews.includes(target)) {
+                    link.classList.remove("hidden");
+                } else {
+                    link.classList.add("hidden");
+                }
             } else if (isSecurity) {
-                // Security users have access ONLY to Dashboard and Reports
                 const securityViews = ["view-dashboard", "view-reports"];
                 if (securityViews.includes(target)) {
                     link.classList.remove("hidden");
@@ -1529,17 +1532,15 @@ async function checkAuthSession() {
         const visitorWrapper = document.getElementById("visitor-registration-wrapper");
         const empDashboardWrapper = document.getElementById("employee-dashboard-wrapper");
 
-        if (isAdmin) {
-            // Admin users access registration cards on the Dashboard
+        if (isAdmin || isSecurity) {
             if (visitorWrapper) visitorWrapper.classList.remove("hidden");
             if (empDashboardWrapper) empDashboardWrapper.classList.add("hidden");
 
             const selector = document.querySelector(".entry-type-selector");
-            if (selector) selector.classList.remove("hidden");
-        } else if (isSecurity) {
-            // Security users: Registration cards are hidden (Dashboard stats & Reports access only)
-            if (visitorWrapper) visitorWrapper.classList.add("hidden");
-            if (empDashboardWrapper) empDashboardWrapper.classList.add("hidden");
+            if (selector) {
+                if (isGatekeeper) selector.classList.add("hidden");
+                else selector.classList.remove("hidden");
+            }
         } else if (isEmployee) {
             if (visitorWrapper) visitorWrapper.classList.add("hidden");
             if (empDashboardWrapper) empDashboardWrapper.classList.remove("hidden");
@@ -1753,11 +1754,19 @@ function isViewAuthorized(viewId) {
     // Admin bypasses all restrictions
     if (role === "admin" || role === "administrator") return true;
 
-    // Security Users (Security Gatekeeper, Front Desk Operator, Gatekeeper, Security)
+    // Security Users (Security Gatekeeper, Front Desk Operator)
     if (role === "security gatekeeper" || role === "front desk operator" || role === "gatekeeper" || role === "security") {
         const allowed = [
             "view-dashboard",
-            "view-reports"
+            "view-reports",
+            "view-student-registration",
+            "view-customer-registration",
+            "view-vendor-registration",
+            "view-contractor-registration",
+            "view-delivery-registration",
+            "view-service-engineer-registration",
+            "view-pending-approvals",
+            "view-checkout"
         ];
         return allowed.includes(viewId);
     }

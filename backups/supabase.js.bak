@@ -1,0 +1,195 @@
+// Spring Boot REST Client Adapter for Visitor Management System
+// Provides transparent compatibility with Supabase-style table queries (.from().select(), .insert(), etc.)
+
+const BACKEND_BASE_URL = "http://localhost:8080/api";
+
+const TABLE_ENDPOINT_MAP = {
+  branches: "/branches",
+  departments: "/departments",
+  employees: "/employees",
+  visitors: "/visitors",
+  visitor_passes: "/passes",
+  blacklist: "/blacklist",
+  notifications: "/notifications",
+  security_users: "/security-users",
+  system_settings: "/system-settings",
+  audit_logs: "/audit-logs",
+  purchase_manuals: "/purchase-manuals",
+  work_permits: "/work-permits",
+  students: "/students"
+};
+
+function getAuthHeaders() {
+  const token = localStorage.getItem("vms_jwt_token");
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {})
+  };
+}
+
+class RestQueryBuilder {
+  constructor(table) {
+    this.table = table;
+    this.endpoint = TABLE_ENDPOINT_MAP[table] || `/${table}`;
+    this.filters = {};
+  }
+
+  select(columns = "*") {
+    this.operation = "SELECT";
+    return this;
+  }
+
+  eq(column, value) {
+    this.filters[column] = value;
+    return this;
+  }
+
+  single() {
+    this.isSingle = true;
+    return this;
+  }
+
+  order(column, options = {}) {
+    this.orderCol = column;
+    this.orderAsc = options.ascending !== false;
+    return this;
+  }
+
+  async insert(data) {
+    const payload = Array.isArray(data) ? data[0] : data;
+    try {
+      const res = await fetch(`${BACKEND_BASE_URL}${this.endpoint}`, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      const resultData = json.data ? (Array.isArray(data) ? [json.data] : json.data) : null;
+      return { data: resultData, error: json.success ? null : new Error(json.message) };
+    } catch (err) {
+      return { data: null, error: err };
+    }
+  }
+
+  async update(data) {
+    const id = this.filters.id || this.filters.visitor_code || this.filters.employee_code;
+    const url = id ? `${BACKEND_BASE_URL}${this.endpoint}/${id}` : `${BACKEND_BASE_URL}${this.endpoint}`;
+    try {
+      const res = await fetch(url, {
+        method: "PUT",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data)
+      });
+      const json = await res.json();
+      return { data: json.data, error: json.success ? null : new Error(json.message) };
+    } catch (err) {
+      return { data: null, error: err };
+    }
+  }
+
+  async upsert(data) {
+    return this.insert(data);
+  }
+
+  async delete() {
+    const id = this.filters.id;
+    try {
+      const res = await fetch(`${BACKEND_BASE_URL}${this.endpoint}/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders()
+      });
+      const json = await res.json();
+      return { data: json.data, error: json.success ? null : new Error(json.message) };
+    } catch (err) {
+      return { data: null, error: err };
+    }
+  }
+
+  then(resolve, reject) {
+    this._executeQuery().then(resolve, reject);
+  }
+
+  async _executeQuery() {
+    try {
+      let url = `${BACKEND_BASE_URL}${this.endpoint}`;
+      if (this.filters.id) {
+        url += `/${this.filters.id}`;
+      } else if (this.filters.employee_code || this.filters.code) {
+        url += `/code/${this.filters.employee_code || this.filters.code}`;
+      } else if (this.filters.key) {
+        url += `/${this.filters.key}`;
+      }
+
+      const res = await fetch(url, {
+        method: "GET",
+        headers: getAuthHeaders()
+      });
+      const json = await res.json();
+
+      let data = json.data;
+      if (data && Array.isArray(data)) {
+        if (this.filters.status) {
+          data = data.filter(item => item.status === this.filters.status);
+        }
+        if (this.isSingle) {
+          data = data[0] || null;
+        }
+      }
+
+      return { data, error: json.success ? null : new Error(json.message) };
+    } catch (err) {
+      return { data: null, error: err };
+    }
+  }
+}
+
+export const springClient = {
+  from: (table) => new RestQueryBuilder(table),
+  auth: {
+    signInWithPassword: async ({ username, password }) => {
+      try {
+        const res = await fetch(`${BACKEND_BASE_URL}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+        const json = await res.json();
+        if (json.success && json.data.token) {
+          localStorage.setItem("vms_jwt_token", json.data.token);
+          return { data: { user: json.data, session: { access_token: json.data.token } }, error: null };
+        }
+        return { data: null, error: new Error(json.message || "Invalid credentials") };
+      } catch (err) {
+        return { data: null, error: err };
+      }
+    },
+    signUp: async (data) => {
+      try {
+        const res = await fetch(`${BACKEND_BASE_URL}/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+        const json = await res.json();
+        if (json.success && json.data.token) {
+          localStorage.setItem("vms_jwt_token", json.data.token);
+          return { data: { user: json.data, session: { access_token: json.data.token } }, error: null };
+        }
+        return { data: null, error: new Error(json.message || "Registration failed") };
+      } catch (err) {
+        return { data: null, error: err };
+      }
+    },
+    signOut: async () => {
+      localStorage.removeItem("vms_jwt_token");
+      return { error: null };
+    }
+  }
+};
+
+export const supabaseClient = springClient;
+window.supabaseClient = springClient;
+window.supabase = {
+  createClient: () => springClient,
+  from: (table) => springClient.from(table)
+};

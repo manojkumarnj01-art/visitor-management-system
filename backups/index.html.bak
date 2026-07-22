@@ -23,8 +23,8 @@
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <!-- EmailJS SDK for browser-side automated email dispatch -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <!-- Node.js + Express REST API Client Reusable Module (via Vite) -->
-    <script type="module" src="/src/lib/api.js"></script>
+    <!-- Supabase Client Reusable Module (via Vite) -->
+    <script type="module" src="/src/lib/supabase.js"></script>
     <style>
         /* CSS Spinner & Loading Overlay for Authentication */
         .loading-overlay {
@@ -156,6 +156,32 @@
                     </svg>
                     <span data-i18n="nav-pending-approvals">Pending Approvals</span>
                 </div>
+                <!-- 2. Student Registration -->
+                <div class="nav-link" data-target="reg-student">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                        <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
+                    </svg>
+                    <span data-i18n="nav-student-reg">Student Registration</span>
+                </div>
+                <!-- 3. Customer Registration -->
+                <div class="nav-link" data-target="reg-customer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <span data-i18n="nav-customer-reg">Customer Registration</span>
+                </div>
+                <!-- 4. Vendor Registration -->
+                <div class="nav-link" data-target="reg-vendor">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
+                        <rect x="1" y="3" width="15" height="13" />
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                        <circle cx="5.5" cy="18.5" r="2.5" />
+                        <circle cx="18.5" cy="18.5" r="2.5" />
+                    </svg>
+                    <span data-i18n="nav-vendor-reg">Vendor Registration</span>
+                </div>
                 <!-- 5. Reports -->
                 <div class="nav-link" data-target="view-reports">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
@@ -192,6 +218,13 @@
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
                     <span data-i18n="nav-emp-search">Employee Search</span>
+                </div>
+                <!-- 7. Check-Out -->
+                <div class="nav-link" data-target="view-checkout">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-icon">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+                    </svg>
+                    <span data-i18n="nav-checkout">Check-Out</span>
                 </div>
                 <!-- 8. Purchase Manual -->
                 <div class="nav-link" data-target="view-purchase-manual">
