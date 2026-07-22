@@ -1,0 +1,103 @@
+L362:                 <section id="view-dashboard" class="page-view active">
+L363:                     <div id="visitor-registration-wrapper">
+L364:                         <!-- Redesigned Registration Dashboard Grid -->
+L365:                         <div id="registration-dashboard-wrapper" class="w-full">
+L366:                             <div class="text-center mb-6" style="margin-top: 1.5rem; margin-bottom: 2rem;">
+L367:                                 <h2 data-i18n="dash-visitor-reg-hdr"
+L368:                                     style="font-size: 1.85rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem; letter-spacing: -0.5px;">
+L369:                                     Visitor Registration</h2>
+L370:                                 <p data-i18n="dash-visitor-reg-desc" style="font-size: 0.95rem; color: var(--text-secondary); font-weight: 500;">Choose the visitor category to register.</p>
+L371:                             </div>
+L372: 
+L373:                             <!-- Dashboard Stats Cards -->
+L374:                             <div class="top-summary-bar no-print"
+L375:                                 style="box-shadow: none; border-bottom: none; background: transparent; padding: 0; margin-bottom: 2.5rem; justify-content: space-between; gap: 1.5rem;">
+L376:                                 <div class="summary-item" style="padding: 0.75rem 1.25rem;">
+L377:                                     <span class="summary-icon" style="font-size: 1.75rem;">&#x1F4E4;</span>
+L378:                                         <div class="summary-details">
+L379:                                             <span class="summary-label" data-i18n="checked-out"
+L380:                                                 style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; display: block;">Checked Out</span>
+L381:                                         <span class="summary-value checked-out" id="dashboard-stat-checked-out"
+L382:                                             style="font-size: 1.4rem; font-weight: 800; color: var(--text-primary);">0</span>
+L383:                                     </div>
+L384:                                 </div>
+L385:                                 <div class="summary-item" style="padding: 0.75rem 1.25rem;">
+L386:                                     <span class="summary-icon" style="font-size: 1.75rem;">&#x1F4C5;</span>
+L387:                                         <div class="summary-details">
+L388:                                             <span class="summary-label" data-i18n="visitors-today"
+L389:                                                 style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; display: block;">Visitors Today</span>
+L390:                                         <span class="summary-value visitors-today" id="dashboard-stat-visitors-today"
+L391:                                             style="font-size: 1.4rem; font-weight: 800; color: var(--accent-primary);">0</span>
+L392:                                     </div>
+L393:                                 </div>
+L394:                                 <div class="summary-item" style="padding: 0.75rem 1.25rem;">
+L395:                                     <span class="summary-icon" style="font-size: 1.75rem;">&#x1F3E2;</span>
+L396:                                         <div class="summary-details">
+L397:                                             <span class="summary-label" data-i18n="inside-campus"
+L398:                                                 style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; display: block;">Currently In Campus</span>
+L399:                                         <span class="summary-value in-campus" id="dashboard-stat-in-campus"
+L400:                                             style="font-size: 1.4rem; font-weight: 800; color: var(--accent-success);">0</span>
+L401:                                     </div>
+L402:                                 </div>
+L403:                             </div>
+L404: 
+L405:                             <div class="registration-dashboard-grid">
+L406:                                 <!-- 1. Student Card -->
+L407:                                 <div class="registration-card"
+L408:                                     style="min-height: 250px; display: flex; flex-direction: column; justify-content: space-between;">
+L409:                                     <div>
+L410:                                         <div class="card-icon-wrapper" style="margin-bottom: 1rem;">&#x1F393;</div>
+L411:                                         <h3 class="card-title" data-i18n="nav-student-reg" style="margin-bottom: 0.5rem;">Student Registration</h3>
+L412:                                         <p class="card-description" data-i18n="dash-student-desc" style="margin-bottom: 1.5rem;">Register students visiting the organization.</p>
+L413:                                     </div>
+L414:                                     <div class="card-actions" style="margin-top: auto; width: 100%;">
+L415:                                         <button type="button" class="btn btn-primary btn-block" data-i18n="dash-register-student-btn"
+L416:                                             onclick="navigateTo('/student-registration')">Register Student</button>
+L417:                                     </div>
+L418:                                 </div>
+L419: 
+L420:                                 <!-- 2. Customer Card -->
+L421:                                 <div class="registration-card"
+L422:                                     style="min-height: 250px; display: flex; flex-direction: column; justify-content: space-between;">
+L423:                                     <div>
+L424:                                         <div class="card-icon-wrapper" style="margin-bottom: 1rem;">&#x1F3E2;</div>
+L425:                                         <h3 class="card-title" data-i18n="nav-customer-reg" style="margin-bottom: 0.5rem;">Customer Registration</h3>
+L426:                                         <p class="card-description" data-i18n="dash-customer-desc" style="margin-bottom: 1.5rem;">Register customers and clients.</p>
+L427:                                     </div>
+L428:                                     <div class="card-actions" style="margin-top: auto; width: 100%;">
+L429:                                         <button type="button" class="btn btn-primary btn-block" data-i18n="dash-register-customer-btn"
+L430:                                             onclick="navigateTo('/customer-registration')">Register Customer</button>
+L431:                                     </div>
+L432:                                 </div>
+L433: 
+L434:                                 <!-- 3. Vendor Card -->
+L435:                                 <div class="registration-card"
+L436:                                     style="min-height: 250px; display: flex; flex-direction: column; justify-content: space-between;">
+L437:                                     <div>
+L438:                                         <div class="card-icon-wrapper" style="margin-bottom: 1rem;">&#x1F69A;</div>
+L439:                                         <h3 class="card-title" data-i18n="nav-vendor-reg" style="margin-bottom: 0.5rem;">Vendor Registration</h3>
+L440:                                         <p class="card-description" data-i18n="dash-vendor-desc" style="margin-bottom: 1.5rem;">Register vendors, suppliers and contractors.</p>
+L441:                                     </div>
+L442:                                     <div class="card-actions" style="margin-top: auto; width: 100%;">
+L443:                                         <button type="button" class="btn btn-primary btn-block" data-i18n="dash-register-vendor-btn"
+L444:                                             onclick="navigateTo('/vendor-registration')">Register Vendor</button>
+L445:                                     </div>
+L446:                                 </div>
+L447: 
+L448:                                 <!-- 4. Check-Out Card -->
+L449:                                 <div class="registration-card"
+L450:                                     style="min-height: 250px; display: flex; flex-direction: column; justify-content: space-between;">
+L451:                                     <div>
+L452:                                         <div class="card-icon-wrapper" style="margin-bottom: 1rem;">&#x1F6AA;</div>
+L453:                                         <h3 class="card-title" data-i18n="nav-checkout" style="margin-bottom: 0.5rem;">Check-Out</h3>
+L454:                                         <p class="card-description" data-i18n="dash-checkout-desc" style="margin-bottom: 1.5rem;">Process visitor departures and exit logs.</p>
+L455:                                     </div>
+L456:                                     <div class="card-actions" style="margin-top: auto; width: 100%;">
+L457:                                         <button type="button" class="btn btn-primary btn-block" data-i18n="nav-checkout"
+L458:                                             onclick="navigateTo('/checkout')">Check-Out</button>
+L459:                                     </div>
+L460:                                 </div>
+L461:                             </div>
+L462:                         </div>
+L463:                     </div>
+L464:                 </section>

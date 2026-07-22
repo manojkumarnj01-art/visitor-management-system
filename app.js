@@ -1508,8 +1508,8 @@ async function checkAuthSession() {
                 // Admin has full access to all modules & navigation links
                 link.classList.remove("hidden");
             } else if (isSecurity) {
-                // Security users have access ONLY to Dashboard and Reports
-                const securityViews = ["view-dashboard", "view-reports"];
+                // Security users have access to Dashboard, Pending Approvals, Reports, Employee Search
+                const securityViews = ["view-dashboard", "view-pending-approvals", "view-reports", "view-employee-search"];
                 if (securityViews.includes(target)) {
                     link.classList.remove("hidden");
                 } else {
@@ -1529,17 +1529,13 @@ async function checkAuthSession() {
         const visitorWrapper = document.getElementById("visitor-registration-wrapper");
         const empDashboardWrapper = document.getElementById("employee-dashboard-wrapper");
 
-        if (isAdmin) {
-            // Admin users access registration cards on the Dashboard
+        if (isAdmin || isSecurity) {
+            // Admin & Security users access registration cards and summary stats on the Dashboard
             if (visitorWrapper) visitorWrapper.classList.remove("hidden");
             if (empDashboardWrapper) empDashboardWrapper.classList.add("hidden");
 
             const selector = document.querySelector(".entry-type-selector");
             if (selector) selector.classList.remove("hidden");
-        } else if (isSecurity) {
-            // Security users: Registration cards are hidden (Dashboard stats & Reports access only)
-            if (visitorWrapper) visitorWrapper.classList.add("hidden");
-            if (empDashboardWrapper) empDashboardWrapper.classList.add("hidden");
         } else if (isEmployee) {
             if (visitorWrapper) visitorWrapper.classList.add("hidden");
             if (empDashboardWrapper) empDashboardWrapper.classList.remove("hidden");
@@ -1757,7 +1753,19 @@ function isViewAuthorized(viewId) {
     if (role === "security gatekeeper" || role === "front desk operator" || role === "gatekeeper" || role === "security") {
         const allowed = [
             "view-dashboard",
-            "view-reports"
+            "view-student-registration",
+            "view-customer-registration",
+            "view-vendor-registration",
+            "view-checkout",
+            "view-reports",
+            "view-registration",
+            "view-pending-approvals",
+            "view-employee-search",
+            "view-contractor-registration",
+            "view-delivery-registration",
+            "view-service-engineer-registration",
+            "view-category-records",
+            "view-history"
         ];
         return allowed.includes(viewId);
     }

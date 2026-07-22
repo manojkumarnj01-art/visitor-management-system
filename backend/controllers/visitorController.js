@@ -153,18 +153,26 @@ async function createVisitor(req, res) {
         setImmediate(async () => {
             try {
                 let hostRecord = null;
-                if (hostId) {
+                const hostQueryVal = hostId || v.host_name || v.hostName || v.host_email || v.hostEmail;
+                if (hostQueryVal) {
                     const empRes = await pool.request()
-                        .input('hid', sql.NVarChar(50), hostId)
-                        .query('SELECT * FROM employees WHERE employee_code = @hid OR name = @hid OR email = @hid');
+                        .input('hquery', sql.NVarChar(255), hostQueryVal)
+                        .query('SELECT * FROM employees WHERE employee_code = @hquery OR name = @hquery OR email = @hquery');
                     if (empRes.recordset.length > 0) {
                         hostRecord = empRes.recordset[0];
                     }
                 }
-                console.log(`[visitorController] Triggering automatic host email for visitor: ${createdVisitor.visitor_code}`);
-                await emailService.sendHostApprovalEmail(createdVisitor, hostRecord, approveToken, rejectToken);
+                
+                // If visitor payload contained explicit host_email, attach to createdVisitor object
+                if (v.host_email || v.hostEmail) {
+                    createdVisitor.host_email = v.host_email || v.hostEmail;
+                }
+
+                console.log(`[visitorController] Triggering automatic host email delivery for visitor: ${createdVisitor.visitor_code}`);
+                const dispatchResult = await emailService.sendHostApprovalEmail(createdVisitor, hostRecord, approveToken, rejectToken);
+                console.log(`[visitorController EMAIL LOG] Dispatch Result for ${createdVisitor.visitor_code}:`, JSON.stringify(dispatchResult));
             } catch (emailErr) {
-                console.error('[visitorController] Async host email error:', emailErr);
+                console.error('[visitorController] Async host email dispatch error:', emailErr);
             }
         });
 

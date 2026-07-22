@@ -1,0 +1,29 @@
+L1494: document.getElementById("header-user-role").innerText = getTranslatedText("role-" + state.currentUser.role.toLowerCase().replace(/ /g, "-"), state.currentUser.role);
+L1497: const role = state.currentUser.role.toLowerCase();
+L1498: const isAdmin = role === "admin" || role === "administrator";
+L1499: const isGatekeeper = role === "gatekeeper" || role === "security gatekeeper";
+L1500: const isReception = role === "receptionist" || role === "front desk operator";
+L1501: const isSecurity = isGatekeeper || isReception || role === "security";
+L1502: const isEmployee = role === "employee";
+L1507: if (isAdmin) {
+L1510: } else if (isSecurity) {
+L1532: if (isAdmin) {
+L1539: } else if (isSecurity) {
+L1617: if (!state.currentUser || state.currentUser.role.toLowerCase() !== "employee") return;
+L1751: const role = state.currentUser.role.toLowerCase();
+L1754: if (role === "admin" || role === "administrator") return true;
+L1757: if (role === "security gatekeeper" || role === "front desk operator" || role === "gatekeeper" || role === "security") {
+L1766: if (role === "employee") {
+L3834: if (state.currentUser && state.currentUser.role.toLowerCase() === "employee") {
+L4033: const isGatekeeper = state.currentUser && (state.currentUser.role.toLowerCase() === "gatekeeper" || state.currentUser.role.toLowerCase() === "security gatekeeper");
+L4043: if (state.currentUser && state.currentUser.role.toLowerCase() === "employee") {
+L4111: if (isGatekeeper) repSummary.classList.add("hidden");
+L4116: if (isGatekeeper) repLayout.classList.add("hidden");
+L4121: if (isGatekeeper) insightsCard.classList.add("hidden");
+L4126: if (isGatekeeper) exportHeader.classList.add("hidden");
+L4132: if (isGatekeeper) {
+L4182: if (isGatekeeper) {
+L4211: if (isGatekeeper) {
+L8026: if (state.currentUser && state.currentUser.role === "Administrator") {
+L8459: if (state.currentUser && state.currentUser.role === "Administrator") {
+L8465: if (state.currentUser && state.currentUser.role === "Administrator") {

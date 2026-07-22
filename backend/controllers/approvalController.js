@@ -51,9 +51,11 @@ function renderHtmlResponse(title, statusType, heading, message, detailsHtml = '
 async function handleApproveLink(req, res) {
     try {
         const { token } = req.query;
+        console.log(`[APPROVAL API] Received approval request with token: ${token ? token.slice(0, 35) + '...' : '(none)'}`);
         const verification = tokenService.verifyApprovalToken(token);
 
         if (!verification.valid) {
+            console.warn(`[APPROVAL API WARN] Token verification failed: ${verification.message}`);
             return res.send(renderHtmlResponse(
                 'Invalid Link',
                 'danger',
@@ -63,6 +65,7 @@ async function handleApproveLink(req, res) {
         }
 
         const { visitor_code, host_id } = verification.payload;
+        console.log(`[APPROVAL API SUCCESS] Token verified for Visitor Code: '${visitor_code}' | Host ID: '${host_id || 'N/A'}'`);
         const pool = await getPool();
 
         // Retrieve visitor

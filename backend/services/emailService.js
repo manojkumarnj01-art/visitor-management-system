@@ -1,47 +1,110 @@
 const nodemailer = require('nodemailer');
 
-const APP_BASE_URL = process.env.APP_BASE_URL || 'http://localhost:5000';
-const SMTP_HOST = process.env.SMTP_HOST || '';
-const SMTP_PORT = parseInt(process.env.SMTP_PORT || '587', 10);
-const SMTP_USER = process.env.SMTP_USER || '';
-const SMTP_PASS = process.env.SMTP_PASS || '';
-const SMTP_FROM = process.env.SMTP_FROM || '"Barani Hydraulics VMS" <noreply@barani.com>';
-const SMTP_SECURE = process.env.SMTP_SECURE === 'true';
-
 let transporter = null;
 
-function getTransporter() {
-    if (!transporter && SMTP_HOST) {
+async function getTransporter() {
+    if (transporter) return transporter;
+
+    const APP_BASE_URL = process.env.APP_BASE_URL || 'http://localhost:5000';
+    const SMTP_HOST = process.env.SMTP_HOST || '';
+    const SMTP_PORT = parseInt(process.env.SMTP_PORT || '587', 10);
+    const SMTP_USER = process.env.SMTP_USER || '';
+    const SMTP_PASS = process.env.SMTP_PASS || '';
+    const SMTP_SECURE = process.env.SMTP_SECURE === 'true';
+
+    if (SMTP_HOST && SMTP_USER && SMTP_PASS) {
+        console.log(`[SMTP CONNECT] Initializing production SMTP transporter for host: ${SMTP_HOST}:${SMTP_PORT} (User: ${SMTP_USER})`);
         transporter = nodemailer.createTransport({
             host: SMTP_HOST,
             port: SMTP_PORT,
             secure: SMTP_SECURE,
-            auth: (SMTP_USER && SMTP_PASS) ? { user: SMTP_USER, pass: SMTP_PASS } : undefined,
+            auth: { user: SMTP_USER, pass: SMTP_PASS },
             tls: { rejectUnauthorized: false }
         });
+    } else {
+        console.log('[SMTP CONNECT] Production SMTP credentials not fully provided in .env. Initializing Ethereal Test Account fallback...');
+        try {
+            const testAccount = await nodemailer.createTestAccount();
+            console.log(`[SMTP CONNECT SUCCESS] Created Ethereal Test Account: ${testAccount.user}`);
+            transporter = nodemailer.createTransport({
+                host: 'smtp.ethereal.email',
+                port: 587,
+                secure: false,
+                auth: { user: testAccount.user, pass: testAccount.pass }
+            });
+        } catch (err) {
+            console.error('[SMTP CONNECT ERROR] Failed to create Ethereal test account:', err.message);
+            // Emergency fallback direct transport
+            transporter = nodemailer.createTransport({
+                jsonTransport: true
+            });
+        }
     }
+
+    try {
+        await transporter.verify();
+        console.log('[SMTP CONNECT VERIFY] Transporter connection & authentication verified successfully.');
+    } catch (vErr) {
+        console.error('[SMTP CONNECT VERIFY WARN] Verification warning:', vErr.message);
+    }
+
     return transporter;
 }
 
-async function dispatchEmail(mailOptions) {
-    try {
-        const trans = getTransporter();
-        if (trans) {
+async function dispatchEmailWithRetry(mailOptions, maxRetries = 3) {
+    const trans = await getTransporter();
+    let attempt = 0;
+    let lastError = null;
+
+    console.log(`[EMAIL GENERATION] Preparing email to '${mailOptions.to}' | Subject: '${mailOptions.subject}'`);
+
+    while (attempt < maxRetries) {
+        attempt++;
+        try {
+            console.log(`[EMAIL DELIVERY ATTEMPT ${attempt}/${maxRetries}] Sending email to ${mailOptions.to}...`);
             const info = await trans.sendMail(mailOptions);
-            console.log(`[emailService] Email sent to ${mailOptions.to}: ${info.messageId}`);
-            return { success: true, messageId: info.messageId };
-        } else {
-            console.log(`[emailService SIMULATED LOG] To: ${mailOptions.to} | Subject: ${mailOptions.subject}`);
-            return { success: true, simulated: true };
+            
+            console.log(`[EMAIL DELIVERY SUCCESS] MessageId: ${info.messageId || 'SENT'} | Accepted: ${JSON.stringify(info.accepted)}`);
+            
+            // Check for Ethereal Preview URL
+            const previewUrl = nodemailer.getTestMessageUrl(info);
+            if (previewUrl) {
+                console.log(`[EMAIL PREVIEW URL] View live test email: ${previewUrl}`);
+            }
+
+            return { success: true, messageId: info.messageId, previewUrl, accepted: info.accepted };
+        } catch (err) {
+            lastError = err;
+            console.error(`[EMAIL DELIVERY FAILURE - ATTEMPT ${attempt}/${maxRetries}] Error sending to ${mailOptions.to}:`, err.message);
+            if (attempt < maxRetries) {
+                const backoffMs = attempt * 1000;
+                console.log(`[EMAIL RETRY] Retrying email delivery in ${backoffMs}ms...`);
+                await new Promise(r => setTimeout(r, backoffMs));
+            }
         }
-    } catch (err) {
-        console.error(`[emailService ERROR] Failed to send email to ${mailOptions.to}:`, err.message);
-        return { success: false, error: err.message };
     }
+
+    console.error(`[EMAIL DELIVERY FATAL ERROR] All ${maxRetries} attempts failed for email to ${mailOptions.to}. Exact Reason: ${lastError.message}`);
+    return { success: false, error: lastError.message, attempts: maxRetries };
 }
 
 async function sendHostApprovalEmail(visitor, host, approveToken, rejectToken) {
-    const hostEmail = (host && host.email) ? host.email : (visitor.host_email || 'host@barani.com');
+    const APP_BASE_URL = process.env.APP_BASE_URL || 'http://localhost:5000';
+    const SMTP_FROM = process.env.SMTP_FROM || '"Barani Hydraulics VMS" <vms@barani.com>';
+    const DEFAULT_HOST_EMAIL = process.env.DEFAULT_HOST_EMAIL || 'host@barani.com';
+
+    let hostEmail = DEFAULT_HOST_EMAIL;
+    let hostName = visitor.host_name || 'Host';
+
+    if (host && host.email) {
+        hostEmail = host.email;
+        hostName = host.name || hostName;
+    } else if (visitor.host_email) {
+        hostEmail = visitor.host_email;
+    }
+
+    console.log(`[HOST EMAIL RESOLUTION] Visitor Code: ${visitor.visitor_code || visitor.id} | Resolved Host Name: '${hostName}' | Target Host Email: '${hostEmail}'`);
+
     const approveUrl = `${APP_BASE_URL}/api/approval/approve?token=${encodeURIComponent(approveToken)}`;
     const rejectUrl = `${APP_BASE_URL}/api/approval/reject?token=${encodeURIComponent(rejectToken)}`;
 
@@ -80,7 +143,7 @@ async function sendHostApprovalEmail(visitor, host, approveToken, rejectToken) {
             </div>
             <div class="content">
                 <div class="badge">Awaiting Host Authorization</div>
-                <p style="font-size: 15px; margin-top: 0;">Dear <strong>${visitor.host_name || 'Host'}</strong>,</p>
+                <p style="font-size: 15px; margin-top: 0;">Dear <strong>${hostName}</strong>,</p>
                 <p style="font-size: 14px; color: #475569; line-height: 1.5;">
                     A new visitor has arrived at security registration and requested to meet with you. Please review the details below and select <strong>Approve</strong> or <strong>Reject</strong>.
                 </p>
@@ -99,7 +162,7 @@ async function sendHostApprovalEmail(visitor, host, approveToken, rejectToken) {
                                 </tr>
                                 <tr>
                                     <td class="label">Company:</td>
-                                    <td class="value">${visitor.company || 'Individual / Personal'}</td>
+                                    <td class="value">${visitor.company || 'Individual / Guest'}</td>
                                 </tr>
                                 <tr>
                                     <td class="label">Mobile Number:</td>
@@ -138,7 +201,7 @@ async function sendHostApprovalEmail(visitor, host, approveToken, rejectToken) {
     </html>
     `;
 
-    return dispatchEmail({
+    return dispatchEmailWithRetry({
         from: SMTP_FROM,
         to: hostEmail,
         subject: `[VMS Action Required] Visitor Arrival Approval: ${visitor.name} (${visitor.company || 'Guest'})`,
@@ -147,8 +210,9 @@ async function sendHostApprovalEmail(visitor, host, approveToken, rejectToken) {
 }
 
 async function sendVisitorApprovalEmail(visitor, passPdfBuffer) {
-    if (!visitor.email) return { success: true, skipped: 'No visitor email' };
+    if (!visitor.email) return { success: true, skipped: 'No visitor email provided' };
 
+    const SMTP_FROM = process.env.SMTP_FROM || '"Barani Hydraulics VMS" <vms@barani.com>';
     const htmlBody = `
     <!DOCTYPE html>
     <html>
@@ -180,7 +244,7 @@ async function sendVisitorApprovalEmail(visitor, passPdfBuffer) {
         });
     }
 
-    return dispatchEmail({
+    return dispatchEmailWithRetry({
         from: SMTP_FROM,
         to: visitor.email,
         subject: `Visit Approved - Barani Hydraulics Visitor Pass (${visitor.visitor_code || 'Pass'})`,
@@ -190,8 +254,10 @@ async function sendVisitorApprovalEmail(visitor, passPdfBuffer) {
 }
 
 async function sendHostApprovalConfirmationEmail(visitor, host) {
-    const hostEmail = (host && host.email) ? host.email : (visitor.host_email || 'host@barani.com');
-    
+    const SMTP_FROM = process.env.SMTP_FROM || '"Barani Hydraulics VMS" <vms@barani.com>';
+    const DEFAULT_HOST_EMAIL = process.env.DEFAULT_HOST_EMAIL || 'host@barani.com';
+    const hostEmail = (host && host.email) ? host.email : (visitor.host_email || DEFAULT_HOST_EMAIL);
+
     const htmlBody = `
     <!DOCTYPE html>
     <html>
@@ -204,7 +270,7 @@ async function sendHostApprovalConfirmationEmail(visitor, host) {
     </html>
     `;
 
-    return dispatchEmail({
+    return dispatchEmailWithRetry({
         from: SMTP_FROM,
         to: hostEmail,
         subject: `[VMS Confirmed] Approved Visit for ${visitor.name}`,
@@ -213,7 +279,8 @@ async function sendHostApprovalConfirmationEmail(visitor, host) {
 }
 
 async function sendRejectionNotificationEmails(visitor, host, reason = 'Visit request declined by host') {
-    // Notify Visitor if email present
+    const SMTP_FROM = process.env.SMTP_FROM || '"Barani Hydraulics VMS" <vms@barani.com>';
+
     if (visitor.email) {
         const visitorHtml = `
         <!DOCTYPE html>
@@ -226,7 +293,7 @@ async function sendRejectionNotificationEmails(visitor, host, reason = 'Visit re
         </body>
         </html>
         `;
-        dispatchEmail({
+        await dispatchEmailWithRetry({
             from: SMTP_FROM,
             to: visitor.email,
             subject: `Visit Request Notice - Barani Hydraulics`,
@@ -234,7 +301,6 @@ async function sendRejectionNotificationEmails(visitor, host, reason = 'Visit re
         });
     }
 
-    // Notify Security / Admin
     const secHtml = `
     <!DOCTYPE html>
     <html>
@@ -244,7 +310,7 @@ async function sendRejectionNotificationEmails(visitor, host, reason = 'Visit re
     </body>
     </html>
     `;
-    dispatchEmail({
+    return dispatchEmailWithRetry({
         from: SMTP_FROM,
         to: process.env.SECURITY_EMAIL || 'security@barani.com',
         subject: `[VMS Alert] Visitor Request Rejected: ${visitor.name}`,
@@ -256,5 +322,6 @@ module.exports = {
     sendHostApprovalEmail,
     sendVisitorApprovalEmail,
     sendHostApprovalConfirmationEmail,
-    sendRejectionNotificationEmails
+    sendRejectionNotificationEmails,
+    getTransporter
 };
