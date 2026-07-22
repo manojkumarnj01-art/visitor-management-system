@@ -17,6 +17,7 @@ const auditRoutes = require('./backend/routes/auditRoutes');
 const branchRoutes = require('./backend/routes/branchRoutes');
 const departmentRoutes = require('./backend/routes/departmentRoutes');
 const studentRoutes = require('./backend/routes/studentRoutes');
+const approvalRoutes = require('./backend/routes/approvalRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -58,6 +59,7 @@ function authorizeRoles(...allowedRoles) {
 
 // API Routes & Access Controls
 app.use('/api/auth', authRoutes);
+app.use('/api/approval', approvalRoutes);
 app.use('/api/dashboard', authorizeRoles('Administrator', 'Security'), dashboardRoutes);
 app.use('/api/reports', authorizeRoles('Administrator', 'Security'), reportsRoutes);
 

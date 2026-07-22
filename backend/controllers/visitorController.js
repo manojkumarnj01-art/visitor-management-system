@@ -1,4 +1,6 @@
 const { getPool, sql } = require('../config/db');
+const tokenService = require('../services/tokenService');
+const emailService = require('../services/emailService');
 
 // GET /api/visitors
 async function getAllVisitors(req, res) {
@@ -59,6 +61,24 @@ async function createVisitor(req, res) {
         const pool = await getPool();
         const v = req.body;
         const visitorCode = v.visitor_code || v.id || `VIS-${Date.now().toString().slice(-6)}`;
+        const hostId = v.host_id || v.hostId || null;
+
+        // Generate secure tokens
+        const tokens = tokenService.generateApprovalTokens(visitorCode, hostId);
+        const approveToken = v.approve_token || v.approveToken || tokens.approveToken;
+        const rejectToken = v.reject_token || v.rejectToken || tokens.rejectToken;
+        const hostDept = v.host_dept || v.hostDept || null;
+
+        // Auto-ensure department exists in departments table if provided
+        if (hostDept) {
+            try {
+                await pool.request()
+                    .input('deptName', sql.NVarChar(100), hostDept)
+                    .query('IF NOT EXISTS (SELECT 1 FROM departments WHERE name = @deptName) INSERT INTO departments (name) VALUES (@deptName)');
+            } catch (deptErr) {
+                console.warn('[visitorController] Department insert warning:', deptErr.message);
+            }
+        }
 
         const request = pool.request()
             .input('visitor_code', sql.NVarChar(50), visitorCode)
@@ -72,14 +92,14 @@ async function createVisitor(req, res) {
             .input('num_visitors', sql.Int, v.num_visitors || v.numVisitors || 1)
             .input('id_type', sql.NVarChar(50), v.id_type || v.idType || null)
             .input('id_number', sql.NVarChar(100), v.id_number || v.idNumber || null)
-            .input('host_id', sql.NVarChar(50), v.host_id || v.hostId || null)
+            .input('host_id', sql.NVarChar(50), hostId)
             .input('host_name', sql.NVarChar(255), v.host_name || v.hostName || null)
-            .input('host_dept', sql.NVarChar(100), v.host_dept || v.hostDept || null)
+            .input('host_dept', sql.NVarChar(100), hostDept)
             .input('status', sql.NVarChar(50), v.status || 'Pending')
             .input('photo', sql.NVarChar(sql.MAX), v.photo || null)
             .input('photo_id_doc', sql.NVarChar(sql.MAX), v.photo_id_doc || v.photoIdDoc || null)
-            .input('approve_token', sql.NVarChar(255), v.approve_token || v.approveToken || null)
-            .input('reject_token', sql.NVarChar(255), v.reject_token || v.rejectToken || null)
+            .input('approve_token', sql.NVarChar(255), approveToken)
+            .input('reject_token', sql.NVarChar(255), rejectToken)
             .input('branch', sql.NVarChar(100), v.branch || null)
             .input('qr_code', sql.NVarChar(sql.MAX), v.qr_code || v.qrCode || null)
             .input('visitor_pass_image', sql.NVarChar(sql.MAX), v.visitor_pass_image || v.visitorPassImage || null)
@@ -100,6 +120,8 @@ async function createVisitor(req, res) {
                     host_id = @host_id, host_name = @host_name, host_dept = @host_dept,
                     status = @status, photo = COALESCE(@photo, photo),
                     photo_id_doc = COALESCE(@photo_id_doc, photo_id_doc),
+                    approve_token = COALESCE(@approve_token, approve_token),
+                    reject_token = COALESCE(@reject_token, reject_token),
                     branch = COALESCE(@branch, branch), qr_code = COALESCE(@qr_code, qr_code),
                     updated_at = GETDATE()
                 WHERE visitor_code = @visitor_code
@@ -125,7 +147,28 @@ async function createVisitor(req, res) {
             .input('vcode', sql.NVarChar(50), visitorCode)
             .query('SELECT * FROM visitors WHERE visitor_code = @vcode');
 
-        return res.status(201).json({ success: true, data: updated.recordset[0] });
+        const createdVisitor = updated.recordset[0];
+
+        // Trigger Async Host Email Dispatch
+        setImmediate(async () => {
+            try {
+                let hostRecord = null;
+                if (hostId) {
+                    const empRes = await pool.request()
+                        .input('hid', sql.NVarChar(50), hostId)
+                        .query('SELECT * FROM employees WHERE employee_code = @hid OR name = @hid OR email = @hid');
+                    if (empRes.recordset.length > 0) {
+                        hostRecord = empRes.recordset[0];
+                    }
+                }
+                console.log(`[visitorController] Triggering automatic host email for visitor: ${createdVisitor.visitor_code}`);
+                await emailService.sendHostApprovalEmail(createdVisitor, hostRecord, approveToken, rejectToken);
+            } catch (emailErr) {
+                console.error('[visitorController] Async host email error:', emailErr);
+            }
+        });
+
+        return res.status(201).json({ success: true, data: createdVisitor });
     } catch (err) {
         console.error('[visitorController] createVisitor error:', err);
         return res.status(500).json({ success: false, message: err.message, data: null });
